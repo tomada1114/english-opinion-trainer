@@ -1,10 +1,10 @@
 {
   "Metadata": {
-    "title": "Next.js App Template",
-    "description": "An App Router skeleton."
+    "title": "English Opinion Trainer",
+    "description": "Short English opinion drills with structured feedback."
   },
   "HomePage": {
-    "title": "Next.js App Template",
+    "title": "English Opinion Trainer",
     "intro": "The App Router skeleton renders in {language}.",
     "localeCount": "{count, plural, one {# language ships with this template.} other {# languages ship with this template.}}"
   },
