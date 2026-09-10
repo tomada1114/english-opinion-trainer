@@ -5,8 +5,7 @@
   },
   "HomePage": {
     "title": "英語意見トレーナー",
-    "intro": "App Router のひな形を{language}で表示しています。",
-    "localeCount": "{count, plural, other {このテンプレートには # 言語が含まれています。}}"
+    "intro": "英語で、自分の意見を数文で言う練習をします。"
   },
   "NotFound": {
     "title": "ページが見つかりません",

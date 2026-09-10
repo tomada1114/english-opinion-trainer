@@ -35,8 +35,7 @@ export default function HomePage({
   return (
     <main>
       <h1>{t("title")}</h1>
-      <p>{t("intro", { language: switcher(locale) })}</p>
-      <p>{t("localeCount", { count: LOCALES.length })}</p>
+      <p>{t("intro")}</p>
       <nav aria-label={switcher("label")}>
         <ul>
           {LOCALES.map((candidate) => (

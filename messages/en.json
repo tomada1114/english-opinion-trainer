@@ -5,8 +5,7 @@
   },
   "HomePage": {
     "title": "English Opinion Trainer",
-    "intro": "The App Router skeleton renders in {language}.",
-    "localeCount": "{count, plural, one {# language ships with this template.} other {# languages ship with this template.}}"
+    "intro": "Say what you think, in English, in a few sentences."
   },
   "NotFound": {
     "title": "Page not found",

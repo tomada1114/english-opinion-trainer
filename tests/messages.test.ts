@@ -295,7 +295,6 @@ const MESSAGE_KEYS = [
   "Metadata.description",
   "HomePage.title",
   "HomePage.intro",
-  "HomePage.localeCount",
   "NotFound.title",
   "NotFound.description",
   "NotFound.homeLink",
