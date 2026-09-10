@@ -188,6 +188,8 @@ const EDITED_CODE_FILES = [
  * the `starting-an-app` skill, which carries the removal procedure and so
  * names the removal set in prose, `building-app-routes`, which teaches the
  * Route Handler pattern through the one endpoint this template ships,
+ * `building-the-drill`, which records this application's own settled choice
+ * of adapter, model and `ERR_LLM_*` codes for the one call it makes,
  * `localizing-ui`, which owns the one mapping from a UI locale to the port's
  * `outputLanguage`, `managing-dependencies`, which points a vendor-SDK bump at
  * the recorded fixtures that verify it offline, and `writing-typescript`,
@@ -208,6 +210,7 @@ const EDITED_CODE_FILES = [
  */
 const EDITED_DOCUMENT_FILES = [
   ".agents/skills/building-app-routes/SKILL.md",
+  ".agents/skills/building-the-drill/SKILL.md",
   ".agents/skills/changing-gates/SKILL.md",
   ".agents/skills/designing-errors/SKILL.md",
   ".agents/skills/localizing-ui/SKILL.md",
