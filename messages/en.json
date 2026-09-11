@@ -11,5 +11,71 @@
     "title": "Page not found",
     "description": "The page you requested does not exist.",
     "homeLink": "Return to the home page"
+  },
+  "Drill": {
+    "title": "Unit {unit}",
+    "loading": "Loading a topic…",
+    "progress": "{count, plural, one {# topic answered} other {# topics answered}}",
+    "structureLabel": "Structure",
+    "mode": {
+      "short": "Short answer: 1–2 sentences",
+      "long": "Long answer: 4–6 sentences"
+    },
+    "answerLabel": "Your answer",
+    "characterCount": "{count} / {max} characters",
+    "send": "Get feedback",
+    "sending": "Getting feedback…",
+    "resend": "Send again",
+    "skip": "Skip this topic",
+    "next": "Next topic",
+    "validation": {
+      "empty": "Write an answer before asking for feedback.",
+      "tooLong": "Keep your answer to {max} characters or fewer.",
+      "notEnglish": "Write your answer in English."
+    },
+    "errors": {
+      "ERR_BAD_REQUEST": "The answer could not be sent. Check it and try again.",
+      "ERR_ANSWER_TOO_LONG": "Your answer is too long for this topic.",
+      "ERR_ANSWER_NOT_ENGLISH": "Write your answer in English.",
+      "ERR_FORBIDDEN_ORIGIN": "Feedback is only available from this app's own pages.",
+      "ERR_PAYLOAD_TOO_LARGE": "Your answer is too large to send.",
+      "ERR_LLM_AUTH": "Feedback is unavailable because the server is not set up to ask the model.",
+      "ERR_LLM_RATE_LIMIT": "Too many requests right now. Wait a moment and try again.",
+      "ERR_LLM_TIMEOUT": "Feedback took too long. Try again.",
+      "ERR_LLM_INVALID_OUTPUT": "The feedback came back malformed. Try again.",
+      "ERR_LLM_UNAVAILABLE": "The feedback service is unavailable right now. Try again later.",
+      "unknown": "Something went wrong. Try again."
+    },
+    "feedback": {
+      "heading": "Feedback",
+      "structureHeading": "Structure",
+      "fixesHeading": "What to fix",
+      "noFixes": "Nothing to fix.",
+      "rewriteHeading": "Rewrite",
+      "savePhrase": "Save to phrases (coming soon)",
+      "grammarHeading": "Grammar notes",
+      "noGrammar": "No grammar notes."
+    },
+    "element": {
+      "point": "Point",
+      "reason": "Reason",
+      "example": "Example",
+      "restatement": "Point, restated",
+      "acknowledgement": "Acknowledging the other side",
+      "opinion": "Opinion",
+      "contrast": "Contrast",
+      "choice": "Choice"
+    },
+    "verdict": {
+      "present": "Present",
+      "weak": "Weak",
+      "absent": "Missing"
+    },
+    "complete": {
+      "heading": "Unit complete",
+      "body": "You answered every topic in this pass.",
+      "restart": "Start a new pass",
+      "homeLink": "Back to the home page"
+    }
   }
 }

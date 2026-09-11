@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { getTopics } from "../src/core/content/index";
+import { UNIT_IDS } from "../src/core/drill";
 import { LOCALES } from "../src/i18n/locales";
 import { MESSAGES } from "../src/i18n/messages";
 
@@ -409,6 +410,44 @@ describe("the built application, served by `next start`", () => {
       expect(routes).toHaveProperty(`/${locale}`);
     }
   });
+
+  it("prerenders every unit's drill page in every shipped locale", () => {
+    const routes = readPrerenderedRoutes();
+
+    for (const locale of LOCALES) {
+      for (const unit of UNIT_IDS) {
+        expect(routes).toHaveProperty([`/${locale}/units/${String(unit)}`]);
+      }
+    }
+  });
+
+  it.each(LOCALES)("serves /%s/units/1 as the drill page", async (locale) => {
+    const response = await fetch(`${baseUrl}/${locale}/units/1`, {
+      redirect: "manual",
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    const document = await response.text();
+    expect(document).toMatch(new RegExp(`<html[^>]*\\slang="${locale}"`));
+    expect(document).toMatch(/<h1>Unit 1<\/h1>/);
+    expect(document).toMatch(
+      new RegExp(
+        `<link(?=[^>]*rel="canonical")(?=[^>]*href="[^"]*/${locale}/units/1")[^>]*>`,
+      ),
+    );
+  });
+
+  it.each(["0", "5", "01", "one"])(
+    "404s for /en/units/%s, a segment that names no unit",
+    async (unitId) => {
+      const response = await fetch(`${baseUrl}/en/units/${unitId}`, {
+        redirect: "manual",
+      });
+
+      expect(response.status).toBe(404);
+    },
+  );
 
   it("redirects a path with no locale prefix to one that has it", async () => {
     const response = await fetch(baseUrl, {
