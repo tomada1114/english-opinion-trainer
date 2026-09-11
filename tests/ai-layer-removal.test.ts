@@ -48,16 +48,13 @@ const REMOVED_PATHS = [
   ".agents/skills/integrating-llm",
   ".claude/skills/integrating-llm",
   "src/ai",
-  "src/app/api",
   "src/server/composition.ts",
-  "src/server/handlers/ask.ts",
   "tests/ai-anthropic.test.ts",
   "tests/ai-layer-removal.test.ts",
   "tests/ai-port.test.ts",
   "tests/ai-vendor-swap.test.ts",
   "tests/fixtures/llm",
   "tests/llm-replay.ts",
-  "tests/server-handler.test.ts",
 ];
 
 /**
@@ -154,14 +151,14 @@ const REMOVED_SKILL_NAMES = [
  * `package.json` declares the vendor SDK, which is the AI layer's one runtime
  * dependency and leaves with it — a manifest entry, not an application module,
  * which is why it can join this half without weakening what it claims.
- * `tests/server-smoke.test.ts` asks the running application for every route it
- * publishes, `POST /api/ask` among them, so the removal deletes those cases
- * the same way it deletes the route; it is a test of the composed application,
- * not a module the layer is embedded in. `tests/proxy.test.ts` picked the same
- * route as its example of a nested API path the locale matcher leaves alone —
- * a case named `"a nested API route"` with `/api/ask` as the literal — and a
+ * `tests/proxy.test.ts` picked `/api/ask` as its example of a nested API path
+ * the locale matcher leaves alone — a case named `"a nested API route"` — and a
  * matcher test choosing a path that no longer exists needs a different
- * example, even though the matcher's own behaviour does not change. This
+ * example, even though the matcher's own behaviour does not change.
+ * `tests/server-smoke.test.ts` is not on this list: it asked the running
+ * application for `POST /api/ask` too, but that route was deleted for a
+ * reason unrelated to a full AI-layer removal (issue #6), so the cases naming
+ * it are already gone and the file no longer names the layer at all. This
  * half is where the separability property lives: it is the one that has to stay
  * near-empty, and an entry joining it means an application module now has to
  * be edited by the removal — the moment the layer has stopped coming out in
@@ -175,7 +172,6 @@ const EDITED_CODE_FILES = [
   "tests/boundaries.test.ts",
   "tests/proxy.test.ts",
   "tests/server-env.test.ts",
-  "tests/server-smoke.test.ts",
   "vitest.config.ts",
 ];
 

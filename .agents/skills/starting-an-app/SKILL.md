@@ -136,9 +136,8 @@ the check you run afterwards, because it is on its own removal list. Those lists
 procedure:
 
 - **`REMOVED_PATHS`** — deleted outright. `src/server/composition.ts` is on it because
-  wiring a port is the whole of what that file does, `src/app/api` because the one route
-  there is the layer's only caller, and the `integrating-llm` skill with its
-  `.claude/skills/` mirror because the subject it documents is what leaves.
+  wiring a port is the whole of what that file does, and the `integrating-llm` skill
+  with its `.claude/skills/` mirror because the subject it documents is what leaves.
 - **`AI_LAYER_TOKENS`** — `ANTHROPIC_API_KEY` and `@anthropic-ai`, the two vendor names
   a file can carry without naming a path. **`AI_LAYER_SYMBOLS`** is the other half: the
   names this repository gives the layer's own surface, which a document cites as often
@@ -156,12 +155,9 @@ procedure:
 
 Delete the paths, then work through both edited lists:
 
-- `src/server/env.ts` loses the key from its schema and `.env.example` the matching
-  line. `API_ACCESS_KEY` and the rule requiring it stay: the rule is keyed off what the
-  composition root wires (`requiresAccessKey`), not off a vendor's variable, so it
-  survives the vendor leaving and is waiting for the first endpoint of your own that
-  costs money to answer. Keep `src/server/env.ts` itself, empty schema and all — it is
-  the seam the next secret enters through, and deleting it means rediscovering where
+- `src/server/env.ts` loses `ANTHROPIC_API_KEY` from its schema and `.env.example` the
+  matching line. Keep `src/server/env.ts` itself, empty schema and all — it is the seam
+  the next secret enters through, and deleting it means rediscovering where
   `process.env` is allowed to be read.
 - `eslint.config.mjs` loses the vendor-SDK zone rules, and `tests/boundaries.test.ts`
   the cases asserting them.
@@ -216,11 +212,9 @@ forward. Dropping `ja` touches:
 - `messages/ja.json`, deleted, and `src/i18n/messages.ts`, which statically imports it
   and keys `MESSAGES` by locale.
 - `messages/en.json` — the switcher entry naming the dropped language.
-- `src/server/handlers/ask.ts` — `OUTPUT_LANGUAGE_BY_LOCALE`, the one place a UI locale
-  is mapped to the language the model writes in. Only if the AI layer stayed.
 - `tests/messages.test.ts` — its switcher key in `MESSAGE_KEYS`, plus every other place
-  it names the locale literally — and `tests/proxy.test.ts`, `tests/home-page.test.tsx`,
-  and `tests/server-handler.test.ts`, each of which names the locale literally too.
+  it names the locale literally — and `tests/proxy.test.ts` and
+  `tests/home-page.test.tsx`, each of which names the locale literally too.
 - `README.md`'s quick start, and AGENTS.md's Conventions exception, which names
   `messages/ja.json` as the one committed file that is not in English.
 
@@ -228,12 +222,12 @@ forward. Dropping `ja` touches:
 trees and paths with an extension, and names no locale at all. `tests/proxy.test.ts`
 does change, because its cases spell one out.
 
-Two of these fail at compile time rather than at runtime, by design:
-`OUTPUT_LANGUAGE_BY_LOCALE` and `MESSAGE_KEYS` are written with `satisfies`, so a locale
-removed from `LOCALES` without its entries removed fails `pnpm typecheck` instead of
-rendering a key as its own name in production — `MESSAGE_KEYS` lives in
-`tests/messages.test.ts` rather than in `src/`, but `tsconfig.json`'s `include` covers
-`tests`, so `pnpm typecheck` type-checks it there too. Check with:
+One of these fails at compile time rather than at runtime, by design: `MESSAGE_KEYS` is
+written with `satisfies`, so a locale removed from `LOCALES` without its entries removed
+fails `pnpm typecheck` instead of rendering a key as its own name in production —
+`MESSAGE_KEYS` lives in `tests/messages.test.ts` rather than in `src/`, but
+`tsconfig.json`'s `include` covers `tests`, so `pnpm typecheck` type-checks it there
+too. Check with:
 
 ```bash
 pnpm exec vitest run tests/messages.test.ts tests/proxy.test.ts
