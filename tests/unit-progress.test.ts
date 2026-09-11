@@ -105,6 +105,15 @@ function skipOnceThenAnswer(
 }
 
 /**
+ * An `rng` that fails the test if called — for asserting that the
+ * pending-skip requeue stage draws deterministically from the queue's own
+ * order, with no randomness involved.
+ */
+function neverCalledRng(): number {
+  throw new Error("rng should not be called once every half has been fully offered");
+}
+
+/**
  * Asserts that, within one half's ordered list of draws, no topic id repeats
  * until every id offered in that half has appeared at least once.
  */
@@ -252,7 +261,7 @@ describe("nextTopic", () => {
     expect(state.answeredTopicIds.at(-1)).toBe(targetId);
   });
 
-  it("re-offers a pending short skip before a pending long skip", () => {
+  it("re-offers a skip recorded during the short half before one recorded during the long half", () => {
     const pool = makeSingleStructurePool("prep");
     const rng = mulberry32(14);
     let state = EMPTY_STATE;
@@ -282,6 +291,68 @@ describe("nextTopic", () => {
     expect(shortResolvedIndex).toBeGreaterThan(-1);
     expect(longResolvedIndex).toBeGreaterThan(-1);
     expect(shortResolvedIndex).toBeLessThan(longResolvedIndex);
+  });
+
+  describe("the pending-skip requeue", () => {
+    it("offers the long skip next once the only pending short skip is skipped again", () => {
+      const pool = makeSingleStructurePool("prep");
+      const shorts = pool.filter((topic) => topic.mode === "short");
+      const longs = pool.filter((topic) => topic.mode === "long");
+      const [pendingShort, ...answeredShorts] = shorts;
+      const [pendingLong, ...answeredLongs] = longs;
+      if (pendingShort === undefined || pendingLong === undefined) {
+        throw new Error("expected at least one short and one long topic");
+      }
+
+      const state: UnitProgressState = {
+        answeredTopicIds: [...answeredShorts, ...answeredLongs].map((t) => t.id),
+        // Short recorded before long, as it would be from real play: the
+        // short half is always fully offered before the long half begins.
+        skippedTopicIds: [pendingShort.id, pendingLong.id],
+      };
+
+      expect(nextTopic(1, pool, state, neverCalledRng)?.id).toBe(pendingShort.id);
+
+      const afterReskip = recordSkipped(state, pendingShort.id);
+
+      expect(afterReskip).not.toBe(state);
+      expect(afterReskip.skippedTopicIds).toStrictEqual([
+        pendingLong.id,
+        pendingShort.id,
+      ]);
+      expect(nextTopic(1, pool, afterReskip, neverCalledRng)?.id).toBe(pendingLong.id);
+    });
+
+    it("offers a re-skipped topic again only after every other pending topic has been", () => {
+      const pool = makeSingleStructurePool("prep");
+      const shorts = pool.filter((topic) => topic.mode === "short");
+      const longs = pool.filter((topic) => topic.mode === "long");
+      const [a, b, c, ...answeredRestShorts] = shorts;
+      if (a === undefined || b === undefined || c === undefined) {
+        throw new Error("expected at least 3 short topics");
+      }
+
+      let state: UnitProgressState = {
+        answeredTopicIds: [...answeredRestShorts, ...longs].map((t) => t.id),
+        skippedTopicIds: [a.id, b.id, c.id],
+      };
+
+      expect(nextTopic(1, pool, state, neverCalledRng)?.id).toBe(a.id);
+
+      // a is skipped again: it must not come up before b and c have.
+      state = recordSkipped(state, a.id);
+      expect(state.skippedTopicIds).toStrictEqual([b.id, c.id, a.id]);
+      expect(nextTopic(1, pool, state, neverCalledRng)?.id).toBe(b.id);
+
+      state = recordAnswered(state, b.id);
+      expect(nextTopic(1, pool, state, neverCalledRng)?.id).toBe(c.id);
+
+      state = recordAnswered(state, c.id);
+      expect(nextTopic(1, pool, state, neverCalledRng)?.id).toBe(a.id);
+
+      state = recordAnswered(state, a.id);
+      expect(isCompleted(state)).toBe(true);
+    });
   });
 
   it("shows zero repeated topic ids before every topic in a half has been offered once, over 1000+ draws", () => {
@@ -421,10 +492,15 @@ describe("recordSkipped", () => {
     expect(skipped.answeredTopicIds).toStrictEqual(["t1"]);
   });
 
-  it("does not duplicate an id that is already skipped", () => {
-    const state = recordSkipped(EMPTY_STATE, "t1");
+  it("moves an id that is already skipped to the end, returning a new state", () => {
+    let state = recordSkipped(EMPTY_STATE, "t1");
+    state = recordSkipped(state, "t2");
 
-    expect(recordSkipped(state, "t1")).toBe(state);
+    const next = recordSkipped(state, "t1");
+
+    expect(next).not.toBe(state);
+    expect(next.skippedTopicIds).toStrictEqual(["t2", "t1"]);
+    expect(next.answeredTopicIds).toStrictEqual(state.answeredTopicIds);
   });
 });
 

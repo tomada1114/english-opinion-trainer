@@ -58,9 +58,10 @@ function pickRandom<T>(pool: readonly T[], rng: () => number): T {
  * until {@link TOPICS_PER_HALF} distinct topics have been touched — which is
  * what caps a larger pool (unit 4's 24-per-mode) down to the per-pass target.
  * A topic already offered, whether answered or still only skipped, is never
- * drawn again by this function: a pending skip is {@link pickPendingSkip}'s
- * job, deliberately kept separate so this half's first round finishes (and
- * the other half's first round can start) without waiting on it.
+ * drawn again by this function: a pending skip is {@link
+ * pickNextPendingSkip}'s job, deliberately kept separate so this half's
+ * first round finishes (and the other half's first round can start)
+ * without waiting on it.
  */
 function pickUnshown(
   half: readonly Topic[],
@@ -87,19 +88,29 @@ function pickUnshown(
 }
 
 /**
- * A uniform-random still-skipped (not yet answered) topic of one mode's
- * half, or `undefined` when none is pending.
+ * The front of the pending-skip queue: the topic named by the earliest id in
+ * `skippedTopicIds` that belongs to `pool`, or `undefined` when none is
+ * pending.
+ *
+ * @remarks
+ * No `rng` here — `skippedTopicIds`' own insertion order is the queue.
+ * {@link recordSkipped} appends a newly-skipped id and moves an
+ * already-pending one to the end, so a short id naturally precedes a long
+ * one (every short topic is offered, and any skip recorded, before the long
+ * half begins), and a topic skipped again waits behind everything else
+ * still pending.
  */
-function pickPendingSkip(
-  half: readonly Topic[],
+function pickNextPendingSkip(
+  pool: readonly Topic[],
   state: UnitProgressState,
-  rng: () => number,
 ): Topic | undefined {
-  const pending = half.filter((topic) => state.skippedTopicIds.includes(topic.id));
-  if (pending.length === 0) {
+  const pendingId = state.skippedTopicIds.find((id) =>
+    pool.some((topic) => topic.id === id),
+  );
+  if (pendingId === undefined) {
     return undefined;
   }
-  return pickRandom(pending, rng);
+  return pool.find((topic) => topic.id === pendingId);
 }
 
 /**
@@ -113,15 +124,14 @@ function pickPendingSkip(
  * parameter for signature parity with the callers this issue unblocks
  * (#9, #16), which do need `unit` to build that pool.
  *
- * The draw runs in four stages, each exhausted before the next begins:
- * every `short` topic offered once ({@link pickUnshown}, random order), then
- * every `long` topic offered once the same way — a short topic left pending
- * by a skip does **not** hold up the `long` half — then the still-pending
- * `short` skips re-offered (random order, a re-skipped one simply staying
- * eligible) until every one is answered, then the still-pending `long`
- * skips the same way. `undefined` at {@link TOPICS_PER_PASS} answered is one
- * way this returns `undefined`; a pool smaller than a full 16-topic pass (as
- * in a test fixture) exhausts the same way once nothing is left to draw.
+ * Three stages, each exhausted before the next begins: every `short` topic
+ * offered once ({@link pickUnshown}, random order); every `long` topic
+ * offered once the same way — a pending short skip does **not** hold this
+ * up; then the still-pending skips re-offered in queue order ({@link
+ * pickNextPendingSkip}: short before long, since they were recorded first)
+ * until every one is answered. `undefined` at {@link TOPICS_PER_PASS}
+ * answered is one way this returns `undefined`; a pool smaller than a full
+ * 16-topic pass (as in a test fixture) exhausts the same way.
  */
 export function nextTopic(
   unit: UnitId,
@@ -139,8 +149,7 @@ export function nextTopic(
   return (
     pickUnshown(shorts, state, rng) ??
     pickUnshown(longs, state, rng) ??
-    pickPendingSkip(shorts, state, rng) ??
-    pickPendingSkip(longs, state, rng)
+    pickNextPendingSkip(topicsForUnit, state)
   );
 }
 
@@ -164,25 +173,23 @@ export function recordAnswered(
 }
 
 /**
- * `state` with `topicId` recorded as skipped: added to `skippedTopicIds`
- * (once) so {@link nextTopic} offers it again later. A no-op — `state`
- * unchanged — when `topicId` is already answered (answered is permanent) or
- * already skipped.
+ * `state` with `topicId` moved to the end of `skippedTopicIds`, so {@link
+ * nextTopic} offers it again only once everything else still pending has
+ * been. A no-op — `state` unchanged — when `topicId` is already answered
+ * (answered is permanent); otherwise always a new state, even for an
+ * already-pending `topicId` whose position does not change.
  */
 export function recordSkipped(
   state: UnitProgressState,
   topicId: string,
 ): UnitProgressState {
-  if (
-    state.answeredTopicIds.includes(topicId) ||
-    state.skippedTopicIds.includes(topicId)
-  ) {
+  if (state.answeredTopicIds.includes(topicId)) {
     return state;
   }
 
   return {
     answeredTopicIds: state.answeredTopicIds,
-    skippedTopicIds: [...state.skippedTopicIds, topicId],
+    skippedTopicIds: [...state.skippedTopicIds.filter((id) => id !== topicId), topicId],
   };
 }
 
