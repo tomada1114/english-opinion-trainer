@@ -1,1 +1,3272 @@
-[]
+[
+  {
+    "topicId": "prep-travel-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["a small quiet town", "not many tourists"]
+  },
+  {
+    "topicId": "prep-travel-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["a quiet countryside town", "fewer crowds"]
+  },
+  {
+    "topicId": "prep-travel-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": ["an under-the-radar rural town", "well off the tourist trail"]
+  },
+  {
+    "topicId": "prep-travel-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not the busy city center", "too crowded"]
+  },
+  {
+    "topicId": "prep-travel-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["skip the overcrowded city center", "packed with tourists"]
+  },
+  {
+    "topicId": "prep-travel-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "avoid the overrun city center",
+      "diminishing charm from overtourism"
+    ]
+  },
+  {
+    "topicId": "prep-travel-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on what they like", "nature or history"]
+  },
+  {
+    "topicId": "prep-travel-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on their interests", "history lover or outdoor type"]
+  },
+  {
+    "topicId": "prep-travel-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on what draws them there",
+      "culture seeker versus nature enthusiast"
+    ]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["a short trip nearby", "easy and not scary"]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["a short trip to a neighboring country", "an easy first step abroad"]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "a low-stakes trip to a neighboring country",
+      "a gentle introduction to traveling abroad"
+    ]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not a long trip far away", "too much at once"]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not a long, complicated itinerary", "overwhelming for a first trip"]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not an ambitious multi-country itinerary",
+      "a recipe for culture shock"
+    ]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends how nervous they feel", "comfort level matters"]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on their comfort with the unknown",
+      "confidence level matters"
+    ]
+  },
+  {
+    "topicId": "prep-travel-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on their tolerance for uncertainty",
+      "varies with their appetite for novelty"
+    ]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["a warm home-cooked soup", "simple and tasty"]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["a hearty home-style soup", "comforting and full of flavor"]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": ["a comforting, slow-simmered soup", "a dish worth the detour"]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not a very spicy dish", "too strong for beginners"]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not the spiciest dish on the menu", "overwhelming for first-timers"]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not the fieriest option available",
+      "punishing for an untrained palate"
+    ]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on what they enjoy", "spicy or mild food"]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on their taste preferences", "adventurous eater or not"]
+  },
+  {
+    "topicId": "prep-food-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on how adventurous their palate is",
+      "cautious eater versus culinary risk-taker"
+    ]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["a well-known simple dish", "easy to enjoy"]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["a well-known, approachable classic", "a safe and satisfying choice"]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "a signature, crowd-pleasing classic",
+      "an accessible entry point into the cuisine"
+    ]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not an unusual dish", "too strange at first"]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not the most unusual specialty", "an acquired taste"]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not the most acquired-taste specialty",
+      "best saved for a second visit"
+    ]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on how brave they are", "picky eater or not"]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on how adventurous they are",
+      "cautious or open-minded eater"
+    ]
+  },
+  {
+    "topicId": "prep-food-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on their willingness to experiment",
+      "conservative palate versus curious one"
+    ]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["how to use the shared tools", "saves time every day"]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["how to use the team's shared tools", "saves everyone time"]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": ["fluency with the team's core tooling", "pays off from day one"]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not just memorizing rules", "not very useful alone"]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not memorizing the rulebook by heart", "far less useful on its own"]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not rote memorization of policy",
+      "yields little without practical context"
+    ]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on their job role", "different for each team"]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the specific role", "varies from team to team"]
+  },
+  {
+    "topicId": "prep-work-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the specific responsibilities of the role",
+      "varies considerably across teams"
+    ]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["a job with short fixed hours", "more time for yourself"]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "a job with predictable, short hours",
+      "leaves plenty of time for yourself"
+    ]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "a role with strictly bounded hours",
+      "protects personal time by design"
+    ]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not a job with long hours", "little time left over"]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not a demanding, high-hour role", "eats into personal time"]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not a role prone to constant overtime",
+      "erodes work-life balance over time"
+    ]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on their money needs", "family or bills matter"]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on their financial situation", "family needs matter too"]
+  },
+  {
+    "topicId": "prep-work-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on their financial obligations",
+      "varies with family circumstances"
+    ]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["something you can do in ten minutes", "no special equipment needed"]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["something doable in short bursts", "requires almost no equipment"]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "something that fits into ten-minute pockets of time",
+      "requires next to no setup"
+    ]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not a hobby with long sessions", "takes too much time"]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not a hobby with long sessions", "demands a big time commitment"]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not a hobby with lengthy sessions",
+      "demands an unrealistic time commitment"
+    ]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends how much time they have", "a little or almost none"]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on how much free time exists", "varies week to week"]
+  },
+  {
+    "topicId": "prep-hobbies-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on how fragmented their free time is",
+      "varies from one week to the next"
+    ]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["something slow and calm", "helps you relax"]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["something slow-paced and calming", "helps you unwind after work"]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "something meditative and unhurried",
+      "a genuine antidote to a stressful day"
+    ]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not something competitive", "adds more pressure"]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not a competitive activity", "adds pressure instead of removing it"]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not a high-pressure, competitive pursuit",
+      "counterproductive when you need to decompress"
+    ]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on what relaxes them", "quiet or active hobbies"]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on what they find relaxing", "quiet hobby or active one"]
+  },
+  {
+    "topicId": "prep-hobbies-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on what personally helps them decompress",
+      "quiet solitary pursuit versus active release"
+    ]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["an app that plans your day", "saves a few minutes daily"]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "an app that organizes your schedule",
+      "saves a noticeable amount of time"
+    ]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "an app that automates daily scheduling",
+      "reclaims meaningful chunks of the day"
+    ]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not an app with too many features", "takes time to learn"]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not an app packed with extra features", "a steep learning curve"]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": ["not a feature-bloated app", "a needlessly steep learning curve"]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on their daily routine", "work or personal use"]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on their daily routine", "work tasks or personal ones"]
+  },
+  {
+    "topicId": "prep-technology-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the shape of their daily routine",
+      "professional use versus personal organization"
+    ]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["a video call app", "see their face while talking"]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "a reliable video calling app",
+      "lets you see each other while talking"
+    ]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "a dependable video-calling platform",
+      "preserves the feeling of face-to-face contact"
+    ]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not just text messages", "feels less personal"]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not text messages alone", "feels distant and impersonal"]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not text messages as the sole channel",
+      "lacks the warmth of a real conversation"
+    ]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the time difference", "hard to plan calls"]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on the time zone difference",
+      "scheduling calls can be tricky"
+    ]
+  },
+  {
+    "topicId": "prep-technology-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on how large the time difference is",
+      "complicates scheduling a shared window"
+    ]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["a park near the river", "quiet and pretty"]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["a park along the river", "peaceful and scenic"]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "a riverside park tucked away from traffic",
+      "a quietly scenic escape"
+    ]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not the crowded shopping street", "too many people"]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not the busy shopping street", "always packed with people"]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not the perpetually packed shopping street",
+      "loses its charm under the crowds"
+    ]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on what they like doing", "shopping or nature"]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on why they're visiting", "shopping trip or quiet walk"]
+  },
+  {
+    "topicId": "prep-city-life-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on what kind of visit they want",
+      "bustling shopping versus quiet scenery"
+    ]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["learn the bus and train routes early", "saves confusion later"]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "learn the public transit routes early on",
+      "avoids a lot of early confusion"
+    ]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "get familiar with the transit map right away",
+      "spares you weeks of early confusion"
+    ]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not renting the first apartment you see", "might regret it"]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not signing a lease on the first apartment", "easy to regret later"]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not committing to the first apartment you view",
+      "a decision easy to regret in haste"
+    ]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the neighborhood", "safe and close to work"]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends heavily on the neighborhood",
+      "safety and commute both matter"
+    ]
+  },
+  {
+    "topicId": "prep-city-life-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the specific neighborhood's trade-offs",
+      "safety weighed against commute time"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["message them every week", "keeps you close"]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["check in with them regularly", "keeps the friendship close"]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "reach out on a consistent cadence",
+      "keeps the bond from quietly fading"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not only talking when you need help", "feels one-sided"]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "not reaching out only when you need something",
+      "makes the friendship feel one-sided"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not contacting them only out of convenience",
+      "reduces the friendship to a transaction"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on how busy you both are", "less often is okay too"]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on both people's schedules",
+      "less frequent contact can still work"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on how demanding both lives currently are",
+      "infrequent contact can still sustain closeness"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["join a class or a club", "meet people with the same interest"]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "join a class built around a shared interest",
+      "an easy way to meet like-minded people"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "join a recurring class tied to a genuine interest",
+      "a low-pressure way to meet like-minded people"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not waiting for people to come to you", "rarely works"]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "not just waiting for friendships to happen",
+      "rarely works out that way"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not passively waiting for connections to appear",
+      "seldom pans out that way"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on how much time they have", "some methods take longer"]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on their available free time",
+      "some approaches take longer than others"
+    ]
+  },
+  {
+    "topicId": "prep-relationships-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on how much time they can realistically invest",
+      "some avenues pay off far more slowly"
+    ]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["basic cooking", "useful every single day"]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["basic cooking skills", "useful in daily life"]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "fundamental cooking competence",
+      "genuinely useful across a lifetime"
+    ]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not a skill you rarely use", "wastes your time"]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["not a niche skill you rarely use", "not worth the time investment"]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not a narrow, seldom-used skill",
+      "a poor return on the time invested"
+    ]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on your daily life", "some skills matter more"]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on someone's daily circumstances",
+      "some skills matter more than others"
+    ]
+  },
+  {
+    "topicId": "prep-learning-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the shape of someone's daily life",
+      "relevance varies a great deal by circumstance"
+    ]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["practice speaking every day", "even a few minutes helps"]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["practice speaking a little every day", "small daily habits add up"]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "build a daily speaking habit, however brief",
+      "consistency compounds faster than intensity"
+    ]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["not just studying grammar books", "not enough by itself"]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "not relying only on grammar textbooks",
+      "insufficient without real conversation"
+    ]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "not leaning solely on grammar textbooks",
+      "insufficient without authentic conversational practice"
+    ]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on their goal for the language", "travel or work use"]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on why they want to learn it", "for travel or for work"]
+  },
+  {
+    "topicId": "prep-learning-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on their underlying motivation for learning it",
+      "casual travel use versus professional necessity"
+    ]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["you make your own choices", "more freedom"]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["you get to make every decision yourself", "a real sense of freedom"]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "full autonomy over every decision",
+      "an unmatched sense of independence"
+    ]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["sharing moments feels better", "less lonely"]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["sharing the experience feels more meaningful", "far less isolating"]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "shared memories carry far more weight",
+      "avoids the isolation of solo travel"
+    ]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the trip", "alone for some, group for others"]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the kind of trip", "some trips suit solo travel better"]
+  },
+  {
+    "topicId": "concession-travel-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the nature of the specific trip",
+      "a relaxing getaway differs from an ambitious expedition"
+    ]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["shows respect to local people", "easier to get help"]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["shows real respect for local people", "makes it easier to get help"]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "signals genuine respect for the host culture",
+      "smooths everyday interactions considerably"
+    ]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["hard for a short trip", "translation apps work fine"]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "unrealistic for a short trip",
+      "translation apps handle it well enough"
+    ]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "impractical to demand before a brief visit",
+      "translation apps now close most of that gap"
+    ]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the trip length", "longer trips need more effort"]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on how long the trip is",
+      "a longer stay warrants more effort"
+    ]
+  },
+  {
+    "topicId": "concession-travel-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the length and purpose of the stay",
+      "a long-term stay justifies far more preparation"
+    ]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["you control the ingredients", "less oil and salt"]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["you control exactly what goes in", "usually less oil and salt"]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "full control over every ingredient",
+      "markedly lower in oil and sodium"
+    ]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["restaurants can use fresh food too", "not always true"]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": ["restaurants can use fresh ingredients too", "not a universal rule"]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "plenty of restaurants prioritize fresh, quality ingredients",
+      "far from a universal truth"
+    ]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the restaurant", "some are healthy, some are not"]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends heavily on the restaurant", "quality varies a lot"]
+  },
+  {
+    "topicId": "concession-food-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges entirely on the restaurant in question",
+      "quality varies wildly across establishments"
+    ]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["it is cheap and fast", "easy to eat too often"]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["it is cheap and convenient", "easy to fall into eating it often"]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "its low cost and convenience encourage overreliance",
+      "easy to slip into a habitual pattern"
+    ]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["many people cook at home too", "not everyone eats it often"]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "plenty of people still cook regularly",
+      "not a habit everyone shares"
+    ]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "a great many people still cook most of their meals",
+      "not the universal habit it is made out to be"
+    ]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the person's schedule", "busy people eat it more"]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on someone's daily schedule",
+      "busier people rely on it more"
+    ]
+  },
+  {
+    "topicId": "concession-food-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on how demanding someone's schedule is",
+      "time-pressed people lean on it far more"
+    ]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["no time wasted on commuting", "more comfortable at home"]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["no time lost commuting", "a more comfortable environment"]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "eliminates the daily commute entirely",
+      "a noticeably more comfortable setting"
+    ]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": [
+      "easier to talk with coworkers in person",
+      "less feeling of teamwork"
+    ]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "easier to collaborate with coworkers in person",
+      "a weaker sense of teamwork"
+    ]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "in-person collaboration flows far more naturally",
+      "team cohesion tends to suffer remotely"
+    ]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the job", "some jobs need people together"]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on the nature of the job",
+      "some roles genuinely need in-person work"
+    ]
+  },
+  {
+    "topicId": "concession-work-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the specific demands of the role",
+      "some functions genuinely require physical presence"
+    ]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["you enjoy your day more", "happier every day"]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["you enjoy the work itself more", "greater day-to-day happiness"]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "genuine enjoyment sustains motivation far longer",
+      "meaningfully higher day-to-day satisfaction"
+    ]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["money pays for a good life too", "bills matter"]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "a higher salary funds a more secure life",
+      "bills do not pay themselves"
+    ]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "financial security underpins nearly every other choice",
+      "an inescapable practical constraint"
+    ]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on how much money they need", "family needs differ"]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on someone's financial obligations",
+      "family situations vary widely"
+    ]
+  },
+  {
+    "topicId": "concession-work-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the weight of someone's financial obligations",
+      "circumstances vary enormously person to person"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["gives your mind a break", "makes you feel calmer"]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["gives your mind a real break", "an important way to unwind"]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "provides essential mental distance from obligations",
+      "a genuine outlet for unwinding"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["some people are happy without one", "not everyone needs it"]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "some people feel fulfilled without one",
+      "not a universal requirement"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "some people find fulfillment without one at all",
+      "hardly a one-size-fits-all requirement"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on how stressful their life is", "busy people need it more"]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on how stressful their daily life is",
+      "high-stress lives benefit more from one"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the baseline stress of someone's routine",
+      "a demanding routine benefits from it far more"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["improving feels rewarding", "gives you a goal"]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "visible progress feels genuinely rewarding",
+      "gives the hobby a clear purpose"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "tangible progress delivers real satisfaction",
+      "lends the hobby a sense of direction"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["just having fun is enough", "no need to improve"]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "simple enjoyment is reason enough on its own",
+      "improvement is not a requirement"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "pure enjoyment is justification enough by itself",
+      "improvement need not be the point at all"
+    ]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the hobby", "some hobbies are just for fun"]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the type of hobby", "some are meant purely for fun"]
+  },
+  {
+    "topicId": "concession-hobbies-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on what the hobby is meant to provide",
+      "some are designed purely for enjoyment"
+    ]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["screens are everywhere now", "hard to look away"]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["screens have become unavoidable", "genuinely hard to put down"]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "screen time has become nearly inescapable",
+      "engineered to be hard to put down"
+    ]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["screens are useful for work and study", "not always bad"]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "screens serve real purposes for work and study",
+      "not inherently a bad thing"
+    ]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "screens serve legitimate purposes across work and study",
+      "not inherently the problem it seems"
+    ]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on what you use it for", "work use is different"]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on what the screen time is for",
+      "work-related use is a different case"
+    ]
+  },
+  {
+    "topicId": "concession-technology-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the purpose behind the screen time",
+      "productive use differs sharply from idle scrolling"
+    ]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["people look at phones instead of talking", "less real conversation"]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "people check phones instead of talking to those nearby",
+      "fewer genuine face-to-face conversations"
+    ]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "phones routinely pull attention away from the people present",
+      "a steady erosion of face-to-face conversation"
+    ]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["phones help you talk to friends far away", "keeps people connected"]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "phones let you stay close to distant friends",
+      "actually keeps people connected"
+    ]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "phones sustain relationships across real distance",
+      "arguably keep people more connected than before"
+    ]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on how someone uses it", "some use it to connect"]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends heavily on how the phone gets used",
+      "some people use it to connect, not withdraw"
+    ]
+  },
+  {
+    "topicId": "concession-technology-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges entirely on the habits of the individual user",
+      "usage patterns matter more than the device itself"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["no need to find parking", "avoids traffic jams"]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": ["no need to search for parking", "avoids sitting in traffic"]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "removes the hassle of hunting for parking",
+      "sidesteps gridlock during peak hours"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["a car goes exactly where you want", "no waiting for a bus"]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "a car takes you exactly where you need to go",
+      "no waiting around for a bus or train"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "a car offers door-to-door flexibility transit cannot match",
+      "eliminates the wait for a scheduled departure"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on the city's transport system",
+      "some cities have better buses"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on the quality of the local transit system",
+      "some cities are far better served than others"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on how well-developed the local transit network is",
+      "coverage and reliability vary enormously by city"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["less pollution and noise", "safer for walking"]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "cuts down on pollution and noise",
+      "makes the center safer to walk in"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "meaningfully reduces both pollution and noise",
+      "creates a far more walkable center"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": [
+      "hurts small shops that need deliveries",
+      "harder for some workers to get in"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "hurts small businesses that rely on deliveries",
+      "makes commuting harder for some workers"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "disrupts small businesses dependent on vehicle deliveries",
+      "disproportionately burdens workers without transit access"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the city's size", "big cities need it more"]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on the size and layout of the city",
+      "larger cities tend to need it more"
+    ]
+  },
+  {
+    "topicId": "concession-city-life-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the city's density and existing transit options",
+      "larger, denser cities stand to benefit more"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["truth builds real trust", "kindness alone can hide problems"]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "truth is what builds lasting trust",
+      "kindness alone can paper over real issues"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "candor is the true foundation of trust",
+      "kindness alone can mask underlying problems"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["harsh truth can hurt someone", "kindness keeps people close"]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "blunt honesty can hurt someone unnecessarily",
+      "kindness is what keeps people close"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "unfiltered honesty can wound needlessly",
+      "kindness is often what sustains the bond"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the situation", "both matter at different times"]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on the specific situation",
+      "both matter, just at different moments"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the situation and how it is delivered",
+      "each matters more in different circumstances"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["old friends know your history", "worth keeping that connection"]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "old friends understand your history in a unique way",
+      "worth the effort to maintain"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "old friends carry a shared history no one else does",
+      "a connection worth actively preserving"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["some friendships naturally end", "that is okay too"]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "some friendships naturally run their course",
+      "and that is perfectly fine"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "some friendships simply run their natural course",
+      "letting go is not a failure"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the friendship", "some are worth keeping, some are not"]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on the specific friendship",
+      "some are worth the effort, others are not"
+    ]
+  },
+  {
+    "topicId": "concession-relationships-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on what the friendship still offers both people",
+      "some relationships age well, others do not"
+    ]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["mistakes teach you fast", "you remember them"]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "mistakes teach lessons that stick",
+      "far more memorable than a warning"
+    ]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "mistakes cement lessons in a way warnings never do",
+      "an unusually durable form of memory"
+    ]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["good instructions can prevent mistakes", "saves time"]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "clear guidance can prevent mistakes altogether",
+      "saves a lot of wasted time"
+    ]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "solid guidance can head off mistakes before they happen",
+      "spares considerable wasted effort"
+    ]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the type of skill", "some skills need more practice"]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends on the kind of skill involved",
+      "some skills demand more trial and error"
+    ]
+  },
+  {
+    "topicId": "concession-learning-short",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on the nature of the skill being learned",
+      "some domains reward trial and error more"
+    ]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "A2",
+    "stance": "for",
+    "keyPhrases": ["a teacher answers questions right away", "keeps you on schedule"]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "B1",
+    "stance": "for",
+    "keyPhrases": [
+      "a teacher can answer questions immediately",
+      "keeps you on a fixed schedule"
+    ]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "B2",
+    "stance": "for",
+    "keyPhrases": [
+      "a teacher provides immediate, tailored feedback",
+      "imposes structure that self-study often lacks"
+    ]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "A2",
+    "stance": "against",
+    "keyPhrases": ["online lets you learn at your own speed", "fits a busy schedule"]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "B1",
+    "stance": "against",
+    "keyPhrases": [
+      "online study lets you learn at your own pace",
+      "fits around a busy schedule"
+    ]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "B2",
+    "stance": "against",
+    "keyPhrases": [
+      "self-paced study accommodates individual learning speeds",
+      "fits far more flexibly around a busy life"
+    ]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "A2",
+    "stance": "conditional",
+    "keyPhrases": ["depends on the subject", "some subjects need a teacher"]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "B1",
+    "stance": "conditional",
+    "keyPhrases": [
+      "depends heavily on the subject itself",
+      "some subjects genuinely need an instructor"
+    ]
+  },
+  {
+    "topicId": "concession-learning-long",
+    "level": "B2",
+    "stance": "conditional",
+    "keyPhrases": [
+      "hinges on how hands-on the subject demands to be",
+      "some disciplines genuinely require expert guidance"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "A2",
+    "stance": "new country",
+    "keyPhrases": ["see something totally new", "exciting and different"]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "B1",
+    "stance": "new country",
+    "keyPhrases": [
+      "experience something completely unfamiliar",
+      "keeps travel exciting"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "B2",
+    "stance": "new country",
+    "keyPhrases": [
+      "immerse yourself in an unfamiliar culture",
+      "sustains a genuine sense of discovery"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "A2",
+    "stance": "familiar place",
+    "keyPhrases": ["you already know what you love", "no surprises"]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "B1",
+    "stance": "familiar place",
+    "keyPhrases": [
+      "you already know exactly what you enjoy there",
+      "removes the guesswork"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "B2",
+    "stance": "familiar place",
+    "keyPhrases": [
+      "you can deepen your appreciation of what you love",
+      "removes the uncertainty of a first visit"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on how much time you have",
+      "short trips favor familiar places"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on how much time is available",
+      "a short trip favors the familiar"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-short",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on the length and purpose of the trip",
+      "a brief getaway tends to favor the familiar"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "A2",
+    "stance": "detailed planning",
+    "keyPhrases": ["no time wasted deciding", "see the best places"]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "B1",
+    "stance": "detailed planning",
+    "keyPhrases": [
+      "no time wasted figuring things out",
+      "ensures you see the highlights"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "B2",
+    "stance": "detailed planning",
+    "keyPhrases": [
+      "eliminates wasted time on the road",
+      "guarantees the must-see highlights are covered"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "A2",
+    "stance": "spontaneous travel",
+    "keyPhrases": ["room for surprises", "more freedom each day"]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "B1",
+    "stance": "spontaneous travel",
+    "keyPhrases": ["leaves room for happy surprises", "far more freedom day to day"]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "B2",
+    "stance": "spontaneous travel",
+    "keyPhrases": [
+      "leaves space for serendipitous discoveries",
+      "preserves genuine freedom from one day to the next"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends how long you're going", "short trips need more planning"]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on the length of the trip",
+      "a short trip benefits from more planning"
+    ]
+  },
+  {
+    "topicId": "comparison-travel-long",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on the length and complexity of the trip",
+      "a brief trip rewards more structure"
+    ]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "A2",
+    "stance": "cooking yourself",
+    "keyPhrases": ["you choose every ingredient", "fun to make"]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "B1",
+    "stance": "cooking yourself",
+    "keyPhrases": [
+      "you control every ingredient that goes in",
+      "satisfying to make from scratch"
+    ]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "B2",
+    "stance": "cooking yourself",
+    "keyPhrases": [
+      "complete control over every ingredient",
+      "genuinely satisfying to make from scratch"
+    ]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "A2",
+    "stance": "someone else cooks",
+    "keyPhrases": ["no cleaning up after", "you can relax"]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "B1",
+    "stance": "someone else cooks",
+    "keyPhrases": ["no cleanup afterward", "lets you fully relax"]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "B2",
+    "stance": "someone else cooks",
+    "keyPhrases": [
+      "spares you the cleanup entirely",
+      "a rare chance to fully switch off"
+    ]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on how tired you are", "busy days favor takeout"]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on how tired or busy you are",
+      "a hectic day favors letting someone else cook"
+    ]
+  },
+  {
+    "topicId": "comparison-food-short",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on your energy and time that day",
+      "a demanding day tips the balance toward convenience"
+    ]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "A2",
+    "stance": "trying new dishes",
+    "keyPhrases": ["discover a new favorite", "part of the adventure"]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "B1",
+    "stance": "trying new dishes",
+    "keyPhrases": [
+      "a chance to discover a new favorite",
+      "part of what makes travel exciting"
+    ]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "B2",
+    "stance": "trying new dishes",
+    "keyPhrases": [
+      "a genuine opportunity to expand your palate",
+      "arguably the whole point of traveling"
+    ]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "A2",
+    "stance": "sticking to familiar food",
+    "keyPhrases": ["no risk of disliking it", "feels safe and easy"]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "B1",
+    "stance": "sticking to familiar food",
+    "keyPhrases": ["no risk of an unpleasant surprise", "a safe, easy choice"]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "B2",
+    "stance": "sticking to familiar food",
+    "keyPhrases": [
+      "avoids the risk of an unwelcome surprise",
+      "a reliably comfortable choice"
+    ]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on how hungry or tired you are",
+      "sometimes safe food is better"
+    ]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on your mood and energy that day",
+      "sometimes the safe choice is simply better"
+    ]
+  },
+  {
+    "topicId": "comparison-food-long",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on your appetite for risk in the moment",
+      "sometimes comfort outweighs curiosity"
+    ]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "A2",
+    "stance": "flexible schedule",
+    "keyPhrases": ["choose your own hours", "more time for family"]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "B1",
+    "stance": "flexible schedule",
+    "keyPhrases": ["control over your own hours", "more time for family and life"]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "B2",
+    "stance": "flexible schedule",
+    "keyPhrases": [
+      "genuine autonomy over your own hours",
+      "space for a fuller life outside work"
+    ]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "A2",
+    "stance": "higher salary",
+    "keyPhrases": ["more money saved", "faster toward your goals"]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "B1",
+    "stance": "higher salary",
+    "keyPhrases": ["faster progress toward financial goals", "more savings each month"]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "B2",
+    "stance": "higher salary",
+    "keyPhrases": [
+      "accelerates progress toward major financial goals",
+      "meaningfully larger savings each month"
+    ]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on your life stage", "young people may want money first"]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on someone's current life stage",
+      "priorities shift as circumstances change"
+    ]
+  },
+  {
+    "topicId": "comparison-work-short",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on someone's current financial priorities",
+      "priorities shift considerably across life stages"
+    ]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "A2",
+    "stance": "large company",
+    "keyPhrases": ["steady paycheck", "more job security"]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "B1",
+    "stance": "large company",
+    "keyPhrases": ["a steady, predictable paycheck", "greater job security overall"]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "B2",
+    "stance": "large company",
+    "keyPhrases": [
+      "a dependable, predictable income stream",
+      "meaningfully greater job security"
+    ]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "A2",
+    "stance": "own business",
+    "keyPhrases": ["you make all the decisions", "no limit on what you earn"]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "B1",
+    "stance": "own business",
+    "keyPhrases": [
+      "you make every major decision yourself",
+      "no ceiling on potential earnings"
+    ]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "B2",
+    "stance": "own business",
+    "keyPhrases": [
+      "full authority over every major decision",
+      "removes any ceiling on potential earnings"
+    ]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on how much risk you accept", "families may want stability"]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on someone's tolerance for risk",
+      "family responsibilities often favor stability"
+    ]
+  },
+  {
+    "topicId": "comparison-work-long",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on someone's appetite for financial risk",
+      "family obligations often tip the scale toward stability"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "A2",
+    "stance": "alone time",
+    "keyPhrases": ["you can fully relax", "no need to talk"]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "B1",
+    "stance": "alone time",
+    "keyPhrases": ["a real chance to recharge", "no pressure to make conversation"]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "B2",
+    "stance": "alone time",
+    "keyPhrases": [
+      "genuine solitude to recharge",
+      "freedom from the effort of conversation"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "A2",
+    "stance": "time with others",
+    "keyPhrases": ["shared fun feels better", "makes good memories"]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "B1",
+    "stance": "time with others",
+    "keyPhrases": [
+      "shared experiences feel more memorable",
+      "builds closer friendships"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "B2",
+    "stance": "time with others",
+    "keyPhrases": [
+      "shared experiences tend to feel far more memorable",
+      "deepens friendships over time"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends how tired you feel", "some days need quiet"]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on your energy that day",
+      "some days call for quiet instead"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-short",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on your social energy in the moment",
+      "some days simply call for solitude"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "A2",
+    "stance": "one main hobby",
+    "keyPhrases": ["you get really good at it", "deep satisfaction"]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "B1",
+    "stance": "one main hobby",
+    "keyPhrases": ["you can become genuinely skilled at it", "a deep sense of mastery"]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "B2",
+    "stance": "one main hobby",
+    "keyPhrases": [
+      "opens the door to genuine mastery over time",
+      "a deeply satisfying sense of expertise"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "A2",
+    "stance": "several hobbies",
+    "keyPhrases": ["never gets boring", "something for every mood"]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "B1",
+    "stance": "several hobbies",
+    "keyPhrases": [
+      "keeps things from feeling repetitive",
+      "something to suit every mood"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "B2",
+    "stance": "several hobbies",
+    "keyPhrases": [
+      "keeps the routine from ever feeling stale",
+      "a fitting outlet for whatever mood arises"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on your free time", "less time favors one hobby"]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on how much free time you have",
+      "limited time favors focusing on one"
+    ]
+  },
+  {
+    "topicId": "comparison-hobbies-long",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on how much free time is realistically available",
+      "limited time tends to favor a single focus"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "A2",
+    "stance": "sending a message",
+    "keyPhrases": ["you can answer when free", "no interruption"]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "B1",
+    "stance": "sending a message",
+    "keyPhrases": [
+      "you can reply whenever you are free",
+      "does not interrupt what you are doing"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "B2",
+    "stance": "sending a message",
+    "keyPhrases": [
+      "lets the recipient respond on their own time",
+      "avoids interrupting whatever they are doing"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "A2",
+    "stance": "making a call",
+    "keyPhrases": ["hear their voice", "faster for complex things"]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "B1",
+    "stance": "making a call",
+    "keyPhrases": [
+      "hearing their voice feels more personal",
+      "faster for anything complicated"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "B2",
+    "stance": "making a call",
+    "keyPhrases": [
+      "carries a warmth that text simply cannot",
+      "far more efficient for anything nuanced"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends how urgent it is", "urgent things need a call"]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on how urgent the matter is",
+      "urgent matters call for an actual call"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-short",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on the urgency and complexity of the matter",
+      "genuinely urgent matters warrant a real conversation"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "A2",
+    "stance": "video tutorials",
+    "keyPhrases": ["you can watch someone do it", "easy to follow along"]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "B1",
+    "stance": "video tutorials",
+    "keyPhrases": [
+      "you can watch each step being done",
+      "easy to follow along in real time"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "B2",
+    "stance": "video tutorials",
+    "keyPhrases": [
+      "demonstrates every step visually as it happens",
+      "remarkably easy to follow in real time"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "A2",
+    "stance": "written guides",
+    "keyPhrases": ["you can read at your own speed", "easy to search for one part"]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "B1",
+    "stance": "written guides",
+    "keyPhrases": ["you can move at your own pace", "easy to jump back to one section"]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "B2",
+    "stance": "written guides",
+    "keyPhrases": [
+      "lets you set your own pace precisely",
+      "makes it simple to revisit a single section"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on the skill you learn", "hands-on skills need video"]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on the type of skill involved",
+      "a hands-on skill benefits more from video"
+    ]
+  },
+  {
+    "topicId": "comparison-technology-long",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on how physical or hands-on the skill is",
+      "a manual skill benefits far more from video"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "A2",
+    "stance": "big city",
+    "keyPhrases": ["more jobs and things to do", "always something happening"]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "B1",
+    "stance": "big city",
+    "keyPhrases": ["more job opportunities and things to do", "rarely feels boring"]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "B2",
+    "stance": "big city",
+    "keyPhrases": [
+      "a far wider range of career opportunities",
+      "an energy that rarely feels stale"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "A2",
+    "stance": "small town",
+    "keyPhrases": ["quieter and slower", "everyone knows each other"]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "B1",
+    "stance": "small town",
+    "keyPhrases": ["a quieter, slower pace of life", "a real sense of community"]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "B2",
+    "stance": "small town",
+    "keyPhrases": [
+      "a noticeably slower, calmer pace of life",
+      "a tight-knit sense of community"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on your job", "some jobs are only in cities"]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on someone's career and priorities",
+      "certain jobs exist only in cities"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-short",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on career demands and personal priorities",
+      "certain career paths exist almost exclusively in cities"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "A2",
+    "stance": "living close to work",
+    "keyPhrases": ["short travel time each day", "more free time"]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "B1",
+    "stance": "living close to work",
+    "keyPhrases": ["a short commute every day", "more free time overall"]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "B2",
+    "stance": "living close to work",
+    "keyPhrases": [
+      "minimizes time lost to commuting",
+      "reclaims meaningful free time each week"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "A2",
+    "stance": "a quieter commute",
+    "keyPhrases": ["a calmer place to live", "less noise and traffic"]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "B1",
+    "stance": "a quieter commute",
+    "keyPhrases": [
+      "a calmer, more peaceful place to live",
+      "far less noise and traffic"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "B2",
+    "stance": "a quieter commute",
+    "keyPhrases": [
+      "a noticeably calmer living environment",
+      "meaningfully less noise and traffic"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on how you feel about commuting", "some enjoy a long ride"]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on someone's tolerance for commuting",
+      "some genuinely enjoy a longer ride"
+    ]
+  },
+  {
+    "topicId": "comparison-city-life-long",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on someone's personal tolerance for commuting",
+      "some people genuinely value that transition time"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "A2",
+    "stance": "a few close friends",
+    "keyPhrases": ["deep trust", "someone to rely on"]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "B1",
+    "stance": "a few close friends",
+    "keyPhrases": [
+      "a deep, dependable level of trust",
+      "someone to rely on in hard times"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "B2",
+    "stance": "a few close friends",
+    "keyPhrases": [
+      "a level of trust built over years",
+      "a reliable support system in hard times"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "A2",
+    "stance": "many casual friends",
+    "keyPhrases": ["more people to do things with", "wider network"]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "B1",
+    "stance": "many casual friends",
+    "keyPhrases": ["more people to spend time with", "a much wider social network"]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "B2",
+    "stance": "many casual friends",
+    "keyPhrases": [
+      "a broader range of people to spend time with",
+      "access to a far wider social network"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on your personality", "some people prefer a small group"]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on someone's personality",
+      "some naturally prefer a smaller circle"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-short",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on someone's underlying social personality",
+      "introverts often prefer a smaller, closer circle"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "A2",
+    "stance": "resolving right away",
+    "keyPhrases": ["stops small problems growing", "clears the air fast"]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "B1",
+    "stance": "resolving right away",
+    "keyPhrases": ["stops a small issue from growing bigger", "clears the air quickly"]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "B2",
+    "stance": "resolving right away",
+    "keyPhrases": [
+      "prevents a minor issue from snowballing",
+      "clears the air before resentment builds"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "A2",
+    "stance": "waiting to calm down",
+    "keyPhrases": ["fewer angry words said", "clearer thinking later"]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "B1",
+    "stance": "waiting to calm down",
+    "keyPhrases": ["fewer things said in anger", "much clearer thinking afterward"]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "B2",
+    "stance": "waiting to calm down",
+    "keyPhrases": [
+      "avoids saying something meant only in anger",
+      "allows for far clearer thinking afterward"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends how serious the issue is", "small things can wait"]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on how serious the disagreement is",
+      "minor issues can usually wait"
+    ]
+  },
+  {
+    "topicId": "comparison-relationships-long",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on the severity of the disagreement",
+      "a minor issue can usually wait"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "A2",
+    "stance": "studying alone",
+    "keyPhrases": ["no distractions", "go at your own speed"]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "B1",
+    "stance": "studying alone",
+    "keyPhrases": ["far fewer distractions", "you set your own pace"]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "B2",
+    "stance": "studying alone",
+    "keyPhrases": [
+      "minimizes distractions almost entirely",
+      "lets you set a pace that truly fits"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "A2",
+    "stance": "studying with a group",
+    "keyPhrases": ["others explain things you missed", "stay motivated together"]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "B1",
+    "stance": "studying with a group",
+    "keyPhrases": [
+      "others can explain what you missed",
+      "keeps everyone motivated together"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "B2",
+    "stance": "studying with a group",
+    "keyPhrases": [
+      "peers can clarify what you missed on your own",
+      "sustains motivation through mutual accountability"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends what you're studying", "some subjects need discussion"]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on the subject being studied",
+      "some subjects benefit from discussion"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-short",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on how discussion-driven the subject is",
+      "some material genuinely benefits from group debate"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "A2",
+    "stance": "classroom learning",
+    "keyPhrases": [
+      "a teacher corrects mistakes fast",
+      "fixed class times keep you going"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "B1",
+    "stance": "classroom learning",
+    "keyPhrases": [
+      "a teacher corrects mistakes right away",
+      "a fixed schedule keeps you consistent"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "B2",
+    "stance": "classroom learning",
+    "keyPhrases": [
+      "immediate correction from an instructor",
+      "a fixed schedule enforces real consistency"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "A2",
+    "stance": "self-study",
+    "keyPhrases": ["study whenever you want", "choose what to focus on"]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "B1",
+    "stance": "self-study",
+    "keyPhrases": ["study whenever it suits you", "focus on exactly what you need"]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "B2",
+    "stance": "self-study",
+    "keyPhrases": [
+      "study on a schedule that truly suits you",
+      "focus narrowly on exactly what you need"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "A2",
+    "stance": "depends",
+    "keyPhrases": ["depends on your self-discipline", "some need more structure"]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "B1",
+    "stance": "depends",
+    "keyPhrases": [
+      "depends on someone's self-discipline",
+      "some people need more external structure"
+    ]
+  },
+  {
+    "topicId": "comparison-learning-long",
+    "level": "B2",
+    "stance": "depends",
+    "keyPhrases": [
+      "hinges on someone's capacity for self-discipline",
+      "some learners genuinely need external structure"
+    ]
+  }
+]
