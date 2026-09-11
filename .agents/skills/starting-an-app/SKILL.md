@@ -215,8 +215,8 @@ forward. Dropping `ja` touches:
 - `tests/messages.test.ts` — its switcher key in `MESSAGE_KEYS`, plus every other place
   it names the locale literally — and `tests/proxy.test.ts` and
   `tests/home-page.test.tsx`, each of which names the locale literally too.
-- `README.md`'s quick start, and AGENTS.md's Conventions exception, which names
-  `messages/ja.json` as the one committed file that is not in English.
+- `README.md`'s quick start, and AGENTS.md's Conventions exception for the non-English
+  `messages/*.json` catalogs.
 
 `src/proxy.ts` does **not** change: its matcher excludes API routes, framework asset
 trees and paths with an extension, and names no locale at all. `tests/proxy.test.ts`

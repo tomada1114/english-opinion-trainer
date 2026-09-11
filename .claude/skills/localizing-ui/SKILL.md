@@ -85,9 +85,9 @@ a key that was never added; only a list a human maintains as step 3 above can. D
 it would collapse all three checks into `flatten(en) === flatten(en)`.
 
 A namespace is a first-level object in the catalog and the argument `useTranslations`
-takes. Group by the component that reads it — the template's `LocaleSwitcher` namespace
-holds one entry per locale code, which is what lets `switcher(locale)` name a language
-without a lookup table of its own.
+takes. Group by the component that reads it — `HomePage` is read by
+`src/app/[locale]/page.tsx` and `NotFound` by `src/app/[locale]/not-found.tsx`, so each
+file asks for one namespace and nothing it does not render.
 
 ## ICU arguments and plural categories
 
@@ -178,11 +178,11 @@ error vocabulary, this one owns which tag a locale maps to.
 
 ## Adding a locale
 
-The template ships `en` and `ja`. A third is one list read five times: `LOCALES` in
+This app ships only `en`. A second locale is one list read three times: `LOCALES` in
 `src/i18n/locales.ts`; a new `messages/<locale>.json` translating every key `en.json`
-holds; a static import and a `MESSAGES` entry in `src/i18n/messages.ts`; a row in
-`OUTPUT_LANGUAGE_BY_LOCALE`; and a `LocaleSwitcher.<locale>` entry in **every** catalog
-— that one is a new key, so `MESSAGE_KEYS` in `tests/messages.test.ts` gains a line too.
+holds; and a static import and a `MESSAGES` entry in `src/i18n/messages.ts`. A locale
+switcher went out with `ja` and comes back with it — its namespace is a new key in
+**every** catalog, so `MESSAGE_KEYS` in `tests/messages.test.ts` gains its lines too.
 Nothing under `src/app/` or in `src/proxy.ts` changes; neither names a locale.
 
 Locale negotiation is `next-intl`'s middleware reading the request's `Accept-Language`
@@ -201,7 +201,8 @@ pnpm exec vitest run tests/proxy.test.ts     # only if routing or the matcher ch
 pnpm build                                   # only if a page or layout changed
 ```
 
-Then open `/en` and `/ja` under `pnpm dev`. `pnpm run test:smoke` (after `pnpm build`)
-serves the built application and checks that both answer 200 with the matching
-`<html lang>`, which catches a locale that never renders at all; nothing checks that a
-string reads correctly in it, and that is what opening the pages is for.
+Then open every locale's root (`/en` today) under `pnpm dev`. `pnpm run test:smoke`
+(after `pnpm build`) serves the built application and checks that each locale in
+`LOCALES` answers 200 with the matching `<html lang>`, which catches a locale that never
+renders at all; nothing checks that a string reads correctly in it, and that is what
+opening the pages is for.
