@@ -1,14 +1,13 @@
 ---
 name: localizing-ui
 description: >
-  Covers the message catalogs under messages/ and the locale plumbing in src/i18n/:
-  adding or renaming a UI string so the catalogs, MESSAGE_KEYS and the typed key union
+  Covers the message catalog under messages/ and the locale plumbing in src/i18n/:
+  adding or renaming a UI string so the catalog, MESSAGE_KEYS and the typed key union
   stay in step, ICU arguments and plural categories, and linking with Link from
   src/i18n/navigation.ts rather than next/link. Use when adding a translated string,
-  editing messages/en.json or messages/ja.json, touching src/i18n/locales.ts,
-  messages.ts, routing.ts, request.ts or navigation.ts, adding a locale, mapping a UI
-  locale to the LLM port's outputLanguage, or when a message renders as its own key
-  name.
+  editing messages/en.json, touching src/i18n/locales.ts, messages.ts, routing.ts,
+  request.ts or navigation.ts, adding a locale, mapping a UI locale to the LLM port's
+  outputLanguage, or when a message renders as its own key name.
 ---
 
 # Localizing UI
@@ -28,9 +27,10 @@ AGENTS.md's Conventions makes `messages/*.json` the one exception to the English
 rule, and states the exception's own limit: it covers the catalogs' string values and
 nothing else. Keys stay English, and so does every comment, test, and document about
 them, bar the narrow case AGENTS.md spells out — a literal whose exact bytes are what a
-check or a worked example exercises, which is why the `localeCount` example below quotes
-`ja.json` rather than translating it. That rule lives in AGENTS.md; this skill only
-points at it.
+check or a worked example exercises. `messages/en.json` is the only catalog this
+application ships today, and it is English throughout, so the exception has nothing to
+cover yet; it exists for the locale `starting-an-app`'s "The locale decision" describes
+adding back. That rule lives in AGENTS.md; this skill only points at it.
 
 The place it is easiest to break is a skill's own frontmatter. Enforced by:
 `tests/skills-frontmatter.test.ts`, which rejects CJK in a `description`. A Japanese
@@ -42,20 +42,24 @@ the text; adding an exclusion is weakening a gate.
 
 ## Adding a string, end to end
 
-Four edits, in this order. Doing three of them and running a check reports the half you
-have not made yet, so make all four first.
+Three edits, in this order. Doing two of them and running a check reports the one you
+have not made yet, so make all three first.
 
 1. `messages/en.json` — add the key under a namespace. English is the source of truth
-   for the catalog's _shape_: `Messages = typeof en`.
-2. `messages/ja.json` — add the same key. Omitting it is a type error rather than a
-   blank string in production, because `MESSAGES` is annotated
-   `Readonly<Record<Locale, Messages>>`.
-3. `tests/messages.test.ts` — add the dotted `Namespace.key` to `MESSAGE_KEYS`. It lives
+   for the catalog's _shape_: `Messages = typeof en`. It is also the only catalog this
+   application ships today.
+2. `tests/messages.test.ts` — add the dotted `Namespace.key` to `MESSAGE_KEYS`. It lives
    in the test, not in `src/`, because nothing the application ships reads it: it exists
    only to be diffed against the catalog (see the three checks below).
-4. Render it: `const t = useTranslations("Namespace")`, then `t("key")`.
+3. Render it: `const t = useTranslations("Namespace")`, then `t("key")`.
 
 Then `pnpm exec vitest run tests/messages.test.ts && pnpm typecheck`.
+
+`ja` was deferred, not cancelled: re-adding it (or any other locale) means repeating
+step 1 for its own `messages/<locale>.json` with every key `en.json` holds, because
+`MESSAGES` is annotated `Readonly<Record<Locale, Messages>>` and a missing entry is then
+a type error rather than a blank string in production. `starting-an-app`'s "The locale
+decision" owns that list; this section does not restate it.
 
 Three checks hold the catalog, the hand-written list and the typed union together. The
 last two overlap on purpose: both fail when `en.json` gains a key nobody listed, but
@@ -81,9 +85,9 @@ a key that was never added; only a list a human maintains as step 3 above can. D
 it would collapse all three checks into `flatten(en) === flatten(en)`.
 
 A namespace is a first-level object in the catalog and the argument `useTranslations`
-takes. Group by the component that reads it — the template's `LocaleSwitcher` namespace
-holds one entry per locale code, which is what lets `switcher(locale)` name a language
-without a lookup table of its own.
+takes. Group by the component that reads it — `HomePage` is read by
+`src/app/[locale]/page.tsx` and `NotFound` by `src/app/[locale]/not-found.tsx`, so each
+file asks for one namespace and nothing it does not render.
 
 ## ICU arguments and plural categories
 
@@ -92,17 +96,18 @@ without a lookup table of its own.
   across catalogs — an argument the caller does not pass is a runtime formatting error
   in that one locale, on a page nobody opened in it.
 - Plural **categories** deliberately differ between catalogs, and the test does not
-  compare them. `HomePage.localeCount` carries `one` and `other` in `en.json` and only
-  `other` in `ja.json`, because Japanese has no singular/plural distinction; an unused
-  `one` branch there would be a translation of a grammar the language does not have.
+  compare them. `en.json` needs `one` and `other` for a key like the one below; a
+  language with no singular/plural distinction — Japanese, when a `ja` catalog comes
+  back — needs only `other`, and an unused `one` branch there would translate a grammar
+  the language does not have.
 
   ```json
-  "localeCount": "{count, plural, other {このテンプレートには # 言語が含まれています。}}"
+  "itemCount": "{count, plural, one {# item} other {# items}}"
   ```
 
 - `#` inside a plural branch is the count. Pass it as an argument —
-  `t("localeCount", { count: LOCALES.length })` — and never format a number into the
-  string yourself, which would hard-code one locale's digit grouping into all of them.
+  `t("itemCount", { count })` — and never format a number into the string yourself,
+  which would hard-code one locale's digit grouping into all of them.
 
 ## The modules, and which one to reach for
 
@@ -173,11 +178,11 @@ error vocabulary, this one owns which tag a locale maps to.
 
 ## Adding a locale
 
-The template ships `en` and `ja`. A third is one list read five times: `LOCALES` in
+This app ships only `en`. A second locale is one list read three times: `LOCALES` in
 `src/i18n/locales.ts`; a new `messages/<locale>.json` translating every key `en.json`
-holds; a static import and a `MESSAGES` entry in `src/i18n/messages.ts`; a row in
-`OUTPUT_LANGUAGE_BY_LOCALE`; and a `LocaleSwitcher.<locale>` entry in **every** catalog
-— that one is a new key, so `MESSAGE_KEYS` in `tests/messages.test.ts` gains a line too.
+holds; and a static import and a `MESSAGES` entry in `src/i18n/messages.ts`. A locale
+switcher went out with `ja` and comes back with it — its namespace is a new key in
+**every** catalog, so `MESSAGE_KEYS` in `tests/messages.test.ts` gains its lines too.
 Nothing under `src/app/` or in `src/proxy.ts` changes; neither names a locale.
 
 Locale negotiation is `next-intl`'s middleware reading the request's `Accept-Language`
@@ -196,7 +201,8 @@ pnpm exec vitest run tests/proxy.test.ts     # only if routing or the matcher ch
 pnpm build                                   # only if a page or layout changed
 ```
 
-Then open `/en` and `/ja` under `pnpm dev`. `pnpm run test:smoke` (after `pnpm build`)
-serves the built application and checks that both answer 200 with the matching
-`<html lang>`, which catches a locale that never renders at all; nothing checks that a
-string reads correctly in it, and that is what opening the pages is for.
+Then open every locale's root (`/en` today) under `pnpm dev`. `pnpm run test:smoke`
+(after `pnpm build`) serves the built application and checks that each locale in
+`LOCALES` answers 200 with the matching `<html lang>`, which catches a locale that never
+renders at all; nothing checks that a string reads correctly in it, and that is what
+opening the pages is for.

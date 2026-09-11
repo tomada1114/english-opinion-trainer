@@ -50,18 +50,17 @@ import { readText, repoRoot, walk } from "./repo-tree";
  * `messages/*.json` added later with its own translated title contributes no
  * row until that value is added to this list. The Japanese title and
  * description are needles AGENTS.md's Conventions allows a test to quote
- * verbatim: deriving them from `messages/ja.json` at runtime would make their
+ * verbatim: deriving them from a catalog at runtime would make their
  * inventory rows self-fulfilling — they would still appear after a correct
- * rename, so the list could never empty.
+ * rename, so the list could never empty. This template ships only
+ * `messages/en.json` today, so those two needles currently match nothing;
+ * they stay listed for the `ja` catalog that `starting-an-app`'s "The locale
+ * decision" describes bringing back.
  *
- * The home page's body copy — `HomePage.intro` and `HomePage.localeCount` on
- * a template that still carries it — is deliberately absent. It is demo copy
- * for a demo page a project rewrites or deletes on day one, and
- * `localizing-ui`'s ICU section carries its own `localeCount` example inline
- * as a worked plural-category demo, so a needle for it would put inventory
- * rows on a skill whose subject is ICU plurals rather than this template's
- * identity. `starting-an-app` sends a renaming project to that copy by hand
- * instead.
+ * The home page's body copy — `HomePage.intro` on a template that still
+ * carries it — is deliberately absent. It is demo copy for a demo page a
+ * project rewrites or deletes on day one. `starting-an-app` sends a renaming
+ * project to that copy by hand instead.
  */
 const PLACEHOLDERS = [
   "my-package",
