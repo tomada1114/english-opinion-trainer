@@ -150,30 +150,30 @@ describe("the ask handler", () => {
     });
 
     await handler(
-      postRequest(JSON.stringify({ prompt: "  Which city? ", locale: "ja" })),
+      postRequest(JSON.stringify({ prompt: "  Which city? ", locale: "en" })),
     );
 
     expect(seen).toHaveLength(1);
     expect(seen[0]?.prompt).toBe("Which city?");
   });
 
-  // The mapping itself, not the port's field: the UI ships `en` and `ja`, and
-  // the model is asked in the BCP 47 tag each one names. A locale added to
+  // The mapping itself, not the port's field: the UI ships `en` only, and the
+  // model is asked in the BCP 47 tag it names. A locale added to
   // `src/i18n/locales.ts` without an entry in the handler's table fails to
   // compile, so this only has to pin the values the table produces today.
-  it.each([
-    ["ja", "ja"],
-    ["en", "en"],
-  ])("asks the model to answer the %s locale in %s", async (locale, expected) => {
-    const seen: CapturedRequest[] = [];
-    const handler = createAskHandler({
-      llm: capturing(createFakeLlmPort({ response: ANSWER }), seen),
-    });
+  it.each([["en", "en"]])(
+    "asks the model to answer the %s locale in %s",
+    async (locale, expected) => {
+      const seen: CapturedRequest[] = [];
+      const handler = createAskHandler({
+        llm: capturing(createFakeLlmPort({ response: ANSWER }), seen),
+      });
 
-    await handler(postRequest(JSON.stringify({ prompt: "Which city?", locale })));
+      await handler(postRequest(JSON.stringify({ prompt: "Which city?", locale })));
 
-    expect(seen[0]?.outputLanguage).toBe(expected);
-  });
+      expect(seen[0]?.outputLanguage).toBe(expected);
+    },
+  );
 
   it("defaults the output language to English when the body omits the locale", async () => {
     const seen: CapturedRequest[] = [];
