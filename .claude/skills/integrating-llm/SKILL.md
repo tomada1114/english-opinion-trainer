@@ -165,7 +165,7 @@ out in `src/ai/adapters/anthropic/errors.ts`:
 Adding a member to the union changes what _every_ adapter promises, so it is declared in
 `src/ai/errors.ts` once and then implemented per adapter. Two compile-time backstops
 catch a half-done addition: `ALL_CODES` in `tests/ai-port.test.ts` and
-`STATUS_BY_LLM_CODE` in `src/server/handlers/ask.ts`.
+`STATUS_BY_LLM_CODE` in `src/server/handlers/feedback.ts`.
 
 ## Fixtures are recorded once and replayed in CI
 

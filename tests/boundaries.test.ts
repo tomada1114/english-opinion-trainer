@@ -83,7 +83,7 @@ function importsAdapter(module: string, specifier: string): boolean {
 }
 
 interface Module {
-  /** Repo-relative POSIX path, e.g. `src/server/handlers/ask.ts`. */
+  /** Repo-relative POSIX path, e.g. `src/server/handlers/feedback.ts`. */
   readonly file: string;
   readonly specifiers: readonly string[];
 }
@@ -199,7 +199,7 @@ describe("the import scanner the zone assertions run on", () => {
   });
 
   it("resolves a relative specifier to the module it names", () => {
-    expect(resolveWithin("src/server/handlers/ask.ts", "../../ai/index")).toBe(
+    expect(resolveWithin("src/server/handlers/feedback.ts", "../../ai/index")).toBe(
       "src/ai/index",
     );
     expect(resolveWithin("src/ai/port.ts", "./adapters/fake/index")).toBe(
@@ -357,7 +357,7 @@ describe("src/app/ and src/server/ reach the AI layer only through src/ai/index.
   // surface" is vacuously true of an empty set. This asserts the real tree
   // actually exercises the surface, without pinning which file does: a
   // minimum count survives a legal refactor that moves the call between
-  // src/server/composition.ts and src/server/handlers/ask.ts, where an
+  // src/server/composition.ts and src/server/handlers/feedback.ts, where an
   // exhaustive file list would not.
   it("has at least one real src/app or src/server module reaching the AI surface", () => {
     const surfaceImporters = modulesIn("src/app", "src/server").filter((module) =>

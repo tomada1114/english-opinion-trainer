@@ -159,17 +159,20 @@ segment, which have to agree with each other.
 
 `LlmRequest.outputLanguage` in `src/ai/port.ts` is an open BCP 47 tag naming a language
 a model can write in. A UI locale is the closed union of the languages this application
-ships a catalog for. `OUTPUT_LANGUAGE_BY_LOCALE` in `src/server/handlers/ask.ts` is the
-only place the two vocabularies are allowed to meet, and it stays there:
+ships a catalog for. The feedback handler, `src/server/handlers/feedback.ts`, is the
+only place the two vocabularies are allowed to meet, and it stays there. Today it passes
+the constant `"en"`: this app ships only `en`, so the request body carries no `locale`
+and there is no table to consult. `tests/server-handler.test.ts` pins that `"en"`.
 
 - Never in `src/ai/port.ts` and never in an adapter. The port knows nothing about this
   application's catalogs, which is what keeps it vendor-neutral and the AI layer
   removable in one piece.
-- Never in a page or a component. The locale reaches the endpoint as the `locale` field
-  of the request body, defaulted to `DEFAULT_LOCALE`.
-- The table is `as const satisfies Record<Locale, string>`, so a locale added to
-  `LOCALES` without a row fails to compile instead of silently answering in English.
-  Pinned by `tests/server-handler.test.ts`.
+- Never in a page or a component. When a second locale returns, the locale reaches the
+  endpoint as a field of the request body, defaulted to `DEFAULT_LOCALE`, and the
+  handler maps it.
+- That mapping is then a table beside the handler, written
+  `as const satisfies Record<Locale, string>`, so a locale added to `LOCALES` without a
+  row fails to compile instead of silently answering in English.
 - The indirection earns its keep on a locale whose tag is not its own name — a `zh`
   catalog answered in `zh-Hans`.
 

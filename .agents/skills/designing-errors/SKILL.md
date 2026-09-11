@@ -70,7 +70,7 @@ what it holds on that basis, not on what would be convenient to debug with.
   are all data someone else supplied; a message that quotes them turns every log line
   into a copy of them. Name the shape instead — a field path, a length that was
   exceeded, an allowed set — not the content.
-- The worked example is `src/server/handlers/ask.ts`: it answers with the failure's
+- The worked example is `src/server/handlers/feedback.ts`: it answers with the failure's
   `code`, an HTTP status and one fixed sentence, and sends **none** of the provider's
   own error text, because a provider message can carry the prompt back to the caller.
   The provider error is on `cause`, which is for the server-side log and stops there.
@@ -128,7 +128,7 @@ operator's alerting matches on.
   has to change. A code that changes silently is one nobody downstream finds out about
   until an alert stops firing.
 - There is a compile-time backstop for one half of it: `STATUS_BY_LLM_CODE` in
-  `src/server/handlers/ask.ts` is written
+  `src/server/handlers/feedback.ts` is written
   `as const satisfies Record<LlmErrorCode, number>`, so a code added to or removed from
   the union fails the build until that table agrees. It cannot see a client, and it
   cannot see a `scripts/**` code at all.
