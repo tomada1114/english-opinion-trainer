@@ -162,6 +162,7 @@ describe("the drill page's client leaf", () => {
     });
     expect(feedbackHeading.parentElement).toHaveAttribute("data-answer-level", "B1");
     expect(feedbackHeading.parentElement).toHaveAttribute("data-used-seed", "true");
+    expect(screen.getByRole("button", { name: en.Drill.showSeeds })).toBeDisabled();
     expect(
       screen.getByRole("button", { name: en.Drill.feedback.savePhrase }),
     ).toBeDisabled();

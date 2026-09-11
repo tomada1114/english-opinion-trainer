@@ -98,6 +98,7 @@ export function TopicAttempt({
       <p>
         <button
           type="button"
+          disabled={answered || sending}
           onClick={() => {
             setShowSeeds(true);
             setUsedSeed(true);
