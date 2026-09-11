@@ -25,9 +25,11 @@ pnpm install
 pnpm dev
 ```
 
-Then open <http://localhost:3000>, which redirects to the locale your browser asks for —
-`/en` or `/ja`. The page it renders is `src/app/[locale]/page.tsx`, and the text on it
-comes from `messages/en.json` and `messages/ja.json`.
+Then open <http://localhost:3000>, which redirects to `/en` — the app is English-only
+for now (owner decision 2026-09-10; see `building-the-drill`). The page it renders is
+`src/app/[locale]/page.tsx`, and the text on it comes from `messages/en.json`. The
+`/[locale]/` tree and the typed catalogs stay in place so a locale can be added back by
+reverting that decision; see `starting-an-app`'s "The locale decision".
 
 The language-model call lives behind `LlmPort` in `src/ai/index.ts`, with a fake adapter
 wired by default in `src/server/composition.ts` — that is what needs no credentials.

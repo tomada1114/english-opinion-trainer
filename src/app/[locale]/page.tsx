@@ -4,18 +4,15 @@ import { notFound } from "next/navigation";
 import { use, type ReactElement } from "react";
 
 import { LOCALES } from "../../i18n/locales";
-import { Link } from "../../i18n/navigation";
 
 /**
- * The one page this template ships, translated.
+ * The one page this application ships, translated.
  *
  * @remarks
- * The locale links are the smallest honest language switch: `Link` from
- * `src/i18n/navigation.ts` adds the locale prefix to the unprefixed pathname
- * it is given, so `/ja` is reachable from `/en` without the reader typing a
- * URL. The pathname here is the literal `/` rather than the current one — the
- * template ships a single page; a switcher on a tree of pages would read
- * `usePathname()` from the same module instead.
+ * No locale switcher: the app is English-only for now (see
+ * `building-the-drill`'s Localization section), and `LOCALES` names one
+ * locale. The `/[locale]/` tree and the typed catalogs stay so a future
+ * locale can be added by reverting that decision rather than rebuilding it.
  */
 export default function HomePage({
   params,
@@ -30,23 +27,11 @@ export default function HomePage({
   setRequestLocale(locale);
 
   const t = useTranslations("HomePage");
-  const switcher = useTranslations("LocaleSwitcher");
 
   return (
     <main>
       <h1>{t("title")}</h1>
       <p>{t("intro")}</p>
-      <nav aria-label={switcher("label")}>
-        <ul>
-          {LOCALES.map((candidate) => (
-            <li key={candidate}>
-              <Link href="/" locale={candidate} hrefLang={candidate}>
-                {switcher(candidate)}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </main>
   );
 }
