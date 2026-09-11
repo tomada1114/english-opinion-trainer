@@ -40,11 +40,10 @@ own to protect that cost: issue the key from a dedicated workspace on the model
 provider's side with a spend limit, which is the deployment's cost control — spend
 limits are set per workspace or organization, never per API key.
 
-This template ships no route of its own today: `POST /api/ask`, its demo endpoint, is
-deleted, since a project built from this template makes its own kind of call rather than
-a free-text one. Add your own Route Handler over the port following the pattern
-`building-app-routes` describes, and wire it in `src/server/composition.ts`, the
-composition root that currently has nothing to compose a handler with.
+This template ships `POST /api/feedback` as its endpoint. Its Route Handler follows the
+pattern `building-app-routes` describes and is composed in `src/server/composition.ts`.
+Add another Route Handler over the port by following that pattern, and wire it in the
+composition root.
 
 ## Starting a new app from this template
 
