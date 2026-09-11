@@ -164,6 +164,10 @@ A reader of `building-app-routes` or `integrating-llm` should not be confused by
   above, because the only caller is same-origin.
 - No `POST /api/ask` — the template's demo endpoint is deleted, replaced by the single
   `POST /api/feedback` endpoint.
+- The Anthropic adapter, not the fake, is wired in `src/server/composition.ts` —
+  `integrating-llm`'s "the default composition wires the fake" describes the template.
+  With no key, the app still starts and `POST /api/feedback` answers `500 ERR_LLM_AUTH`;
+  the fake remains the adapter every test injects.
 - No deployment yet — the app runs locally only (`pnpm dev` /
   `pnpm build && pnpm start`) until the deferred Cloudflare decision above is made.
 - A single locale (`en`) and no locale switcher — the template's two-locale default is

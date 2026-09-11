@@ -37,20 +37,11 @@ const serverEnvShape = z.object({
    * Credential for the Anthropic adapter.
    *
    * @remarks
-   * Optional because `src/server/composition.ts` wires the fake adapter by
-   * default, which needs no credential at all — that is what keeps the
-   * template's promise that `pnpm dev` answers a request with nothing
-   * configured. The key stays in this schema because the Anthropic adapter is
-   * still shipped and still one line away in `src/server/composition.ts`: a
-   * deployment that switches to it supplies this variable, and the adapter
-   * reports a missing or rejected key as the port's `ERR_LLM_AUTH` on the
-   * request that needed it — a failure a caller can see and act on, which a
-   * server that refuses to boot is not.
-   *
-   * Its mere presence obliges nothing. A machine can have this exported for
-   * something else entirely — the fixture recording flow in
-   * `tests/ai-port.test.ts` needs it — while this application still answers
-   * from the fake adapter and bills no one.
+   * Optional even though `src/server/composition.ts` wires the Anthropic
+   * adapter: the adapter reports a missing or rejected key as the port's
+   * `ERR_LLM_AUTH` on the request that needed it — a failure a caller can see
+   * and act on, which a server that refuses to boot is not. That is what keeps
+   * `pnpm dev` and `pnpm start` starting with nothing configured.
    */
   ANTHROPIC_API_KEY: optionalSetting,
 });
