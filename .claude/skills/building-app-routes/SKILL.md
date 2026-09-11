@@ -109,56 +109,39 @@ so an added code fails to compile rather than falling through to a default.
 
 An endpoint under `src/app/api/` has nothing in front of it. `src/proxy.ts`'s matcher
 excludes `api` outright, so no middleware runs; whatever the handler does not check, is
-not checked. Two consequences, and they are answered differently.
+not checked.
 
-**Authentication is a startup rule, not a per-request decision, and the adapter is what
-triggers it.** `src/server/composition.ts` declares whether the adapter it wires bills a
-provider (`ADAPTER_BILLS_A_PROVIDER`) and passes that to `readServerEnv` as
-`requiresAccessKey`; `src/server/env.ts` then refuses an environment with no
-`API_ACCESS_KEY`, so a deployment that pays for its answers cannot boot with the
-endpoint open — `readServerEnv` throws and the server stops as it starts.
-`src/server/composition.ts` passes the value down and `src/server/handlers/ask.ts`
-compares it, in constant time and with the scheme matched case-insensitively (RFC 9110
-§11.1), against the caller's `Authorization: Bearer` credential **before** the body is
-read and before the port is reached; a mismatch is `401 ERR_UNAUTHORIZED` with a
-`WWW-Authenticate: Bearer` challenge and a fixed sentence.
+**This template ships no authentication of its own, and no rate limit or concurrency
+limit either — all three are deliberate omissions.** The only caller of an endpoint this
+template composes is its own browser page, so a credential shipped to that same browser
+would protect nothing while still being an exposure; a deployment whose adapter bills a
+provider caps spend on the provider side instead — a dedicated workspace with its own
+spend limit, since a limit scoped to one API key does not exist. A paid-adapter
+deployment must enforce its own caller-throughput policy in an edge or gateway layer
+before a request reaches the app; that enforcement point must be shared across
+instances, and its exact store, algorithm, caller key, quota, window, and concurrency
+policy belong to the deployment rather than this template. `src/proxy.ts` is not the
+limiter because its matcher excludes `api` paths, so it does not run there. A consuming
+application may add a handler-local check for defense in depth — a same-origin gate, say
+— but that is not a substitute for either the deployment-wide limiter or the
+provider-side spend cap.
 
-Key any gate of this kind off what the composition root wires, never off whether a
-credential is present in `process.env`. The two are not the same question: a machine
-exports `ANTHROPIC_API_KEY` for all sorts of reasons — recording the LLM fixtures under
-`LLM_RECORD=1` is one — while this application still answers from the fake adapter and
-bills no one, and a presence-based gate would refuse to start, build, or load a test
-suite there for nothing. A second provider changes one field of that one declaration and
-nothing else.
-
-The zero-credential quick start is untouched by all of this: with the fake adapter
-wired, nothing is required and the endpoint answers anyone, which is the promise
-`pnpm dev` makes.
-
-**This template ships no rate limit and no concurrency limit, and that is deliberate.**
-A paid-adapter deployment must enforce its caller-throughput policy in an edge or
-gateway layer before `POST /api/ask` reaches the app. That enforcement point must be
-shared across instances; its exact store, algorithm, caller key, quota, window, and
-concurrency policy belong to the deployment rather than this template. `src/proxy.ts` is
-not the limiter because its matcher excludes `api` paths, so it does not run there. A
-consuming application may add a handler-local limiter for defense in depth, but that is
-not the deployment-wide safeguard and is not part of this issue.
-
-**What the endpoint does bound is the size of one request.** `src/server/http.ts` reads
-a JSON body through a wrapper that abandons it once it crosses `MAX_REQUEST_BODY_BYTES`,
+**What an endpoint does bound is the size of one request.** `src/server/http.ts` reads a
+JSON body through a wrapper that abandons it once it crosses `MAX_REQUEST_BODY_BYTES`,
 rather than trusting `Content-Length` — a header that is absent under chunked transfer
 encoding and is otherwise whatever the client says it is, so only what is actually read
-bounds anything. The request schema bounds the `prompt` at both ends after trimming it,
-which is what bounds the input tokens billed for a call. Read a new endpoint's body
-through the same helper instead of calling `request.json()`, and keep both refusals
-ahead of the port: a request rejected after the model has answered has already been paid
-for.
+bounds anything. Bound whatever field costs tokens the same way, at both ends, once it
+is trimmed. Read a new endpoint's body through the same helper instead of calling
+`request.json()`, and keep both refusals ahead of the port: a request rejected after the
+model has answered has already been paid for.
 
-The endpoint all of this is illustrated with is the AI layer's only caller, so removing
-that layer deletes `src/app/api/` and `src/server/composition.ts` outright. The pattern
-above outlives them — the first endpoint of your own restores the composition root — but
-until one exists, this section names files that are gone. **BACKGROUND:**
-`starting-an-app`, which owns the removal and lists this skill among the files it edits.
+This template ships no endpoint of its own today. `POST /api/ask`, the demo this section
+used to illustrate the pattern with, is deleted along with its handler and the
+bearer-token auth it needed — the only caller of any endpoint this template composes is
+its own browser page, so that auth protected nothing while still being an exposure. The
+pattern above outlives the illustration: the first endpoint of your own restores
+`src/app/api/<name>/route.ts` and gives `src/server/composition.ts` a handler to
+compose.
 
 ## `src/proxy.ts`
 
