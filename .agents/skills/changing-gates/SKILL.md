@@ -330,11 +330,10 @@ No check here boots a browser, and only one boots a server: `pnpm run test:smoke
 the last `pnpm build` with `next start` under `NODE_ENV=production` and asserts over
 `fetch` that `/` redirects to a locale-prefixed path, that `/en` and `/ja` render with
 the right `<html lang>`, that an unknown unprefixed path is redirected rather than 404ed
-and that the prefixed one 404s, and that `POST /api/ask` answers its documented
-statuses. Each hop is asserted with `redirect: "manual"`, because a followed redirect
-merges the proxy's answer with the route's and would pass with the proxy gone. That is
-the whole of what a running server is checked for — the seams between the layers, not
-their behaviour, which each layer's own suite owns.
+and that the prefixed one 404s. Each hop is asserted with `redirect: "manual"`, because
+a followed redirect merges the proxy's answer with the route's and would pass with the
+proxy gone. That is the whole of what a running server is checked for — the seams
+between the layers, not their behaviour, which each layer's own suite owns.
 
 It runs from `check:source` and from ci.yml's `static` job, both times immediately after
 `Build`, and from neither `pnpm test` nor `pnpm check:quick`: the build is what it
