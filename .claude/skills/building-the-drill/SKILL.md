@@ -72,10 +72,11 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
 - **The endpoint.** `POST /api/ask` (the template's free-text demo) is deleted along
   with its handler, tests, fixtures, and home-page demo copy — this app makes one kind
   of LLM call. `POST /api/feedback` request:
-  `{ topicId: string, answer: string, level: "A2"|"B1"|"B2", locale: "en"|"ja" }`.
-  Structure, mode, and topic text are looked up server-side from static data; an unknown
-  `topicId` is `400 ERR_BAD_REQUEST`. Input validation (same rules client and server,
-  server authoritative, before any LLM call): trimmed answer non-empty (else
+  `{ topicId: string, answer: string, level: "A2"|"B1"|"B2" }` — no `locale` field; the
+  app is English-only (see Localization below), so feedback language is not a request
+  parameter. Structure, mode, and topic text are looked up server-side from static data;
+  an unknown `topicId` is `400 ERR_BAD_REQUEST`. Input validation (same rules client and
+  server, server authoritative, before any LLM call): trimmed answer non-empty (else
   `ERR_BAD_REQUEST`); length ceiling 400 chars `short` / 1200 chars `long` (else
   `ERR_ANSWER_TOO_LONG`); CJK letters outnumbering Latin letters is
   `ERR_ANSWER_NOT_ENGLISH`; the template's 64 KiB body ceiling is unchanged. Port errors
@@ -101,9 +102,10 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
   retry beyond the adapter's own one.
 - **Prompt rules.** Built by a pure function from (topic text, structure type, the
   mode's element list, level, answer). The topic's text is sent, never its id. Seeds are
-  never sent; whether one was opened is a browser-only attribute. The existing
-  `OUTPUT_LANGUAGE_BY_LOCALE` mechanism moves from the deleted `ask` handler to the
-  feedback handler — locale `ja` asks for Japanese feedback.
+  never sent; whether one was opened is a browser-only attribute. Output language is
+  always English: the handler passes `outputLanguage: "en"` as a constant, not a value
+  derived from a locale. The `ask` handler's `OUTPUT_LANGUAGE_BY_LOCALE` map is not
+  carried over.
 - **Model.** `src/server/composition.ts` wires `createAnthropicAdapter` with
   `claude-haiku-4-5` as the initial model, chosen for speed against the five-minute
   session — a one-line choice, revisited by a separate measurement issue. Tests keep
@@ -125,9 +127,15 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
   structure-template explanations. A vitest suite validates the grid: 48 unique topics
   (one `short` + one `long` per structure×category cell), 432 seeds (every topic × every
   level × 3, stances differing within a triple, no seed a full sentence), and no CJK.
-- **Localization.** UI strings and the LLM output language are the only things a locale
-  switch changes; already-rendered feedback is not regenerated. Per `localizing-ui`,
-  every new UI string is added to both `messages/en.json` and `messages/ja.json`.
+- **Localization (owner decision, 2026-09-10).** The app is English-only for now; the
+  earlier planning-phase decision that switching to Japanese changes UI and feedback
+  language is superseded. `LOCALES` (`src/i18n/locales.ts`) is `["en"]` only,
+  `messages/ja.json` is deleted, and the locale switcher is removed from the UI. The
+  next-intl mechanism — the `/[locale]/` page tree, the typed message catalogs,
+  `src/i18n/` — is kept rather than removed, specifically so `ja` can return later by
+  reverting this edit; see `starting-an-app`'s "The locale decision" for the exact files
+  it touches. Every new UI string goes to `messages/en.json` only, and feedback language
+  is not locale-driven (see the endpoint contract above).
 
 ## Deviations from the template
 
@@ -139,11 +147,15 @@ A reader of `building-app-routes` or `integrating-llm` should not be confused by
   `POST /api/feedback` endpoint.
 - No deployment yet — the app runs locally only (`pnpm dev` /
   `pnpm build && pnpm start`) until the deferred Cloudflare decision above is made.
+- A single locale (`en`) and no locale switcher — the template's two-locale default is
+  deferred, not cancelled; see Localization above.
 
 ## Not decided
 
 - The deployment target (candidate: Cloudflare/OpenNext, re-checked when pursued).
 - The model, pending the Haiku-4.5-vs-Sonnet-5 measurement issue.
+- When, or whether, `ja` returns — the mechanism is kept so it is a documented edit
+  rather than a rebuild, but no date or trigger is decided.
 - Folder names marked "assumption" in the design doc (`src/core/content/` for static
   data, `src/app/_client/` for the localStorage adapter and hook, the `concession`/
   `comparison` element key names) — treat these as the current default, not settled,
