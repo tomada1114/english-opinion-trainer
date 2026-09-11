@@ -142,9 +142,9 @@ describe("fixes and grammar", () => {
   it("accepts entries of any count, including none", () => {
     const fix = { before: "I think so.", after: "I agree.", why: "More direct." };
     const note = {
-      excerpt: "a informations",
-      correction: "information",
-      note: "Uncountable.",
+      excerpt: "She go to work.",
+      correction: "She goes to work.",
+      note: "Third-person singular takes -s.",
     };
     for (const [fixes, grammar] of [
       [[], []],
