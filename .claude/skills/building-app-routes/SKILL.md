@@ -76,8 +76,8 @@ strings from.
 
 ## A Route Handler is one re-export line
 
-`src/app/api/ask/route.ts` is a single line re-exporting `askHandler` as `POST`. Copy
-that shape for a new endpoint rather than inventing another:
+`src/app/api/feedback/route.ts` is a single line re-exporting `feedbackHandler` as
+`POST`. Copy that shape for a new endpoint rather than inventing another:
 
 1. Write the logic in `src/server/handlers/<name>.ts` as a
    `create<Name>Handler(dependencies)` factory returning
@@ -101,9 +101,9 @@ still arrives at the handler as a plain argument.
 
 The response contract is the status, the `error.code` vocabulary, and nothing from a
 provider's own error text — a provider message can carry request content back to the
-caller. `src/server/handlers/ask.ts` maps codes to statuses through a `satisfies` table
-so an added code fails to compile rather than falling through to a default.
-**BACKGROUND:** `designing-errors` for the code vocabulary itself.
+caller. `src/server/handlers/feedback.ts` maps codes to statuses through a `satisfies`
+table, `STATUS_BY_LLM_CODE`, so an added code fails to compile rather than falling
+through to a default. **BACKGROUND:** `designing-errors` for the code vocabulary itself.
 
 ### Who may call it, and how often
 
@@ -135,13 +135,16 @@ is trimmed. Read a new endpoint's body through the same helper instead of callin
 `request.json()`, and keep both refusals ahead of the port: a request rejected after the
 model has answered has already been paid for.
 
-This template ships no endpoint of its own today. `POST /api/ask`, the demo this section
-used to illustrate the pattern with, is deleted along with its handler and the
-bearer-token auth it needed — the only caller of any endpoint this template composes is
-its own browser page, so that auth protected nothing while still being an exposure. The
-pattern above outlives the illustration: the first endpoint of your own restores
-`src/app/api/<name>/route.ts` and gives `src/server/composition.ts` a handler to
-compose.
+`POST /api/feedback` is the one endpoint this app composes, and it follows every step
+above: `createFeedbackHandler` in `src/server/handlers/feedback.ts`, `feedbackHandler`
+built once in `src/server/composition.ts`, and `src/app/api/feedback/route.ts`
+re-exporting it. Its one handler-local check is the defense-in-depth gate described
+above, and it runs before the body is read: a `Sec-Fetch-Site` header other than
+`same-origin` is `403 ERR_FORBIDDEN_ORIGIN`. It stands where bearer-token auth would
+otherwise sit — a credential shipped to the same browser page that is the only caller
+would protect nothing while still being an exposure — and it is no more a limiter than
+that auth would have been. **BACKGROUND:** `building-the-drill` for that endpoint's own
+request and response contract.
 
 ## `src/proxy.ts`
 

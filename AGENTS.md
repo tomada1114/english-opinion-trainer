@@ -122,11 +122,11 @@ three seams:
   `src/ai/adapters/` is private to the layer, so swapping the fake for a provider, or
   deleting the layer outright, is a bounded edit; `tests/ai-layer-removal.test.ts` is
   what keeps the deletion bounded rather than trusting that it stays so.
-- **The Web-standard handler.** `src/server/handlers/ask.ts` exports
-  `createAskHandler(dependencies)`, which returns a plain
+- **The Web-standard handler.** `src/server/handlers/feedback.ts` exports
+  `createFeedbackHandler(dependencies)`, which returns a plain
   `(request: Request) => Promise<Response>` and imports nothing from `next`. That is
   what lets a test drive it with `new Request(…)` and no framework, and what keeps
-  `src/app/api/ask/route.ts` a one-line re-export with no logic of its own to test.
+  `src/app/api/feedback/route.ts` a one-line re-export with no logic of its own to test.
 - **The environment.** `src/server/env.ts` is the only module under `src/` that reads
   `process.env`. It validates the whole environment against one schema and hands every
   other module what it needs as an argument, so "where does this secret enter the
@@ -139,24 +139,28 @@ vendor. That choice made anywhere else is the leak these boundaries exist to pre
 ### Rate limiting
 
 This template deliberately implements neither rate limiting nor concurrency limiting for
-`POST /api/ask`. It owns no limiter state, store, algorithm, or rate-limit environment
-variable. A deployment that wires a billed adapter must enforce its caller-throughput
-policy at an edge or gateway before the request reaches the app, with enforcement shared
-across instances; a per-process limiter is not equivalent across instances.
-`API_ACCESS_KEY` is authentication only, not a rate-limit declaration.
+`POST /api/feedback`. It owns no limiter state, store, algorithm, or rate-limit
+environment variable. A deployment that wires a billed adapter must enforce its
+caller-throughput policy at an edge or gateway before the request reaches the app, with
+enforcement shared across instances; a per-process limiter is not equivalent across
+instances. The handler's same-origin gate — a `Sec-Fetch-Site` other than `same-origin`
+is `403 ERR_FORBIDDEN_ORIGIN` — screens out cross-site browser requests only, not a
+rate-limit declaration.
 
-The app still owns its existing per-request request-body and prompt ceilings and rejects
-those before `llm.generate`.
+The app still owns its existing per-request request-body and answer-length ceilings and
+rejects those before `llm.generate`.
 
 ### What is contract and what is private
 
 Nothing here is published, so the contract is not an export map. It is what a caller
 outside the process can observe, plus what each zone publishes to the zone above it:
 
-- **Contract.** The HTTP surface of `POST /api/ask` — its request body, its answer, and
-  the `error.code` vocabulary a client branches on. The `LlmPort` interface, `LlmError`
-  and its `ERR_LLM_*` codes, and everything else `src/ai/index.ts` names. The locale
-  list in `src/i18n/locales.ts` and the message keys `messages/en.json` defines.
+- **Contract.** The HTTP surface of `POST /api/feedback` — its request body, its answer
+  (`{ topicId, structure, mode, level, feedback }`, the clamped feedback nested rather
+  than merged), and the `error.code` vocabulary a client branches on. The `LlmPort`
+  interface, `LlmError` and its `ERR_LLM_*` codes, and everything else `src/ai/index.ts`
+  names. The locale list in `src/i18n/locales.ts` and the message keys
+  `messages/en.json` defines.
 - **Private.** `src/ai/adapters/**`; the wiring inside `src/server/composition.ts`; and
   any module a zone's own surface does not re-export. A test reaches a private module
   through the surface that owns it, never around it.
