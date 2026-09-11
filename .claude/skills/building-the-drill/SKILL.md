@@ -126,7 +126,12 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
 - **Static data.** English only, never translated — topics, seeds, and the three
   structure-template explanations. A vitest suite validates the grid: 48 unique topics
   (one `short` + one `long` per structure×category cell), 432 seeds (every topic × every
-  level × 3, stances differing within a triple, no seed a full sentence), and no CJK.
+  level × 3, stances differing within a triple, no seed a full sentence), and no CJK. It
+  lives in `src/core/content/` (settled by #3): `topics.json` and `seeds.json`, their
+  zod schemas in `schema.ts` (`Topic` and `Seed` are `z.infer` of them), and
+  `index.ts`'s `getTopics`, `getTopicById`, and `getSeedsForTopic`, which `.parse` both
+  files once at module load so a malformed row fails every test and build.
+  `tests/content.test.ts` is the suite.
 - **Localization (owner decision, 2026-09-10).** The app is English-only for now; the
   earlier planning-phase decision that switching to Japanese changes UI and feedback
   language is superseded. `LOCALES` (`src/i18n/locales.ts`) is `["en"]` only,
@@ -156,11 +161,11 @@ A reader of `building-app-routes` or `integrating-llm` should not be confused by
 - The model, pending the Haiku-4.5-vs-Sonnet-5 measurement issue.
 - When, or whether, `ja` returns — the mechanism is kept so it is a documented edit
   rather than a rebuild, but no date or trigger is decided.
-- Folder names marked "assumption" in the design doc (`src/core/content/` for static
-  data, `src/app/_client/` for the localStorage adapter and hook) — treat these as the
-  current default, not settled, until an issue confirms or changes them. The element key
-  names and category slugs in the vocabulary table above are settled:
-  `src/core/drill.ts` is their source of truth.
+- The `src/app/_client/` folder name for the localStorage adapter and hook, marked
+  "assumption" in the design doc — treat it as the current default, not settled, until
+  an issue confirms or changes it. (`src/core/content/` was the other such assumption;
+  #3 settled it — see Static data above.) The element key names and category slugs in
+  the vocabulary table above are settled: `src/core/drill.ts` is their source of truth.
 
 ## Planning history
 
