@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { getTopics } from "../src/core/content/index";
 import { LOCALES } from "../src/i18n/locales";
 import { MESSAGES } from "../src/i18n/messages";
 
@@ -359,6 +360,45 @@ afterAll(async () => {
     await stopServer(server);
     server = undefined;
   }
+});
+
+// Node's `fetch` sends no `Sec-Fetch-Site` of its own, so the accepted case
+// sets it by hand to take the path a real same-origin browser request takes,
+// and the rejected one shows the header is what decides it.
+describe("POST /api/feedback, served by `next start`", () => {
+  const body = JSON.stringify({
+    topicId: getTopics()[0]?.id,
+    answer: "I recommend Kyoto because its old temples are beautiful.",
+    level: "B1",
+  });
+
+  it("answers a same-origin request with 200 and the topic echoed", async () => {
+    const response = await fetch(`${baseUrl}/api/feedback`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "sec-fetch-site": "same-origin" },
+      body,
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("application/json");
+    await expect(response.json()).resolves.toMatchObject({
+      topicId: getTopics()[0]?.id,
+      level: "B1",
+    });
+  });
+
+  it("rejects a request with no Sec-Fetch-Site header with 403", async () => {
+    const response = await fetch(`${baseUrl}/api/feedback`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    });
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "ERR_FORBIDDEN_ORIGIN" },
+    });
+  });
 });
 
 describe("the built application, served by `next start`", () => {

@@ -129,7 +129,7 @@ const message = "imported from ../ai/adapters/fake/index by hand";
  * expectation. Each entry earns its place — three directories deep (the
  * recursion), a `.tsx` inside a bracketed segment (the extension filter and the
  * directory name), a zone holding exactly one module, a file at the root of
- * `src/`, and a module in the zone the surface rules are about. What the
+ * `src/`, and a nested module in the zone the surface rules are about. What the
  * exhaustive list was really standing in for — a scan that quietly found
  * nothing — is asserted directly by this and by the zone-coverage case below.
  */
@@ -138,7 +138,7 @@ const SCAN_ANCHORS = [
   "src/app/[locale]/page.tsx",
   "src/core/result.ts",
   "src/proxy.ts",
-  "src/server/composition.ts",
+  "src/server/handlers/feedback.ts",
 ];
 
 describe("the import scanner the zone assertions run on", () => {
@@ -159,7 +159,31 @@ describe("the import scanner the zone assertions run on", () => {
       "src/ai/adapters/fake/index.ts",
       ["zod", "../../../core/result", "../../errors", "../../port"],
     ],
-    ["src/server/composition.ts", ["server-only", "../ai/index", "./env"]],
+    [
+      "src/server/handlers/feedback.ts",
+      [
+        "zod",
+        "../../ai/index",
+        "../../core/content/index",
+        "../../core/drill",
+        "../../core/feedback",
+        "../../core/feedback-prompt",
+        "../http",
+      ],
+    ],
+    ["src/app/api/feedback/route.ts", ["../../../server/composition"]],
+    [
+      "src/server/composition.ts",
+      [
+        "server-only",
+        "zod",
+        "../ai/index",
+        "../core/drill",
+        "../core/result",
+        "./env",
+        "./handlers/feedback",
+      ],
+    ],
   ])("reads %s as %p", (file, expected) => {
     const module = sourceModules.find((candidate) => candidate.file === file);
     expect(module?.specifiers).toStrictEqual(expected);
