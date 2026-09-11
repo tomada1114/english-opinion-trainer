@@ -124,12 +124,14 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
   and `version` drives migrations. The pure shape, its zod schema, and migrations live
   in `src/core/state.ts` (framework-free: `stateDocumentSchema`, `defaultState`,
   `migrateState`); the `localStorage` adapter and the React hook are client-only and
-  live in `src/app/_client/` (settled by #11; the underscore makes it a private folder
-  the App Router never routes): `storage.ts`'s `readState`/`writeState`, which never
-  throw, and `use-state-document.ts`'s `useStateDocument`, one `useSyncExternalStore`
-  document shared by every consumer, which reports `loaded: false` until storage has
-  been read. `version` is the literal `1`; a version 2 adds a literal and its migration
-  path to `migrateState`. A phrase-list entry is
+  live in `src/app/_client/` (settled by #11 for client code shared across pages; a
+  page's own client leaf sits in a `_client/` beside the page instead, as #9's drill
+  page does; the underscore makes either a private folder the App Router never routes):
+  `storage.ts`'s `readState`/`writeState`, which never throw, and
+  `use-state-document.ts`'s `useStateDocument`, one `useSyncExternalStore` document
+  shared by every consumer, which reports `loaded: false` until storage has been read.
+  `version` is the literal `1`; a version 2 adds a literal and its migration path to
+  `migrateState`. A phrase-list entry is
   `{ id, text, topicId, category, structure, mode, level, usedSeed, savedAt }`.
 - **Pages.** `/` lists units with progress and a level selector; `/units/[unitId]` runs
   the drill; `/phrases` lists saved phrases with tag filters. Units are always
@@ -175,8 +177,9 @@ A reader of `building-app-routes` or `integrating-llm` should not be confused by
   rather than a rebuild, but no date or trigger is decided.
 - Nothing else about folder layout: the design doc's two folder-name assumptions are
   both settled — `src/core/content/` by #3 (Static data above) and `src/app/_client/` by
-  #11 (Browser state above). The element key names and category slugs in the vocabulary
-  table above are settled: `src/core/drill.ts` is their source of truth.
+  #11 (Browser state above), with a page's own client leaf in a `_client/` beside that
+  page. The element key names and category slugs in the vocabulary table above are
+  settled: `src/core/drill.ts` is their source of truth.
 
 ## Planning history
 
