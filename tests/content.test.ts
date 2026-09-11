@@ -5,6 +5,7 @@ import {
   getSeedsForTopic,
   getTopicById,
   getTopics,
+  getTopicsForUnit,
   type Seed,
   seedSchema,
   seedsSchema,
@@ -21,6 +22,7 @@ import {
   MODES,
   STRUCTURE_TYPES,
   type StructureType,
+  UNIT_IDS,
 } from "../src/core/drill";
 
 // Mirrors tests/drill.test.ts: CJK is the script a translated string would
@@ -158,6 +160,35 @@ describe("getTopicById", () => {
 
   it("is typed to return a Topic or undefined", () => {
     expectTypeOf(getTopicById).returns.toEqualTypeOf<Topic | undefined>();
+  });
+});
+
+describe("getTopicsForUnit", () => {
+  it.each([
+    [1, "prep"],
+    [2, "concession"],
+    [3, "comparison"],
+  ] as const)("gives unit %i exactly the %s topics", (unit, structure) => {
+    expect(getTopicsForUnit(unit)).toStrictEqual(
+      getTopics().filter((topic) => topic.structure === structure),
+    );
+  });
+
+  it("gives unit 4, the mixed unit, every topic", () => {
+    expect(getTopicsForUnit(4)).toStrictEqual(getTopics());
+  });
+
+  it.each(UNIT_IDS)("gives unit %i at least one short and one long topic", (unit) => {
+    const modes = new Set(getTopicsForUnit(unit).map((topic) => topic.mode));
+
+    expect([...modes].sort()).toStrictEqual(["long", "short"]);
+  });
+
+  it("gives unit 1 the placeholder travel topic by its literal id", () => {
+    expect(getTopicsForUnit(1).map((topic) => topic.id)).toContain("prep-travel-short");
+    expect(getTopicsForUnit(2).map((topic) => topic.id)).not.toContain(
+      "prep-travel-short",
+    );
   });
 });
 

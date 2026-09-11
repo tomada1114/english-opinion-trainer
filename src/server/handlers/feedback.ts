@@ -1,8 +1,9 @@
 import * as z from "zod";
 
 import type { LlmErrorCode, LlmPort } from "../../ai/index";
+import { ANSWER_CEILING, checkAnswer } from "../../core/answer-rules";
 import { getTopicById } from "../../core/content/index";
-import { elementsFor, LEVELS, type Mode } from "../../core/drill";
+import { elementsFor, LEVELS } from "../../core/drill";
 import { feedbackSchemaFor } from "../../core/feedback";
 import { buildFeedbackPrompt, clampFeedback } from "../../core/feedback-prompt";
 import { failure, readJsonBody } from "../http";
@@ -32,31 +33,6 @@ const feedbackRequestSchema = z.object({
   answer: z.string(),
   level: z.enum(LEVELS),
 });
-
-/**
- * The longest answer each mode accepts, in characters once trimmed.
- *
- * @remarks
- * A ceiling on what one request can spend, checked before the model is asked;
- * the drill page applies the same numbers, but this one is authoritative.
- */
-const ANSWER_CEILING = {
-  short: 400,
-  long: 1_200,
-} as const satisfies Record<Mode, number>;
-
-/** One Han, Hiragana or Katakana character. */
-const CJK_CHARACTER = /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}/gu;
-
-/** One unaccented Latin letter. */
-const LATIN_LETTER = /[A-Za-z]/g;
-
-/** Whether `answer` has more CJK characters than Latin letters. */
-function isMostlyCjk(answer: string): boolean {
-  const cjk = answer.match(CJK_CHARACTER)?.length ?? 0;
-  const latin = answer.match(LATIN_LETTER)?.length ?? 0;
-  return cjk > latin;
-}
 
 /**
  * The HTTP status each port failure is reported as.
@@ -132,29 +108,30 @@ export function createFeedbackHandler(
       );
     }
 
-    const answer = parsed.data.answer.trim();
-    if (answer === "") {
-      return failure(
-        400,
-        "ERR_BAD_REQUEST",
-        "The `answer` must not be empty once trimmed.",
-      );
+    const checked = checkAnswer(parsed.data.answer, topic.mode);
+    if (!checked.ok) {
+      switch (checked.error) {
+        case "empty":
+          return failure(
+            400,
+            "ERR_BAD_REQUEST",
+            "The `answer` must not be empty once trimmed.",
+          );
+        case "too-long":
+          return failure(
+            400,
+            "ERR_ANSWER_TOO_LONG",
+            `The \`answer\` must be at most ${String(ANSWER_CEILING[topic.mode])} characters once trimmed for a ${topic.mode} topic.`,
+          );
+        case "not-english":
+          return failure(
+            400,
+            "ERR_ANSWER_NOT_ENGLISH",
+            "The `answer` must be written in English.",
+          );
+      }
     }
-    const ceiling = ANSWER_CEILING[topic.mode];
-    if (answer.length > ceiling) {
-      return failure(
-        400,
-        "ERR_ANSWER_TOO_LONG",
-        `The \`answer\` must be at most ${String(ceiling)} characters once trimmed for a ${topic.mode} topic.`,
-      );
-    }
-    if (isMostlyCjk(answer)) {
-      return failure(
-        400,
-        "ERR_ANSWER_NOT_ENGLISH",
-        "The `answer` must be written in English.",
-      );
-    }
+    const answer = checked.value;
 
     const result = await llm.generate({
       schema: feedbackSchemaFor(topic.structure, topic.mode),

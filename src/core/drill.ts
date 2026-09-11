@@ -37,6 +37,17 @@ export const UNIT_IDS = [1, 2, 3, 4] as const;
 export type UnitId = (typeof UNIT_IDS)[number];
 
 /**
+ * The unit a URL segment names, or `undefined` when it names none.
+ *
+ * @remarks
+ * Only the canonical spelling matches — `"1"`, not `"01"`, `"1.0"` or `" 1"` —
+ * so each unit has exactly one URL.
+ */
+export function parseUnitId(segment: string): UnitId | undefined {
+  return UNIT_IDS.find((unit) => String(unit) === segment);
+}
+
+/**
  * The structure a unit's topics use, or `"mixed"` for the unit that draws from
  * every structure.
  */

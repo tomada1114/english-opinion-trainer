@@ -37,12 +37,12 @@ answer is almost never a file under `src/app/`.
 
 ## The Server / Client boundary
 
-Every file under `src/app/` is a Server Component until one says `"use client"`. This
-template ships no such file: `src/app/[locale]/page.tsx` calls `useLocale` and
-`useTranslations` and still runs on the server, because `next-intl` publishes a
-`react-server` export condition and those hooks resolve to a server implementation
-there. A hook is therefore not evidence that a file is a Client Component — the
-directive is, and nothing else is.
+Every file under `src/app/` is a Server Component until one says `"use client"`. The
+drill page's leaf, `src/app/[locale]/units/[unitId]/_client/unit-drill.tsx`, is where
+this app says it; `src/app/[locale]/page.tsx` calls `useLocale` and `useTranslations`
+and still runs on the server, because `next-intl` publishes a `react-server` export
+condition and those hooks resolve to a server implementation there. A hook is therefore
+not evidence that a file is a Client Component — the directive is, and nothing else is.
 
 - Add `"use client"` to the smallest file that actually needs the client: the one owning
   state, an effect, a browser API, or a DOM event handler. Pass it data as props from
