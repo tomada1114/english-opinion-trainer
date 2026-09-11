@@ -186,16 +186,102 @@ describe("nextTopic", () => {
     expect(isCompleted(finalState)).toBe(true);
   });
 
-  it("keeps every skip-and-requeue confined to its own half", () => {
+  it("draws the first long topic once the other 7 short topics are offered, even with one short skip pending", () => {
     const pool = makeSingleStructurePool("prep");
     const rng = mulberry32(5);
-    const { draws } = runPass(pool, rng, skipOnceThenAnswer(mulberry32(50), 0.6));
+    let state = EMPTY_STATE;
+    let skippedShortId: string | undefined;
 
-    const firstLongIndex = draws.findIndex((d) => d.topic.mode === "long");
-    expect(firstLongIndex).toBeGreaterThan(-1);
-    expect(draws.slice(firstLongIndex).every((d) => d.topic.mode === "long")).toBe(
-      true,
-    );
+    for (let i = 0; i < TOPICS_PER_HALF; i += 1) {
+      const topic = nextTopic(1, pool, state, rng);
+      if (topic === undefined) {
+        throw new Error("expected a topic for every short-half draw");
+      }
+      expect(topic.mode).toBe("short");
+      if (i === 0) {
+        skippedShortId = topic.id;
+        state = recordSkipped(state, topic.id);
+      } else {
+        state = recordAnswered(state, topic.id);
+      }
+    }
+
+    expect(state.skippedTopicIds).toStrictEqual([skippedShortId]);
+
+    const next = nextTopic(1, pool, state, rng);
+    expect(next?.mode).toBe("long");
+  });
+
+  it("lets a repeatedly-skipped short topic reach 15 answered without blocking the long half, then resolves it last", () => {
+    const pool = makeSingleStructurePool("concession");
+    const rng = mulberry32(12);
+    let state = EMPTY_STATE;
+    let targetId: string | undefined;
+    let sawLongWhileTargetPending = false;
+    let reachedFifteenWhileTargetPending = false;
+
+    let topic = nextTopic(1, pool, state, rng);
+    while (topic !== undefined) {
+      targetId ??= topic.id;
+
+      if (
+        topic.id === targetId &&
+        state.answeredTopicIds.length < TOPICS_PER_PASS - 1
+      ) {
+        state = recordSkipped(state, topic.id);
+      } else {
+        state = recordAnswered(state, topic.id);
+      }
+
+      if (topic.mode === "long" && state.skippedTopicIds.includes(targetId)) {
+        sawLongWhileTargetPending = true;
+      }
+      if (
+        state.answeredTopicIds.length === TOPICS_PER_PASS - 1 &&
+        state.skippedTopicIds.includes(targetId)
+      ) {
+        reachedFifteenWhileTargetPending = true;
+      }
+
+      topic = nextTopic(1, pool, state, rng);
+    }
+
+    expect(sawLongWhileTargetPending).toBe(true);
+    expect(reachedFifteenWhileTargetPending).toBe(true);
+    expect(state.answeredTopicIds).toHaveLength(TOPICS_PER_PASS);
+    expect(state.answeredTopicIds.at(-1)).toBe(targetId);
+  });
+
+  it("re-offers a pending short skip before a pending long skip", () => {
+    const pool = makeSingleStructurePool("prep");
+    const rng = mulberry32(14);
+    let state = EMPTY_STATE;
+    let skippedShortId: string | undefined;
+    let skippedLongId: string | undefined;
+
+    let topic = nextTopic(1, pool, state, rng);
+    while (topic !== undefined) {
+      if (topic.mode === "short" && skippedShortId === undefined) {
+        skippedShortId = topic.id;
+        state = recordSkipped(state, topic.id);
+      } else if (topic.mode === "long" && skippedLongId === undefined) {
+        skippedLongId = topic.id;
+        state = recordSkipped(state, topic.id);
+      } else {
+        state = recordAnswered(state, topic.id);
+      }
+      topic = nextTopic(1, pool, state, rng);
+    }
+
+    if (skippedShortId === undefined || skippedLongId === undefined) {
+      throw new Error("expected both a short and a long topic to be skipped once");
+    }
+
+    const shortResolvedIndex = state.answeredTopicIds.indexOf(skippedShortId);
+    const longResolvedIndex = state.answeredTopicIds.indexOf(skippedLongId);
+    expect(shortResolvedIndex).toBeGreaterThan(-1);
+    expect(longResolvedIndex).toBeGreaterThan(-1);
+    expect(shortResolvedIndex).toBeLessThan(longResolvedIndex);
   });
 
   it("shows zero repeated topic ids before every topic in a half has been offered once, over 1000+ draws", () => {

@@ -9,7 +9,7 @@ import type { Topic } from "./content";
  * This is a draw cap, not an assertion that the pool holds exactly this many:
  * unit 4's pool holds 24 topics per mode (all three structures combined), and
  * {@link nextTopic} still draws only this many of them per pass, chosen
- * uniformly at random — see {@link pickHalf}.
+ * uniformly at random — see {@link pickUnshown}.
  */
 const TOPICS_PER_HALF = 8;
 
@@ -50,47 +50,56 @@ function pickRandom<T>(pool: readonly T[], rng: () => number): T {
 }
 
 /**
- * The next topic to offer from one mode's half of the pool, or `undefined`
- * once that half has nothing left to offer.
+ * The next never-yet-offered topic of one mode's half, or `undefined` once
+ * every topic of the half has been offered once (answered or skipped).
  *
  * @remarks
- * Draws uniformly at random from the topics never yet offered
- * (`answeredTopicIds` and `skippedTopicIds` both exclude them) until
- * {@link TOPICS_PER_HALF} distinct topics have been touched — answered or
- * skipped — which is what caps a larger pool (unit 4's 24-per-mode) down to
- * the per-pass target. After that cap is reached, it draws uniformly at
- * random from whichever of those touched topics are still only skipped, so a
- * skipped topic is only ever eligible again once every other topic in its
- * half has been offered once. It returns `undefined` only once every touched
- * topic in the half has been answered — a half is never abandoned mid-pass
- * because of an unresolved skip.
+ * Draws uniformly at random from the topics neither answered nor skipped,
+ * until {@link TOPICS_PER_HALF} distinct topics have been touched — which is
+ * what caps a larger pool (unit 4's 24-per-mode) down to the per-pass target.
+ * A topic already offered, whether answered or still only skipped, is never
+ * drawn again by this function: a pending skip is {@link pickPendingSkip}'s
+ * job, deliberately kept separate so this half's first round finishes (and
+ * the other half's first round can start) without waiting on it.
  */
-function pickHalf(
+function pickUnshown(
   half: readonly Topic[],
   state: UnitProgressState,
   rng: () => number,
 ): Topic | undefined {
   const target = Math.min(TOPICS_PER_HALF, half.length);
-  const answeredHere = half.filter((topic) =>
-    state.answeredTopicIds.includes(topic.id),
+  const touchedCount = half.filter(
+    (topic) =>
+      state.answeredTopicIds.includes(topic.id) ||
+      state.skippedTopicIds.includes(topic.id),
+  ).length;
+
+  if (touchedCount >= target) {
+    return undefined;
+  }
+
+  const unshown = half.filter(
+    (topic) =>
+      !state.answeredTopicIds.includes(topic.id) &&
+      !state.skippedTopicIds.includes(topic.id),
   );
-  const skippedHere = half.filter((topic) => state.skippedTopicIds.includes(topic.id));
-  const touchedCount = answeredHere.length + skippedHere.length;
+  return pickRandom(unshown, rng);
+}
 
-  if (touchedCount < target) {
-    const unshown = half.filter(
-      (topic) =>
-        !state.answeredTopicIds.includes(topic.id) &&
-        !state.skippedTopicIds.includes(topic.id),
-    );
-    return pickRandom(unshown, rng);
+/**
+ * A uniform-random still-skipped (not yet answered) topic of one mode's
+ * half, or `undefined` when none is pending.
+ */
+function pickPendingSkip(
+  half: readonly Topic[],
+  state: UnitProgressState,
+  rng: () => number,
+): Topic | undefined {
+  const pending = half.filter((topic) => state.skippedTopicIds.includes(topic.id));
+  if (pending.length === 0) {
+    return undefined;
   }
-
-  if (skippedHere.length > 0) {
-    return pickRandom(skippedHere, rng);
-  }
-
-  return undefined;
+  return pickRandom(pending, rng);
 }
 
 /**
@@ -104,11 +113,15 @@ function pickHalf(
  * parameter for signature parity with the callers this issue unblocks
  * (#9, #16), which do need `unit` to build that pool.
  *
- * The draw is short-first: every eligible `short` topic (see {@link
- * pickHalf}) is offered, and answered or re-offered after a skip, before any
- * `long` topic is drawn. `undefined` at {@link TOPICS_PER_PASS} answered is
- * one way this returns `undefined`; a pool smaller than a full 16-topic pass
- * (as in a test fixture) exhausts the same way once nothing is left to draw.
+ * The draw runs in four stages, each exhausted before the next begins:
+ * every `short` topic offered once ({@link pickUnshown}, random order), then
+ * every `long` topic offered once the same way — a short topic left pending
+ * by a skip does **not** hold up the `long` half — then the still-pending
+ * `short` skips re-offered (random order, a re-skipped one simply staying
+ * eligible) until every one is answered, then the still-pending `long`
+ * skips the same way. `undefined` at {@link TOPICS_PER_PASS} answered is one
+ * way this returns `undefined`; a pool smaller than a full 16-topic pass (as
+ * in a test fixture) exhausts the same way once nothing is left to draw.
  */
 export function nextTopic(
   unit: UnitId,
@@ -123,7 +136,12 @@ export function nextTopic(
   const shorts = topicsForUnit.filter((topic) => topic.mode === "short");
   const longs = topicsForUnit.filter((topic) => topic.mode === "long");
 
-  return pickHalf(shorts, state, rng) ?? pickHalf(longs, state, rng);
+  return (
+    pickUnshown(shorts, state, rng) ??
+    pickUnshown(longs, state, rng) ??
+    pickPendingSkip(shorts, state, rng) ??
+    pickPendingSkip(longs, state, rng)
+  );
 }
 
 /**
