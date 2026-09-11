@@ -5,7 +5,16 @@
   },
   "HomePage": {
     "title": "English Opinion Trainer",
-    "intro": "Say what you think, in English, in a few sentences."
+    "intro": "Choose a unit, practice an opinion, and build confident English answers.",
+    "loading": "Loading your progress…",
+    "levelLabel": "Practice level",
+    "unit": "Unit {unit}",
+    "structure": {
+      "mixed": "Mixed structures"
+    },
+    "progress": "{answered} / {total} topics answered",
+    "completed": "Complete",
+    "phrasesLink": "View saved phrases"
   },
   "NotFound": {
     "title": "Page not found",

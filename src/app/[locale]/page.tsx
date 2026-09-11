@@ -3,7 +3,9 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { use, type ReactElement } from "react";
 
+import { UNIT_IDS } from "../../core/drill";
 import { LOCALES } from "../../i18n/locales";
+import { HomeDashboard } from "./_client/home-dashboard";
 
 /**
  * The one page this application ships, translated.
@@ -32,6 +34,7 @@ export default function HomePage({
     <main>
       <h1>{t("title")}</h1>
       <p>{t("intro")}</p>
+      <HomeDashboard units={UNIT_IDS} />
     </main>
   );
 }
