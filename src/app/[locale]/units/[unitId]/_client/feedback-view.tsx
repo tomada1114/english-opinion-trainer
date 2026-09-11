@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useId, useState } from "react";
 
 import type { Topic } from "../../../../../core/content/index";
 import {
@@ -33,6 +33,7 @@ export function FeedbackView({
   feedback: Feedback;
 }>): ReactElement {
   const t = useTranslations("Drill");
+  const rewriteId = useId();
   const { setState } = useStateDocument();
   const [rewrite, setRewrite] = useState(feedback.rewrite);
   const [saved, setSaved] = useState(false);
@@ -99,9 +100,9 @@ export function FeedbackView({
       )}
 
       <h4>{t("feedback.rewriteHeading")}</h4>
-      <label htmlFor="feedback-rewrite">{t("feedback.editRewriteLabel")}</label>
+      <label htmlFor={rewriteId}>{t("feedback.editRewriteLabel")}</label>
       <textarea
-        id="feedback-rewrite"
+        id={rewriteId}
         value={rewrite}
         rows={4}
         onChange={(event) => {
