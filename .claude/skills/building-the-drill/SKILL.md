@@ -83,8 +83,11 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
   keep the template's mapping (`AUTH`→500, `RATE_LIMIT`→429, `TIMEOUT`→504,
   `INVALID_OUTPUT`→502, `UNAVAILABLE`→503). A `200` answers with the clamped feedback
   object (below) plus an echo of `{ topicId, structure, mode, level }` so the client
-  renders without a second lookup. `src/server/env.ts` reads only `ANTHROPIC_API_KEY`
-  (optional; a missing key is a per-request `ERR_LLM_AUTH` → 500, not a boot failure).
+  renders without a second lookup — as `{ topicId, structure, mode, level, feedback }`,
+  nested rather than merged, because the feedback object's own `structure` key (the
+  per-element verdicts) would collide with the echoed structure type.
+  `src/server/env.ts` reads only `ANTHROPIC_API_KEY` (optional; a missing key is a
+  per-request `ERR_LLM_AUTH` → 500, not a boot failure).
 - **Feedback schema.** Built per request by a pure factory
   `feedbackSchemaFor(structure, mode)` returning a `z.object`: a `structure` field whose
   keys are exactly the judged elements for that mode (first two for `short`, all for
