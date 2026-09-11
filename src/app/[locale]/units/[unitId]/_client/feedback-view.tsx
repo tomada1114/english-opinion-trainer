@@ -98,6 +98,7 @@ export function FeedbackView({
         rows={4}
         onChange={(event) => {
           setRewrite(event.target.value);
+          setSaved(false);
         }}
       />
       <button type="button" disabled={!canSave} onClick={savePhrase}>

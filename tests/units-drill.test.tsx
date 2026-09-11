@@ -197,6 +197,7 @@ describe("the drill page's client leaf", () => {
     stubFetch(Response.json(feedbackBody(SHORT_PREP)));
     renderDrill([SHORT_PREP]);
 
+    clickButton(en.Drill.showSeeds);
     typeAnswer(ANSWER);
     clickButton(en.Drill.send);
     await screen.findByText(REWRITE);
@@ -219,7 +220,7 @@ describe("the drill page's client leaf", () => {
       structure: SHORT_PREP.structure,
       mode: SHORT_PREP.mode,
       level: "B1",
-      usedSeed: false,
+      usedSeed: true,
     });
     expect(Number.isNaN(Date.parse(stored.phrases[0]?.savedAt ?? ""))).toBe(false);
 
@@ -229,6 +230,24 @@ describe("the drill page's client leaf", () => {
     expect(
       screen.getByRole("heading", { name: en.Drill.complete.heading }),
     ).toBeInTheDocument();
+  });
+
+  it("clears the save confirmation when the rewrite is edited", async () => {
+    stubFetch(Response.json(feedbackBody(SHORT_PREP)));
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    clickButton(en.Drill.send);
+    await screen.findByText(REWRITE);
+    clickButton(en.Drill.feedback.savePhrase);
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      en.Drill.feedback.savedToPhrases,
+    );
+
+    fireEvent.change(screen.getByLabelText(en.Drill.feedback.editRewriteLabel), {
+      target: { value: "A newly edited rewrite." },
+    });
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("appends distinct entries and keeps the submitted level after a state change", async () => {
