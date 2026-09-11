@@ -1,8 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { type ReactElement, useState, useSyncExternalStore } from "react";
+import { type ReactElement, useState } from "react";
 
+import {
+  useStateDocument,
+  type StateDocumentHandle,
+} from "../../../../_client/use-state-document";
 import type { Topic } from "../../../../../core/content/index";
 import type { UnitId } from "../../../../../core/drill";
 import {
@@ -18,7 +22,7 @@ import { TopicAttempt } from "./topic-attempt";
 const NEW_PASS: UnitProgressState = { answeredTopicIds: [], skippedTopicIds: [] };
 
 /**
- * One pass through a unit, held in memory only.
+ * One pass through a unit, with answered topics persisted in the browser.
  *
  * @remarks
  * `turn` counts every advance and keys the attempt, so a skipped topic that
@@ -40,10 +44,6 @@ function sessionAt(
   return { progress, topic: nextTopic(unit, topics, progress, Math.random), turn };
 }
 
-function subscribeToNothing(): () => void {
-  return () => undefined;
-}
-
 /**
  * The drill for one unit: its topics, one at a time, until the pass is done.
  *
@@ -51,34 +51,81 @@ function subscribeToNothing(): () => void {
  * The first topic is drawn at random, so drawing it during the server render
  * would hand the client a different topic to hydrate against. The server —
  * and a prerender — render a placeholder instead, and the session starts once
- * the page is running in a browser. Progress lives in this component's state;
- * it is lost on reload until persisted progress (#16) lands.
+ * the browser state document has been loaded. Skipped topics remain in this
+ * component's state; only answered topics and completion are persisted.
  */
 export function UnitDrill({
   unit,
   topics,
 }: Readonly<{ unit: UnitId; topics: readonly Topic[] }>): ReactElement {
   const t = useTranslations("Drill");
-  const inBrowser = useSyncExternalStore(
-    subscribeToNothing,
-    () => true,
-    () => false,
-  );
+  const { state, loaded, setState } = useStateDocument();
 
-  return inBrowser ? (
-    <DrillSession unit={unit} topics={topics} />
-  ) : (
-    <p>{t("loading")}</p>
+  if (!loaded) {
+    return <p>{t("loading")}</p>;
+  }
+
+  const storedProgress = state.units[unit];
+  const initialProgress: UnitProgressState = {
+    answeredTopicIds: storedProgress?.answeredTopicIds ?? [],
+    skippedTopicIds: [],
+  };
+
+  return (
+    <DrillSession
+      key={unit}
+      unit={unit}
+      topics={topics}
+      initialProgress={initialProgress}
+      setState={setState}
+    />
   );
 }
 
 function DrillSession({
   unit,
   topics,
-}: Readonly<{ unit: UnitId; topics: readonly Topic[] }>): ReactElement {
+  initialProgress,
+  setState,
+}: Readonly<{
+  unit: UnitId;
+  topics: readonly Topic[];
+  initialProgress: UnitProgressState;
+  setState: StateDocumentHandle["setState"];
+}>): ReactElement {
   const t = useTranslations("Drill");
-  const [session, setSession] = useState(() => sessionAt(unit, topics, NEW_PASS, 0));
+  const [session, setSession] = useState(() =>
+    sessionAt(unit, topics, initialProgress, 0),
+  );
   const { progress, topic, turn } = session;
+
+  function persistProgress(nextProgress: UnitProgressState): void {
+    const passCompleted = isCompleted(nextProgress);
+    setState((current) => ({
+      ...current,
+      units: {
+        ...current.units,
+        [unit]: {
+          answeredTopicIds: [...nextProgress.answeredTopicIds],
+          completed: passCompleted || current.units[unit]?.completed === true,
+        },
+      },
+    }));
+  }
+
+  function restart(): void {
+    setState((current) => ({
+      ...current,
+      units: {
+        ...current.units,
+        [unit]: {
+          answeredTopicIds: [],
+          completed: current.units[unit]?.completed === true,
+        },
+      },
+    }));
+    setSession(sessionAt(unit, topics, NEW_PASS, turn + 1));
+  }
 
   if (topic === undefined || isCompleted(progress)) {
     return (
@@ -86,12 +133,7 @@ function DrillSession({
         <h2>{t("complete.heading")}</h2>
         <p>{t("complete.body")}</p>
         <p>
-          <button
-            type="button"
-            onClick={() => {
-              setSession(sessionAt(unit, topics, NEW_PASS, turn + 1));
-            }}
-          >
+          <button type="button" onClick={restart}>
             {t("complete.restart")}
           </button>{" "}
           <Link href="/">{t("complete.homeLink")}</Link>
@@ -107,9 +149,9 @@ function DrillSession({
         key={turn}
         topic={topic}
         onAnswered={() => {
-          setSession(
-            sessionAt(unit, topics, recordAnswered(progress, topic.id), turn + 1),
-          );
+          const nextProgress = recordAnswered(progress, topic.id);
+          persistProgress(nextProgress);
+          setSession(sessionAt(unit, topics, nextProgress, turn + 1));
         }}
         onSkip={() => {
           setSession(

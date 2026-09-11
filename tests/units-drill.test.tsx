@@ -1,10 +1,11 @@
 import { NextIntlClientProvider } from "next-intl";
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import UnitPage from "../src/app/[locale]/units/[unitId]/page";
 import { UnitDrill } from "../src/app/[locale]/units/[unitId]/_client/unit-drill";
 import type { Topic } from "../src/core/content/index";
+import { elementsFor } from "../src/core/drill";
 import en from "../messages/en.json";
 
 vi.mock("next-intl/server", () => ({
@@ -35,21 +36,62 @@ const ANSWER = "I recommend Kyoto because its old temples are beautiful.";
 
 const REWRITE = "I would recommend Kyoto, because its old temples are beautiful.";
 
+const STORAGE_KEY = "english-opinion-trainer";
+
+const FULL_PASS_TOPICS: readonly Topic[] = [
+  ...Array.from({ length: 8 }, (_, index) => ({
+    ...SHORT_PREP,
+    id: `fixture-prep-short-${String(index)}`,
+    text: `Which fixture short dish would you recommend: ${String(index)}?`,
+  })),
+  ...Array.from({ length: 8 }, (_, index) => ({
+    ...SHORT_PREP,
+    id: `fixture-prep-long-${String(index)}`,
+    mode: "long" as const,
+    text: `Which fixture long dish would you recommend: ${String(index)}?`,
+  })),
+];
+
+beforeEach(() => {
+  window.localStorage.clear();
+});
+
+afterEach(() => {
+  window.localStorage.clear();
+});
+
 /** A `200` body for a `prep`/`short` topic, as the endpoint answers it. */
 function feedbackBody(topic: Topic): unknown {
+  const structure =
+    topic.id === SHORT_PREP.id
+      ? {
+          point: { verdict: "present", reason: "The answer names Kyoto." },
+          reason: { verdict: "weak", reason: "The reason is thin." },
+        }
+      : Object.fromEntries(
+          elementsFor(topic.structure, topic.mode).map((element) => [
+            element,
+            { verdict: "present", reason: `The answer includes the ${element}.` },
+          ]),
+        );
+
   return {
     topicId: topic.id,
     structure: topic.structure,
     mode: topic.mode,
     level: "B1",
     feedback: {
-      structure: {
-        point: { verdict: "present", reason: "The answer names Kyoto." },
-        reason: { verdict: "weak", reason: "The reason is thin." },
-      },
-      fixes: [
-        { before: "old temples", after: "centuries-old temples", why: "More vivid." },
-      ],
+      structure,
+      fixes:
+        topic.id === SHORT_PREP.id
+          ? [
+              {
+                before: "old temples",
+                after: "centuries-old temples",
+                why: "More vivid.",
+              },
+            ]
+          : [],
       rewrite: REWRITE,
       grammar: [],
     },
@@ -74,8 +116,8 @@ function stubFetch(...responses: Response[]): RecordedCall[] {
   return calls;
 }
 
-function renderDrill(topics: readonly Topic[]): void {
-  render(
+function renderDrill(topics: readonly Topic[]) {
+  return render(
     <NextIntlClientProvider locale="en" messages={en}>
       <UnitDrill unit={1} topics={topics} />
     </NextIntlClientProvider>,
@@ -152,6 +194,83 @@ describe("the drill page's client leaf", () => {
     expect([SHORT_PREP.text, OTHER_SHORT_PREP.text]).toContain(second);
     expect(second).not.toBe(first);
     expect(calls).toStrictEqual([]);
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it("persists answered topics and resumes them after remounting", async () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    const view = renderDrill([SHORT_PREP, OTHER_SHORT_PREP]);
+    stubFetch(Response.json(feedbackBody(SHORT_PREP)));
+
+    typeAnswer(ANSWER);
+    clickButton(en.Drill.send);
+    await screen.findByText(REWRITE);
+    clickButton(en.Drill.next);
+
+    expect(
+      JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
+    ).toMatchObject({
+      units: {
+        1: { answeredTopicIds: [SHORT_PREP.id], completed: false },
+      },
+    });
+
+    view.unmount();
+    renderDrill([SHORT_PREP, OTHER_SHORT_PREP]);
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: OTHER_SHORT_PREP.text }),
+    ).toBeInTheDocument();
+  });
+
+  it("persists completion and starts a fresh pass without clearing completion", async () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    stubFetch(...FULL_PASS_TOPICS.map((topic) => Response.json(feedbackBody(topic))));
+    const view = renderDrill(FULL_PASS_TOPICS);
+
+    for (const [index] of FULL_PASS_TOPICS.entries()) {
+      typeAnswer(ANSWER);
+      clickButton(en.Drill.send);
+      await screen.findByText(REWRITE);
+      clickButton(en.Drill.next);
+
+      if (index < FULL_PASS_TOPICS.length - 1) {
+        const next = FULL_PASS_TOPICS[index + 1];
+        if (next !== undefined) {
+          await screen.findByRole("heading", { level: 2, name: next.text });
+        }
+      }
+    }
+
+    expect(
+      screen.getByRole("heading", { name: en.Drill.complete.heading }),
+    ).toBeInTheDocument();
+    expect(
+      JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
+    ).toMatchObject({
+      units: {
+        1: {
+          answeredTopicIds: FULL_PASS_TOPICS.map(({ id }) => id),
+          completed: true,
+        },
+      },
+    });
+
+    view.unmount();
+    renderDrill(FULL_PASS_TOPICS);
+    expect(
+      await screen.findByRole("heading", { name: en.Drill.complete.heading }),
+    ).toBeInTheDocument();
+
+    clickButton(en.Drill.complete.restart);
+    expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
+    expect(
+      JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
+    ).toMatchObject({
+      units: {
+        1: { answeredTopicIds: [], completed: true },
+      },
+    });
   });
 
   it("keeps the answer and offers a resend when the endpoint fails", async () => {
