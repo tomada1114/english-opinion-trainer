@@ -172,8 +172,7 @@ export function TopicAttempt({
       {answered ? (
         <>
           <FeedbackView
-            structure={topic.structure}
-            mode={topic.mode}
+            topic={topic}
             level={submittedLevel ?? level}
             usedSeed={usedSeed}
             feedback={phase.feedback}

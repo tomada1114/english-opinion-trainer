@@ -58,7 +58,10 @@
       "fixesHeading": "What to fix",
       "noFixes": "Nothing to fix.",
       "rewriteHeading": "Rewrite",
-      "savePhrase": "Save to phrases (coming soon)",
+      "editRewriteLabel": "Edit the rewrite",
+      "savePhrase": "Save to phrases",
+      "savedToPhrases": "Saved to phrases.",
+      "dismissSaved": "Dismiss",
       "grammarHeading": "Grammar notes",
       "noGrammar": "No grammar notes."
     },
