@@ -48,13 +48,16 @@ const REMOVED_PATHS = [
   ".agents/skills/integrating-llm",
   ".claude/skills/integrating-llm",
   "src/ai",
+  "src/app/api",
   "src/server/composition.ts",
+  "src/server/handlers/feedback.ts",
   "tests/ai-anthropic.test.ts",
   "tests/ai-layer-removal.test.ts",
   "tests/ai-port.test.ts",
   "tests/ai-vendor-swap.test.ts",
   "tests/fixtures/llm",
   "tests/llm-replay.ts",
+  "tests/server-handler.test.ts",
 ];
 
 /**
@@ -93,11 +96,11 @@ const AI_LAYER_TOKENS = ["ANTHROPIC_API_KEY", "@anthropic-ai"];
  * layer, and a needle matching a survivor that is not on the edited lists
  * fails this suite for a false reason.
  *
- * `/api/ask` belongs here rather than on `REMOVED_PATHS` because it names the
- * removed route by its URL, not its source path: `REMOVED_PATHS` carries
- * `src/app/api`, and `"src/app/api".includes(text)` never matches a sentence
- * or a test request that spells the route as `POST /api/ask` — the two
- * strings share no substring. A document names an endpoint by the address a
+ * `/api/ask` and `/api/feedback` belong here rather than on `REMOVED_PATHS`
+ * because they name a route by its URL, not its source path: `REMOVED_PATHS`
+ * carries `src/app/api`, and `"src/app/api".includes(text)` never matches a
+ * sentence or a test request that spells the route as `POST /api/feedback` —
+ * the two strings share no substring. A document names an endpoint by the address a
  * caller sends a request to at least as often as by the file that answers it,
  * so the URL needs a needle of its own the same way `outputLanguage` needs one
  * separate from `src/ai/port.ts`.
@@ -109,6 +112,7 @@ const AI_LAYER_SYMBOLS = [
   "outputLanguage",
   "askHandler",
   "/api/ask",
+  "/api/feedback",
 ];
 
 /**
@@ -155,10 +159,10 @@ const REMOVED_SKILL_NAMES = [
  * the locale matcher leaves alone — a case named `"a nested API route"` — and a
  * matcher test choosing a path that no longer exists needs a different
  * example, even though the matcher's own behaviour does not change.
- * `tests/server-smoke.test.ts` is not on this list: it asked the running
- * application for `POST /api/ask` too, but that route was deleted for a
- * reason unrelated to a full AI-layer removal (issue #6), so the cases naming
- * it are already gone and the file no longer names the layer at all. This
+ * `tests/server-smoke.test.ts` asks the running application for
+ * `POST /api/feedback`, the one route the layer answers, so the removal
+ * deletes those cases the same way it deletes the route; it is a test of the
+ * composed application, not a module the layer is embedded in. This
  * half is where the separability property lives: it is the one that has to stay
  * near-empty, and an entry joining it means an application module now has to
  * be edited by the removal — the moment the layer has stopped coming out in
@@ -172,6 +176,7 @@ const EDITED_CODE_FILES = [
   "tests/boundaries.test.ts",
   "tests/proxy.test.ts",
   "tests/server-env.test.ts",
+  "tests/server-smoke.test.ts",
   "vitest.config.ts",
 ];
 
