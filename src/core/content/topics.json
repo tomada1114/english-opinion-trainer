@@ -1,0 +1,44 @@
+[
+  {
+    "id": "prep-travel-short",
+    "category": "travel",
+    "structure": "prep",
+    "mode": "short",
+    "text": "What is one place you would recommend to a friend visiting your country?"
+  },
+  {
+    "id": "prep-food-long",
+    "category": "food",
+    "structure": "prep",
+    "mode": "long",
+    "text": "Which dish would you recommend to someone trying your country's food for the first time?"
+  },
+  {
+    "id": "concession-work-short",
+    "category": "work",
+    "structure": "concession",
+    "mode": "short",
+    "text": "Do you agree that working from home is better than working in an office?"
+  },
+  {
+    "id": "concession-technology-long",
+    "category": "technology",
+    "structure": "concession",
+    "mode": "long",
+    "text": "Do you agree that smartphones make people less social?"
+  },
+  {
+    "id": "comparison-city-life-short",
+    "category": "city-life",
+    "structure": "comparison",
+    "mode": "short",
+    "text": "Would you rather live in a big city or a small town?"
+  },
+  {
+    "id": "comparison-learning-long",
+    "category": "learning",
+    "structure": "comparison",
+    "mode": "long",
+    "text": "Is it better to learn a new language in a classroom or on your own?"
+  }
+]

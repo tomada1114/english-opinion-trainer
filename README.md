@@ -31,26 +31,20 @@ for now (owner decision 2026-09-10; see `building-the-drill`). The page it rende
 `/[locale]/` tree and the typed catalogs stay in place so a locale can be added back by
 reverting that decision; see `starting-an-app`'s "The locale decision".
 
-There is one API route, `POST /api/ask`, which takes
-`{ "prompt": "...", "locale": "en" }` and answers `{ "answer": "..." }`. The `locale` is
-a UI locale, and the handler is what maps it to the language the model writes in. The
-route runs against a fake language-model adapter, so it needs no credentials;
-`src/server/composition.ts` is the single place that decides which adapter is behind it.
-Copy `.env.example` to `.env` when you swap in one that needs a key.
+The language-model call lives behind `LlmPort` in `src/ai/index.ts`, with a fake adapter
+wired by default in `src/server/composition.ts` — that is what needs no credentials.
+Copy `.env.example` to `.env` when you swap in an adapter that needs a key.
+`src/server/composition.ts` is the single place that decides which adapter is behind the
+port; swapping one in bills a provider for every call it answers, and this template
+ships no authentication or rate limit of its own to protect that cost — a deployment
+using a billed adapter enforces its own caller-throughput policy at an edge or gateway
+instead, and keeps a spend limit on the provider side.
 
-Swapping one in also closes the endpoint. `src/server/composition.ts` declares that the
-adapter it wires bills a provider, and `readServerEnv` then requires `API_ACCESS_KEY` —
-a deployment that pays for its answers refuses to start rather than serving anyone who
-finds the URL — after which the route answers `401` unless the request carries that key
-as `Authorization: Bearer <value>`. Exporting a provider credential does not on its own
-close anything: while the fake adapter answers, nothing is billed and nothing is
-required. That is authentication and nothing more: this template ships no rate limit.
-
-What the route does bound is the size of a request. The `prompt` is trimmed and must be
-1 to 8000 characters, and the body is refused with `413` once it crosses 64 KiB while it
-is being read — before the model is asked, on either path. Both ceilings are constants:
-`MAX_PROMPT_LENGTH` in `src/server/handlers/ask.ts` and `MAX_REQUEST_BODY_BYTES` in
-`src/server/http.ts`.
+This template ships no route of its own today: `POST /api/ask`, its demo endpoint, is
+deleted, since a project built from this template makes its own kind of call rather than
+a free-text one. Add your own Route Handler over the port following the pattern
+`building-app-routes` describes, and wire it in `src/server/composition.ts`, the
+composition root that currently has nothing to compose a handler with.
 
 ## Starting a new app from this template
 
