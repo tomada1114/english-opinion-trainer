@@ -1,7 +1,12 @@
 import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 
-import { elementsFor, type Mode, type StructureType } from "../../../../../core/drill";
+import {
+  elementsFor,
+  type Level,
+  type Mode,
+  type StructureType,
+} from "../../../../../core/drill";
 import type { Feedback, Verdict } from "../../../../../core/feedback";
 
 interface ElementJudgement {
@@ -17,6 +22,8 @@ export function FeedbackView({
 }: Readonly<{
   structure: StructureType;
   mode: Mode;
+  level: Level;
+  usedSeed: boolean;
   feedback: Feedback;
 }>): ReactElement {
   const t = useTranslations("Drill");

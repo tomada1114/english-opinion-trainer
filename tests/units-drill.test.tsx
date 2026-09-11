@@ -6,6 +6,7 @@ import UnitPage from "../src/app/[locale]/units/[unitId]/page";
 import { UnitDrill } from "../src/app/[locale]/units/[unitId]/_client/unit-drill";
 import type { Topic } from "../src/core/content/index";
 import { elementsFor } from "../src/core/drill";
+import { defaultState } from "../src/core/state";
 import en from "../messages/en.json";
 
 vi.mock("next-intl/server", () => ({
@@ -30,6 +31,14 @@ const OTHER_SHORT_PREP: Topic = {
   structure: "prep",
   mode: "short",
   text: "Which fixture dish would you recommend?",
+};
+
+const SEEDED_SHORT_PREP: Topic = {
+  id: "prep-travel-short",
+  category: "travel",
+  structure: "prep",
+  mode: "short",
+  text: "What is one place you would recommend to a friend visiting your country?",
 };
 
 const ANSWER = "I recommend Kyoto because its old temples are beautiful.";
@@ -138,6 +147,7 @@ describe("the drill page's client leaf", () => {
     renderDrill([SHORT_PREP]);
 
     expect(screen.getByRole("heading", { name: SHORT_PREP.text })).toBeInTheDocument();
+    clickButton(en.Drill.showSeeds);
     typeAnswer(`  ${ANSWER}\n`);
     clickButton(en.Drill.send);
 
@@ -161,6 +171,56 @@ describe("the drill page's client leaf", () => {
       answer: ANSWER,
       level: "B1",
     });
+  });
+
+  it("reveals three seed rows without calling the feedback endpoint", () => {
+    const calls = stubFetch();
+    renderDrill([SEEDED_SHORT_PREP]);
+
+    expect(
+      screen.queryByRole("heading", { name: en.Drill.seeds.heading }),
+    ).not.toBeInTheDocument();
+    clickButton(en.Drill.showSeeds);
+
+    expect(
+      screen.getByRole("heading", { name: en.Drill.seeds.heading }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(`${en.Drill.seeds.stance}:`)).toHaveLength(3);
+    expect(screen.getAllByText(`${en.Drill.seeds.keyPhrases}:`)).toHaveLength(3);
+    expect(screen.getByText("a quiet countryside town")).toBeInTheDocument();
+    expect(calls).toStrictEqual([]);
+  });
+
+  it("uses the persisted level when choosing seed rows", () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ ...defaultState(), level: "B2" }),
+    );
+    renderDrill([SEEDED_SHORT_PREP]);
+
+    clickButton(en.Drill.showSeeds);
+
+    expect(screen.getByText("an under-the-radar rural town")).toBeInTheDocument();
+    expect(screen.queryByText("a quiet countryside town")).not.toBeInTheDocument();
+  });
+
+  it("collapses the seeds again when the next topic starts", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    renderDrill([SEEDED_SHORT_PREP, OTHER_SHORT_PREP]);
+
+    clickButton(en.Drill.showSeeds);
+    expect(
+      screen.getByRole("heading", { name: en.Drill.seeds.heading }),
+    ).toBeInTheDocument();
+
+    clickButton(en.Drill.skip);
+
+    expect(
+      screen.getByRole("button", { name: en.Drill.showSeeds }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: en.Drill.seeds.heading }),
+    ).not.toBeInTheDocument();
   });
 
   it.each([

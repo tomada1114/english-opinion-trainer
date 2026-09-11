@@ -28,6 +28,12 @@
     "resend": "Send again",
     "skip": "Skip this topic",
     "next": "Next topic",
+    "showSeeds": "Show seeds",
+    "seeds": {
+      "heading": "Starting points",
+      "stance": "Stance",
+      "keyPhrases": "Key phrases"
+    },
     "validation": {
       "empty": "Write an answer before asking for feedback.",
       "tooLong": "Keep your answer to {max} characters or fewer.",
