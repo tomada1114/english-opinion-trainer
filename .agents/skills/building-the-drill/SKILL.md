@@ -98,7 +98,10 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
   element order is never penalized. Granularity policy (verified 2026-09-10 against the
   structured-outputs docs; `maxItems`/`minLength`/`maxLength`/`minimum` are unsupported,
   `enum`/`required`/`additionalProperties:false`/`minItems` 0-or-1/`pattern` are): the
-  API guarantees which keys come back and their enum values, nothing about length or
+  API guarantees which keys come back and rejects extras through
+  `additionalProperties:false`, but it does not enforce `enum` values or `pattern`.
+  Those constraints are checked by the adapter's second `safeParseAsync` pass, and a
+  violation surfaces as `ERR_LLM_INVALID_OUTPUT`; nothing is guaranteed about length or
   count, so the prompt asks for ordering-by-importance and the server then clamps
   deterministically — `fixes` to the first 2, `grammar` to the first 5; a `rewrite` over
   the mode's sentence ceiling (2 `short` / 6 `long`) is logged, not regenerated. No
