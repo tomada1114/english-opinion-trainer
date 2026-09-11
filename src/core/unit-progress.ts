@@ -14,7 +14,7 @@ import type { Topic } from "./content";
 const TOPICS_PER_HALF = 8;
 
 /** A pass completes once this many topics have been answered. */
-const TOPICS_PER_PASS = TOPICS_PER_HALF * 2;
+export const TOPICS_PER_PASS = TOPICS_PER_HALF * 2;
 
 /**
  * One unit's progress through a single pass: which topics have been

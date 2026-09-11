@@ -5,22 +5,14 @@ import { type ChangeEvent, type ReactElement, useId } from "react";
 
 import {
   LEVELS,
+  STRUCTURE_TEMPLATES,
   structureForUnit,
   type Level,
-  type StructureType,
   type UnitId,
 } from "../../../core/drill";
+import { TOPICS_PER_PASS } from "../../../core/unit-progress";
 import { useStateDocument } from "../../_client/use-state-document";
 import { Link } from "../../../i18n/navigation";
-
-const TOPICS_PER_PASS = 16;
-
-const STRUCTURE_MESSAGE_KEYS = {
-  prep: "structure.prep",
-  concession: "structure.concession",
-  comparison: "structure.comparison",
-  mixed: "structure.mixed",
-} as const satisfies Record<StructureType | "mixed", string>;
 
 function isLevel(value: string): value is Level {
   return LEVELS.some((level) => level === value);
@@ -70,7 +62,11 @@ export function HomeDashboard({
               <h2>
                 <Link href={`/units/${String(unit)}`}>{t("unit", { unit })}</Link>
               </h2>
-              <p>{t(STRUCTURE_MESSAGE_KEYS[structure])}</p>
+              <p>
+                {structure === "mixed"
+                  ? t("structure.mixed")
+                  : STRUCTURE_TEMPLATES[structure]}
+              </p>
               <p>{t("progress", { answered, total: TOPICS_PER_PASS })}</p>
               {progress?.completed === true ? <p>{`✓ ${t("completed")}`}</p> : null}
             </li>

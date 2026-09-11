@@ -9,6 +9,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import HomePage from "../src/app/[locale]/page";
+import { STRUCTURE_TEMPLATES } from "../src/core/drill";
 import { defaultState } from "../src/core/state";
 import en from "../messages/en.json";
 
@@ -103,7 +104,7 @@ describe("HomePage", () => {
 
     await renderHomePage();
 
-    expect(screen.getByText(en.HomePage.structure.prep)).toBeInTheDocument();
+    expect(screen.getByText(STRUCTURE_TEMPLATES.prep)).toBeInTheDocument();
     expect(
       screen.getByText(
         en.HomePage.progress.replace("{answered}", "5").replace("{total}", "16"),

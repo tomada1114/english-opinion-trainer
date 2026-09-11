@@ -10,9 +10,6 @@
     "levelLabel": "Practice level",
     "unit": "Unit {unit}",
     "structure": {
-      "prep": "Point → reason → example → restatement",
-      "concession": "Acknowledge the other side → give your opinion → give a reason",
-      "comparison": "Contrast the options → make your choice → give a reason",
       "mixed": "Mixed structures"
     },
     "progress": "{answered} / {total} topics answered",
