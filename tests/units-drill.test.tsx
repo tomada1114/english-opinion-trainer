@@ -45,6 +45,8 @@ const ANSWER = "I recommend Kyoto because its old temples are beautiful.";
 
 const REWRITE = "I would recommend Kyoto, because its old temples are beautiful.";
 
+const EDITED_REWRITE = "I recommend Kyoto for its centuries-old temples.";
+
 const STORAGE_KEY = "english-opinion-trainer";
 
 const FULL_PASS_TOPICS: readonly Topic[] = [
@@ -112,6 +114,18 @@ interface RecordedCall {
   readonly init: RequestInit | undefined;
 }
 
+interface StoredPhrase {
+  readonly id: string;
+  readonly text: string;
+  readonly topicId: string;
+  readonly category: string;
+  readonly structure: string;
+  readonly mode: string;
+  readonly level: string;
+  readonly usedSeed: boolean;
+  readonly savedAt: string;
+}
+
 /** Stubs `fetch` to answer each call with the next response, recording every call. */
 function stubFetch(...responses: Response[]): RecordedCall[] {
   const calls: RecordedCall[] = [];
@@ -165,7 +179,7 @@ describe("the drill page's client leaf", () => {
     expect(screen.getByRole("button", { name: en.Drill.showSeeds })).toBeDisabled();
     expect(
       screen.getByRole("button", { name: en.Drill.feedback.savePhrase }),
-    ).toBeDisabled();
+    ).toBeEnabled();
 
     expect(calls).toHaveLength(1);
     expect(calls[0]?.url).toBe("/api/feedback");
@@ -177,6 +191,96 @@ describe("the drill page's client leaf", () => {
       answer: ANSWER,
       level: "B1",
     });
+  });
+
+  it("saves an edited rewrite with its feedback context and allows dismissal", async () => {
+    stubFetch(Response.json(feedbackBody(SHORT_PREP)));
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    clickButton(en.Drill.send);
+    await screen.findByText(REWRITE);
+    fireEvent.change(screen.getByLabelText(en.Drill.feedback.editRewriteLabel), {
+      target: { value: EDITED_REWRITE },
+    });
+    clickButton(en.Drill.feedback.savePhrase);
+
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      en.Drill.feedback.savedToPhrases,
+    );
+    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null") as {
+      readonly phrases: readonly StoredPhrase[];
+    };
+    expect(stored.phrases).toHaveLength(1);
+    expect(stored.phrases[0]).toMatchObject({
+      text: EDITED_REWRITE,
+      topicId: SHORT_PREP.id,
+      category: SHORT_PREP.category,
+      structure: SHORT_PREP.structure,
+      mode: SHORT_PREP.mode,
+      level: "B1",
+      usedSeed: false,
+    });
+    expect(Number.isNaN(Date.parse(stored.phrases[0]?.savedAt ?? ""))).toBe(false);
+
+    clickButton(en.Drill.feedback.dismissSaved);
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    clickButton(en.Drill.next);
+    expect(
+      screen.getByRole("heading", { name: en.Drill.complete.heading }),
+    ).toBeInTheDocument();
+  });
+
+  it("appends distinct entries and keeps the submitted level after a state change", async () => {
+    stubFetch(Response.json(feedbackBody(SHORT_PREP)));
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    clickButton(en.Drill.send);
+    await screen.findByText(REWRITE);
+
+    const storedBeforeLevelChange = JSON.parse(
+      window.localStorage.getItem(STORAGE_KEY) ?? "null",
+    ) as Record<string, unknown>;
+    const changedState = JSON.stringify({ ...storedBeforeLevelChange, level: "B2" });
+    window.localStorage.setItem(STORAGE_KEY, changedState);
+    act(() => {
+      window.dispatchEvent(
+        new StorageEvent("storage", { key: STORAGE_KEY, newValue: changedState }),
+      );
+    });
+
+    clickButton(en.Drill.feedback.savePhrase);
+    clickButton(en.Drill.feedback.savePhrase);
+
+    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null") as {
+      readonly phrases: readonly StoredPhrase[];
+    };
+    expect(stored.phrases).toHaveLength(2);
+    expect(stored.phrases[0]?.id).not.toBe(stored.phrases[1]?.id);
+    expect(stored.phrases.map((phrase) => phrase.level)).toStrictEqual(["B1", "B1"]);
+    expect(
+      stored.phrases.every((phrase) => !Number.isNaN(Date.parse(phrase.savedAt))),
+    ).toBe(true);
+  });
+
+  it("disables saving an all-whitespace rewrite", async () => {
+    stubFetch(Response.json(feedbackBody(SHORT_PREP)));
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    clickButton(en.Drill.send);
+    await screen.findByText(REWRITE);
+    fireEvent.change(screen.getByLabelText(en.Drill.feedback.editRewriteLabel), {
+      target: { value: " \n\t" },
+    });
+
+    const saveButton = screen.getByRole("button", {
+      name: en.Drill.feedback.savePhrase,
+    });
+    expect(saveButton).toBeDisabled();
+    clickButton(en.Drill.feedback.savePhrase);
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
 
   it("reveals three seed rows without calling the feedback endpoint", () => {
