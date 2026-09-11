@@ -157,6 +157,11 @@ describe("the drill page's client leaf", () => {
     expect(screen.getByText(/Weak — The reason is thin\./)).toBeInTheDocument();
     expect(screen.getByText("centuries-old temples")).toBeInTheDocument();
     expect(screen.getByText(en.Drill.feedback.noGrammar)).toBeInTheDocument();
+    const feedbackHeading = screen.getByRole("heading", {
+      name: en.Drill.feedback.heading,
+    });
+    expect(feedbackHeading.parentElement).toHaveAttribute("data-answer-level", "B1");
+    expect(feedbackHeading.parentElement).toHaveAttribute("data-used-seed", "true");
     expect(
       screen.getByRole("button", { name: en.Drill.feedback.savePhrase }),
     ).toBeDisabled();

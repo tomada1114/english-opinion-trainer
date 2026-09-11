@@ -18,6 +18,8 @@ interface ElementJudgement {
 export function FeedbackView({
   structure,
   mode,
+  level,
+  usedSeed,
   feedback,
 }: Readonly<{
   structure: StructureType;
@@ -30,7 +32,7 @@ export function FeedbackView({
   const judgements: Readonly<Record<string, ElementJudgement>> = feedback.structure;
 
   return (
-    <section>
+    <section data-answer-level={level} data-used-seed={usedSeed}>
       <h3>{t("feedback.heading")}</h3>
 
       <h4>{t("feedback.structureHeading")}</h4>
