@@ -10,6 +10,7 @@ import {
   LEVELS,
   type Mode,
   MODES,
+  parseUnitId,
   QUESTION_TYPE_TO_STRUCTURE,
   type QuestionType,
   QUESTION_TYPES,
@@ -99,6 +100,28 @@ describe("structureForUnit", () => {
       structureForUnit(5);
     expectTypeOf(structureForUnit(4)).toEqualTypeOf<StructureType | "mixed">();
     expect(rejected).toBeTypeOf("function");
+  });
+});
+
+describe("parseUnitId", () => {
+  it.each([
+    ["1", 1],
+    ["2", 2],
+    ["3", 3],
+    ["4", 4],
+  ] as const)("reads %p as unit %i", (segment, expected) => {
+    expect(parseUnitId(segment)).toBe(expected);
+  });
+
+  it.each(["0", "5", "-1", "01", "1.0", " 1", "1 ", "", "one", "NaN"])(
+    "reads %p as no unit",
+    (segment) => {
+      expect(parseUnitId(segment)).toBeUndefined();
+    },
+  );
+
+  it("is typed to return a UnitId or undefined", () => {
+    expectTypeOf(parseUnitId).returns.toEqualTypeOf<UnitId | undefined>();
   });
 });
 

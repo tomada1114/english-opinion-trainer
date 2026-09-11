@@ -164,6 +164,7 @@ describe("the import scanner the zone assertions run on", () => {
       [
         "zod",
         "../../ai/index",
+        "../../core/answer-rules",
         "../../core/content/index",
         "../../core/drill",
         "../../core/feedback",
