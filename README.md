@@ -11,10 +11,10 @@ tree, one JSON endpoint, and one language-model call kept behind an interface ra
 than called directly. ESM-only TypeScript throughout.
 
 Two things follow from that last part, and they are most of why this template exists. A
-fake adapter is wired in by default, so `pnpm dev` answers a request before any
-credential exists — the first thing you do with a checkout is run it, not go and find an
-API key. And a project that wants no model at all deletes the layer in one piece instead
-of unpicking it, which a test keeps true rather than a convention.
+missing credential is a per-request error rather than a boot failure, so `pnpm dev`
+starts before any API key exists — the first thing you do with a checkout is run it, not
+go and find one. And a project that wants no model at all deletes the layer in one piece
+instead of unpicking it, which a test keeps true rather than a convention.
 
 `AGENTS.md` describes the architecture and the rules; this file is the tour.
 
@@ -31,14 +31,14 @@ for now (owner decision 2026-09-10; see `building-the-drill`). The page it rende
 `/[locale]/` tree and the typed catalogs stay in place so a locale can be added back by
 reverting that decision; see `starting-an-app`'s "The locale decision".
 
-The language-model call lives behind `LlmPort` in `src/ai/index.ts`, with a fake adapter
-wired by default in `src/server/composition.ts` — that is what needs no credentials.
-Copy `.env.example` to `.env` when you swap in an adapter that needs a key.
-`src/server/composition.ts` is the single place that decides which adapter is behind the
-port; swapping one in bills a provider for every call it answers, and this template
-ships no authentication or rate limit of its own to protect that cost — a deployment
-using a billed adapter enforces its own caller-throughput policy at an edge or gateway
-instead, and keeps a spend limit on the provider side.
+The language-model call lives behind `LlmPort` in `src/ai/index.ts`, and
+`src/server/composition.ts` wires a provider adapter on `claude-haiku-4-5`. Copy
+`.env.example` to `.env` and fill in the provider key it names to get real feedback;
+without it the app still starts, and `POST /api/feedback` answers `500 ERR_LLM_AUTH`.
+Every call bills the provider, and this app ships no authentication or rate limit of its
+own to protect that cost: issue the key from a dedicated workspace on the model
+provider's side with a spend limit, which is the deployment's cost control — spend
+limits are set per workspace or organization, never per API key.
 
 This template ships no route of its own today: `POST /api/ask`, its demo endpoint, is
 deleted, since a project built from this template makes its own kind of call rather than

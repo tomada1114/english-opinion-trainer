@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import * as z from "zod";
+import { describe, expect, it, vi } from "vitest";
+import type * as z from "zod";
 
 import {
   createFakeLlmPort,
@@ -9,8 +9,6 @@ import {
   type LlmRequest,
 } from "../src/ai/index";
 import { POST } from "../src/app/api/feedback/route";
-import { getTopics } from "../src/core/content/index";
-import { feedbackSchemaFor } from "../src/core/feedback";
 import { buildFeedbackPrompt } from "../src/core/feedback-prompt";
 import type { Result } from "../src/core/result";
 import { feedbackHandler } from "../src/server/composition";
@@ -670,35 +668,21 @@ describe("the composed /api/feedback route", () => {
     expect(POST).toBe(feedbackHandler);
   });
 
-  // Every shipped topic, because each structure × mode is its own strict
-  // schema: this is what shows the wired adapter answers all six shapes. The
-  // body is matched by shape, not wording — which adapter answers is
-  // composition.ts's to change.
-  it.each(getTopics().map((topic) => [topic.id, topic] as const))(
-    "answers %s with 200 and the feedback envelope",
-    async (_id, topic) => {
-      const response = await feedbackHandler(
-        feedbackRequest({ topicId: topic.id, answer: "I recommend Kyoto." }),
-      );
+  // Re-imported under a stubbed-out key rather than driven through the static
+  // import: the wired adapter reaches a billed provider, and a machine that
+  // exports a real key for fixture recording must not pay for this suite.
+  it("reports a missing key as 500 ERR_LLM_AUTH on the request, not at boot", async () => {
+    vi.stubEnv("ANTHROPIC_API_KEY", undefined);
+    vi.resetModules();
+    const composition = await import("../src/server/composition");
 
-      expect(response.status).toBe(200);
-      const body: unknown = await response.json();
-      expect(body).toMatchObject({
-        topicId: topic.id,
-        structure: topic.structure,
-        mode: topic.mode,
-        level: "B1",
-      });
-      const envelope = z.strictObject({
-        topicId: z.string(),
-        structure: z.string(),
-        mode: z.string(),
-        level: z.string(),
-        feedback: feedbackSchemaFor(topic.structure, topic.mode),
-      });
-      expect(envelope.safeParse(body).success).toBe(true);
-    },
-  );
+    const response = await composition.feedbackHandler(feedbackRequest());
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "ERR_LLM_AUTH" },
+    });
+  });
 
   it("rejects a cross-site request", async () => {
     const response = await POST(

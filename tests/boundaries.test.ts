@@ -175,15 +175,7 @@ describe("the import scanner the zone assertions run on", () => {
     ["src/app/api/feedback/route.ts", ["../../../server/composition"]],
     [
       "src/server/composition.ts",
-      [
-        "server-only",
-        "zod",
-        "../ai/index",
-        "../core/drill",
-        "../core/result",
-        "./env",
-        "./handlers/feedback",
-      ],
+      ["server-only", "../ai/index", "./env", "./handlers/feedback"],
     ],
   ])("reads %s as %p", (file, expected) => {
     const module = sourceModules.find((candidate) => candidate.file === file);

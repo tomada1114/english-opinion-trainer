@@ -320,8 +320,11 @@ beforeAll(async () => {
       // and Next.js's CLI only fills the variable in when it is absent, so the
       // production build would otherwise be served under `test` and every
       // `process.env.NODE_ENV === "production"` branch would take a path no
-      // deployment takes.
-      env: { ...process.env, NODE_ENV: "production" },
+      // deployment takes. `ANTHROPIC_API_KEY` is blanked rather than inherited
+      // so a machine exporting a real key never bills a provider from this
+      // suite; blank, not deleted, because Next.js fills an absent variable
+      // from a local `.env` but leaves one that is set alone.
+      env: { ...process.env, NODE_ENV: "production", ANTHROPIC_API_KEY: "" },
       stdio: ["ignore", "pipe", "pipe"],
       detached: true,
     },
@@ -373,18 +376,20 @@ describe("POST /api/feedback, served by `next start`", () => {
     level: "B1",
   });
 
-  it("answers a same-origin request with 200 and the topic echoed", async () => {
+  // The server was started with no key, so reaching the wired adapter shows up
+  // as its `ERR_LLM_AUTH` — which is also what proves a missing key is a
+  // per-request failure rather than one that stops `next start` booting.
+  it("passes a same-origin request through to the adapter, which reports the missing key", async () => {
     const response = await fetch(`${baseUrl}/api/feedback`, {
       method: "POST",
       headers: { "content-type": "application/json", "sec-fetch-site": "same-origin" },
       body,
     });
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(500);
     expect(response.headers.get("content-type")).toContain("application/json");
     await expect(response.json()).resolves.toMatchObject({
-      topicId: getTopics()[0]?.id,
-      level: "B1",
+      error: { code: "ERR_LLM_AUTH" },
     });
   });
 
