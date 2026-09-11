@@ -192,15 +192,78 @@ describe("getTopicsForUnit", () => {
   });
 });
 
-describe("getSeedsForTopic", () => {
-  it("parses the committed seeds.json as an empty list", () => {
-    expect(seedsSchema.parse(seedsJson)).toStrictEqual([]);
+// The 48 topics × 3 levels × 3 seeds grid from #14. Every assertion reads the
+// dataset's own size, or derives it from the topic grid and the closed level
+// vocabulary, the same way the topics describe block above does.
+describe("the seeds dataset", () => {
+  const seeds = seedsSchema.parse(seedsJson);
+  const topics = getTopics();
+
+  it("has exactly one triple of 3 seeds per topic × level pair", () => {
+    expect(seeds.length).toBe(topics.length * LEVELS.length * 3);
   });
 
+  it("covers every (topicId, level) pair from the topic × level grid exactly once, with exactly 3 rows", () => {
+    const counts = new Map<string, number>();
+    for (const seed of seeds) {
+      const key = `${seed.topicId}/${seed.level}`;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+
+    for (const topic of topics) {
+      for (const level of LEVELS) {
+        expect(counts.get(`${topic.id}/${level}`)).toBe(3);
+      }
+    }
+    expect(counts.size).toBe(topics.length * LEVELS.length);
+  });
+
+  it("gives every (topicId, level) triple 3 distinct stance values", () => {
+    const stancesByTriple = new Map<string, Set<string>>();
+    for (const seed of seeds) {
+      const key = `${seed.topicId}/${seed.level}`;
+      const stances = stancesByTriple.get(key) ?? new Set<string>();
+      stances.add(seed.stance);
+      stancesByTriple.set(key, stances);
+    }
+
+    expect([...stancesByTriple.values()].every((stances) => stances.size === 3)).toBe(
+      true,
+    );
+  });
+
+  it("writes every keyPhrases entry with no terminal punctuation and at most 12 words", () => {
+    for (const seed of seeds) {
+      for (const phrase of seed.keyPhrases) {
+        expect(/[.!?]$/u.test(phrase.trim())).toBe(false);
+        expect(phrase.trim().split(/\s+/u).length).toBeLessThanOrEqual(12);
+      }
+    }
+  });
+
+  it("writes every stance and keyPhrases entry in English, with no CJK", () => {
+    for (const seed of seeds) {
+      expect(CJK.test(seed.stance)).toBe(false);
+      expect(seed.keyPhrases.some((phrase) => CJK.test(phrase))).toBe(false);
+    }
+  });
+
+  it("names a topicId that exists in topics.json, for every seed", () => {
+    const topicIds = new Set(topics.map((topic) => topic.id));
+    expect(seeds.every((seed) => topicIds.has(seed.topicId))).toBe(true);
+  });
+});
+
+describe("getSeedsForTopic", () => {
   it.each(LEVELS)(
-    "returns no seeds for a known topic at %s, without throwing",
+    "returns exactly 3 seeds for a known topic at %s, each naming that topic and level",
     (level) => {
-      expect(getSeedsForTopic("prep-travel-short", level)).toStrictEqual([]);
+      const seeds = getSeedsForTopic("prep-travel-short", level);
+      expect(seeds).toHaveLength(3);
+      for (const seed of seeds) {
+        expect(seed.topicId).toBe("prep-travel-short");
+        expect(seed.level).toBe(level);
+      }
     },
   );
 
