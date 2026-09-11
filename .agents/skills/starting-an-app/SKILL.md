@@ -73,22 +73,22 @@ What goes into each site:
   it. Every fork inherits `LICENSE` verbatim, which is why the template ships a blank.
 - **The app's display name** — the `title` in `src/app/[locale]/layout.tsx`'s
   `metadata`, which is the browser tab, and the `HomePage.title` key in
-  `messages/en.json` and `messages/ja.json`, which is the page heading. Only the catalog
-  half is per-locale — each catalog gets the name written in its own language; the
-  layout's `title`, like `description` below, is one hard-coded string.
+  `messages/en.json`, which is the page heading. Only the catalog half is per-locale —
+  each catalog gets the name written in its own language, and a locale added back gets
+  its own row here too; the layout's `title`, like `description` below, is one
+  hard-coded string.
 - **The one-line `description`** in that same `metadata` block, which renders into
   `<meta name="description">` and so into search results and link previews. It is not
   per-locale — the layout hard-codes one string for every locale — so there is one site,
   not one per catalog.
 
 Those are the only reader-visible strings the inventory covers. The home page's body
-text — each catalog's `HomePage.intro` and `HomePage.localeCount`, which still describe
-the page as a template — is deliberately left out: it is demo copy for a demo page you
-are expected to rewrite or delete, so pinning it would pin strings that may not survive
-your first day, and one of them is quoted in `localizing-ui` as a worked example that
-has nothing to do with your identity. Review that copy by hand once the page is yours.
-`tests/home-page.test.tsx` asserts the English `intro` as a literal, so rewriting it
-turns that test red; update the assertion in the same edit.
+text — each catalog's `HomePage.intro`, which still describes the page as a template —
+is deliberately left out: it is demo copy for a demo page you are expected to rewrite or
+delete, so pinning it would pin a string that may not survive your first day. Review
+that copy by hand once the page is yours. `tests/home-page.test.tsx` asserts the English
+`intro` as a literal, so rewriting it turns that test red; update the assertion in the
+same edit.
 
 Emptying `EXPECTED_INVENTORY` is the intended edit and is not weakening a gate. Widening
 `SKIPPED_DIRECTORIES` or `SKIPPED_FILES`, or dropping an entry from `PLACEHOLDERS`, to
@@ -215,8 +215,8 @@ forward. Dropping `ja` touches:
 - `tests/messages.test.ts` — its switcher key in `MESSAGE_KEYS`, plus every other place
   it names the locale literally — and `tests/proxy.test.ts` and
   `tests/home-page.test.tsx`, each of which names the locale literally too.
-- `README.md`'s quick start, and AGENTS.md's Conventions exception, which names
-  `messages/ja.json` as the one committed file that is not in English.
+- `README.md`'s quick start, and AGENTS.md's Conventions exception for the non-English
+  `messages/*.json` catalogs.
 
 `src/proxy.ts` does **not** change: its matcher excludes API routes, framework asset
 trees and paths with an extension, and names no locale at all. `tests/proxy.test.ts`
