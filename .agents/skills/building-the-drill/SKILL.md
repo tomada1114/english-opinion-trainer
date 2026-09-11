@@ -157,9 +157,10 @@ A reader of `building-app-routes` or `integrating-llm` should not be confused by
 - When, or whether, `ja` returns — the mechanism is kept so it is a documented edit
   rather than a rebuild, but no date or trigger is decided.
 - Folder names marked "assumption" in the design doc (`src/core/content/` for static
-  data, `src/app/_client/` for the localStorage adapter and hook, the `concession`/
-  `comparison` element key names) — treat these as the current default, not settled,
-  until an issue confirms or changes them.
+  data, `src/app/_client/` for the localStorage adapter and hook) — treat these as the
+  current default, not settled, until an issue confirms or changes them. The element key
+  names and category slugs in the vocabulary table above are settled:
+  `src/core/drill.ts` is their source of truth.
 
 ## Planning history
 
