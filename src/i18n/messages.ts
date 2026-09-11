@@ -1,5 +1,4 @@
 import en from "../../messages/en.json";
-import ja from "../../messages/ja.json";
 import type { Locale } from "./locales";
 
 /**
@@ -43,11 +42,11 @@ export type MessageKey = DottedKeys<Messages>;
  * The catalogs, keyed by locale.
  *
  * @remarks
- * Both are imported statically rather than through a dynamic `import()` per
- * locale. Two small catalogs are not worth a code-split, and a static import is
- * what gives {@link Messages} something to be inferred from.
+ * Imported statically rather than through a dynamic `import()` per locale. A
+ * small catalog is not worth a code-split, and a static import is what gives
+ * {@link Messages} something to be inferred from.
  */
-export const MESSAGES: Readonly<Record<Locale, Messages>> = { en, ja };
+export const MESSAGES: Readonly<Record<Locale, Messages>> = { en };
 
 declare module "next-intl" {
   // Teaches `useTranslations`, `getTranslations` and `useLocale` this

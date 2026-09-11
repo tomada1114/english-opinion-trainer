@@ -49,7 +49,6 @@ export interface AskHandlerDependencies {
  */
 const OUTPUT_LANGUAGE_BY_LOCALE = {
   en: "en",
-  ja: "ja",
 } as const satisfies Record<Locale, string>;
 
 /**
