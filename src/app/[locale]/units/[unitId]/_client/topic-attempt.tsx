@@ -173,8 +173,6 @@ export function TopicAttempt({
         <>
           <FeedbackView
             topic={topic}
-            structure={topic.structure}
-            mode={topic.mode}
             level={submittedLevel ?? level}
             usedSeed={usedSeed}
             feedback={phase.feedback}

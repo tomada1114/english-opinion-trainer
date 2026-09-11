@@ -45,7 +45,7 @@ const ANSWER = "I recommend Kyoto because its old temples are beautiful.";
 
 const REWRITE = "I would recommend Kyoto, because its old temples are beautiful.";
 
-const EDITED_REWRITE = "I recommend Kyoto for its centuries-old temples.";
+const EDITED_REWRITE = "  I recommend Kyoto for its centuries-old temples.  ";
 
 const STORAGE_KEY = "english-opinion-trainer";
 
@@ -213,7 +213,7 @@ describe("the drill page's client leaf", () => {
     };
     expect(stored.phrases).toHaveLength(1);
     expect(stored.phrases[0]).toMatchObject({
-      text: EDITED_REWRITE,
+      text: EDITED_REWRITE.trim(),
       topicId: SHORT_PREP.id,
       category: SHORT_PREP.category,
       structure: SHORT_PREP.structure,

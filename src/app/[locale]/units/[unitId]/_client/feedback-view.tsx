@@ -2,12 +2,7 @@ import { useTranslations } from "next-intl";
 import { type ReactElement, useId, useState } from "react";
 
 import type { Topic } from "../../../../../core/content/index";
-import {
-  elementsFor,
-  type Level,
-  type Mode,
-  type StructureType,
-} from "../../../../../core/drill";
+import { elementsFor, type Level } from "../../../../../core/drill";
 import type { Feedback, Verdict } from "../../../../../core/feedback";
 import { useStateDocument } from "../../../../_client/use-state-document";
 
@@ -19,15 +14,11 @@ interface ElementJudgement {
 /** The schema-fixed feedback for one answer, one section per field. */
 export function FeedbackView({
   topic,
-  structure,
-  mode,
   level,
   usedSeed,
   feedback,
 }: Readonly<{
   topic: Topic;
-  structure: StructureType;
-  mode: Mode;
   level: Level;
   usedSeed: boolean;
   feedback: Feedback;
@@ -50,7 +41,7 @@ export function FeedbackView({
         ...current.phrases,
         {
           id: crypto.randomUUID(),
-          text: rewrite,
+          text: rewrite.trim(),
           topicId: topic.id,
           category: topic.category,
           structure: topic.structure,
@@ -70,7 +61,7 @@ export function FeedbackView({
 
       <h4>{t("feedback.structureHeading")}</h4>
       <ul>
-        {elementsFor(structure, mode).map((element) => {
+        {elementsFor(topic.structure, topic.mode).map((element) => {
           const judgement = judgements[element];
           return (
             <li key={element}>
