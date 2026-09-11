@@ -7,11 +7,137 @@
     "text": "What is one place you would recommend to a friend visiting your country?"
   },
   {
+    "id": "prep-travel-long",
+    "category": "travel",
+    "structure": "prep",
+    "mode": "long",
+    "text": "What is one trip you would recommend to someone who has never traveled abroad, and why?"
+  },
+  {
+    "id": "prep-food-short",
+    "category": "food",
+    "structure": "prep",
+    "mode": "short",
+    "text": "What is one meal you would recommend someone try at least once?"
+  },
+  {
     "id": "prep-food-long",
     "category": "food",
     "structure": "prep",
     "mode": "long",
     "text": "Which dish would you recommend to someone trying your country's food for the first time?"
+  },
+  {
+    "id": "prep-work-short",
+    "category": "work",
+    "structure": "prep",
+    "mode": "short",
+    "text": "What is one skill you would recommend a new coworker learn quickly?"
+  },
+  {
+    "id": "prep-work-long",
+    "category": "work",
+    "structure": "prep",
+    "mode": "long",
+    "text": "What kind of job would you recommend to someone who values free time over a high salary?"
+  },
+  {
+    "id": "prep-hobbies-short",
+    "category": "hobbies",
+    "structure": "prep",
+    "mode": "short",
+    "text": "What is one hobby you would recommend to someone with very little free time?"
+  },
+  {
+    "id": "prep-hobbies-long",
+    "category": "hobbies",
+    "structure": "prep",
+    "mode": "long",
+    "text": "What hobby would you recommend to someone who wants to feel less stressed after work?"
+  },
+  {
+    "id": "prep-technology-short",
+    "category": "technology",
+    "structure": "prep",
+    "mode": "short",
+    "text": "What is one app you would recommend to someone who wants to save more time?"
+  },
+  {
+    "id": "prep-technology-long",
+    "category": "technology",
+    "structure": "prep",
+    "mode": "long",
+    "text": "What kind of technology would you recommend to someone trying to stay in touch with family far away?"
+  },
+  {
+    "id": "prep-city-life-short",
+    "category": "city-life",
+    "structure": "prep",
+    "mode": "short",
+    "text": "What is one place in your city you would recommend to a visitor?"
+  },
+  {
+    "id": "prep-city-life-long",
+    "category": "city-life",
+    "structure": "prep",
+    "mode": "long",
+    "text": "What would you recommend to someone who is moving to a big city for the first time?"
+  },
+  {
+    "id": "prep-relationships-short",
+    "category": "relationships",
+    "structure": "prep",
+    "mode": "short",
+    "text": "What is one habit you would recommend for keeping a friendship strong?"
+  },
+  {
+    "id": "prep-relationships-long",
+    "category": "relationships",
+    "structure": "prep",
+    "mode": "long",
+    "text": "What would you recommend to someone who wants to make new friends as an adult?"
+  },
+  {
+    "id": "prep-learning-short",
+    "category": "learning",
+    "structure": "prep",
+    "mode": "short",
+    "text": "What is one skill you would recommend everyone learn at some point?"
+  },
+  {
+    "id": "prep-learning-long",
+    "category": "learning",
+    "structure": "prep",
+    "mode": "long",
+    "text": "What would you recommend to someone who wants to learn a new language as an adult?"
+  },
+  {
+    "id": "concession-travel-short",
+    "category": "travel",
+    "structure": "concession",
+    "mode": "short",
+    "text": "Do you agree that traveling alone is more rewarding than traveling in a group?"
+  },
+  {
+    "id": "concession-travel-long",
+    "category": "travel",
+    "structure": "concession",
+    "mode": "long",
+    "text": "Do you agree that people should learn some of a country's language before visiting it?"
+  },
+  {
+    "id": "concession-food-short",
+    "category": "food",
+    "structure": "concession",
+    "mode": "short",
+    "text": "Do you agree that cooking at home is healthier than eating at restaurants?"
+  },
+  {
+    "id": "concession-food-long",
+    "category": "food",
+    "structure": "concession",
+    "mode": "long",
+    "text": "Do you agree that people eat too much fast food in modern daily life?"
   },
   {
     "id": "concession-work-short",
@@ -21,6 +147,34 @@
     "text": "Do you agree that working from home is better than working in an office?"
   },
   {
+    "id": "concession-work-long",
+    "category": "work",
+    "structure": "concession",
+    "mode": "long",
+    "text": "Do you agree that a person's job should match their personal interests rather than pay the most?"
+  },
+  {
+    "id": "concession-hobbies-short",
+    "category": "hobbies",
+    "structure": "concession",
+    "mode": "short",
+    "text": "Do you agree that everyone needs a hobby outside of work or study?"
+  },
+  {
+    "id": "concession-hobbies-long",
+    "category": "hobbies",
+    "structure": "concession",
+    "mode": "long",
+    "text": "Do you agree that a hobby only counts as worthwhile if you get better at it over time?"
+  },
+  {
+    "id": "concession-technology-short",
+    "category": "technology",
+    "structure": "concession",
+    "mode": "short",
+    "text": "Do you agree that people spend too much time looking at screens each day?"
+  },
+  {
     "id": "concession-technology-long",
     "category": "technology",
     "structure": "concession",
@@ -28,11 +182,151 @@
     "text": "Do you agree that smartphones make people less social?"
   },
   {
+    "id": "concession-city-life-short",
+    "category": "city-life",
+    "structure": "concession",
+    "mode": "short",
+    "text": "Do you agree that public transportation is more convenient than driving in a big city?"
+  },
+  {
+    "id": "concession-city-life-long",
+    "category": "city-life",
+    "structure": "concession",
+    "mode": "long",
+    "text": "Do you agree that cities should limit the number of cars allowed in the center?"
+  },
+  {
+    "id": "concession-relationships-short",
+    "category": "relationships",
+    "structure": "concession",
+    "mode": "short",
+    "text": "Do you agree that honesty matters more than kindness in a close relationship?"
+  },
+  {
+    "id": "concession-relationships-long",
+    "category": "relationships",
+    "structure": "concession",
+    "mode": "long",
+    "text": "Do you agree that people should stay in touch with old friends even after they grow apart?"
+  },
+  {
+    "id": "concession-learning-short",
+    "category": "learning",
+    "structure": "concession",
+    "mode": "short",
+    "text": "Do you agree that people learn best by making mistakes rather than avoiding them?"
+  },
+  {
+    "id": "concession-learning-long",
+    "category": "learning",
+    "structure": "concession",
+    "mode": "long",
+    "text": "Do you agree that traditional classroom learning teaches skills better than learning on your own online?"
+  },
+  {
+    "id": "comparison-travel-short",
+    "category": "travel",
+    "structure": "comparison",
+    "mode": "short",
+    "text": "Would you rather travel to a new country or return to a place you already love?"
+  },
+  {
+    "id": "comparison-travel-long",
+    "category": "travel",
+    "structure": "comparison",
+    "mode": "long",
+    "text": "Is it better to plan your trips in detail or to travel with no fixed plan at all?"
+  },
+  {
+    "id": "comparison-food-short",
+    "category": "food",
+    "structure": "comparison",
+    "mode": "short",
+    "text": "Would you rather cook a meal yourself or have someone else cook it for you?"
+  },
+  {
+    "id": "comparison-food-long",
+    "category": "food",
+    "structure": "comparison",
+    "mode": "long",
+    "text": "Is it better to try unfamiliar dishes when you travel or stick to food you already know?"
+  },
+  {
+    "id": "comparison-work-short",
+    "category": "work",
+    "structure": "comparison",
+    "mode": "short",
+    "text": "Would you rather have a flexible schedule or a higher salary at your job?"
+  },
+  {
+    "id": "comparison-work-long",
+    "category": "work",
+    "structure": "comparison",
+    "mode": "long",
+    "text": "Is it better to work for a large company or start a business of your own?"
+  },
+  {
+    "id": "comparison-hobbies-short",
+    "category": "hobbies",
+    "structure": "comparison",
+    "mode": "short",
+    "text": "Would you rather spend free time alone or with other people?"
+  },
+  {
+    "id": "comparison-hobbies-long",
+    "category": "hobbies",
+    "structure": "comparison",
+    "mode": "long",
+    "text": "Is it better to have one hobby you love or several hobbies you enjoy a little?"
+  },
+  {
+    "id": "comparison-technology-short",
+    "category": "technology",
+    "structure": "comparison",
+    "mode": "short",
+    "text": "Would you rather send a message or make a phone call?"
+  },
+  {
+    "id": "comparison-technology-long",
+    "category": "technology",
+    "structure": "comparison",
+    "mode": "long",
+    "text": "Is it better to learn a new skill from a video or from a guide you read yourself?"
+  },
+  {
     "id": "comparison-city-life-short",
     "category": "city-life",
     "structure": "comparison",
     "mode": "short",
     "text": "Would you rather live in a big city or a small town?"
+  },
+  {
+    "id": "comparison-city-life-long",
+    "category": "city-life",
+    "structure": "comparison",
+    "mode": "long",
+    "text": "Is it better for you to live close to work or somewhere quieter with a longer commute?"
+  },
+  {
+    "id": "comparison-relationships-short",
+    "category": "relationships",
+    "structure": "comparison",
+    "mode": "short",
+    "text": "Would you rather have a few close friends or many casual ones?"
+  },
+  {
+    "id": "comparison-relationships-long",
+    "category": "relationships",
+    "structure": "comparison",
+    "mode": "long",
+    "text": "Is it better for you to resolve a disagreement right away or wait until both people calm down?"
+  },
+  {
+    "id": "comparison-learning-short",
+    "category": "learning",
+    "structure": "comparison",
+    "mode": "short",
+    "text": "Would you rather study a subject alone or with a group of classmates?"
   },
   {
     "id": "comparison-learning-long",

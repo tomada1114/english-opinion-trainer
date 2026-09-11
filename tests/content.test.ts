@@ -50,13 +50,20 @@ function makeSeed(overrides: Record<string, unknown> = {}): Record<string, unkno
   };
 }
 
-// Every assertion reads the dataset's own size, so the same suite holds for
-// the placeholders shipped now and the full grid that replaces them.
+// Every assertion reads the dataset's own size, or derives it from the
+// closed vocabularies, so the same suite holds for the placeholders shipped
+// before #13 and the full grid that replaces them.
 describe("the topics dataset", () => {
   const topics = getTopics();
 
   it("is not empty", () => {
     expect(topics.length).toBeGreaterThan(0);
+  });
+
+  it("fills the whole structure × category × mode grid, exactly once per cell", () => {
+    expect(topics.length).toBe(
+      STRUCTURE_TYPES.length * CATEGORIES.length * MODES.length,
+    );
   });
 
   it("gives every topic a unique id", () => {
@@ -87,6 +94,37 @@ describe("the topics dataset", () => {
     ).toBe(true);
   });
 
+  it.each(
+    STRUCTURE_TYPES.flatMap((structure) =>
+      CATEGORIES.flatMap((category) =>
+        MODES.map((mode) => [structure, category, mode] as const),
+      ),
+    ),
+  )("has exactly one %s/%s topic in %s mode", (structure, category, mode) => {
+    expect(
+      topics.filter(
+        (topic) =>
+          topic.structure === structure &&
+          topic.category === category &&
+          topic.mode === mode,
+      ),
+    ).toHaveLength(1);
+  });
+
+  it("gives every topic's id the <structure>-<category>-<mode> shape", () => {
+    for (const topic of topics) {
+      expect(topic.id).toBe(`${topic.structure}-${topic.category}-${topic.mode}`);
+    }
+  });
+
+  it("writes every topic as exactly one question, at most 20 words", () => {
+    for (const topic of topics) {
+      expect(topic.text.match(/\?/gu)).toHaveLength(1);
+      expect(topic.text.trim().endsWith("?")).toBe(true);
+      expect(topic.text.trim().split(/\s+/u).length).toBeLessThanOrEqual(20);
+    }
+  });
+
   it("writes every topic in English, with no CJK", () => {
     expect(topics.filter((topic) => CJK.test(topic.text))).toStrictEqual([]);
   });
@@ -103,7 +141,7 @@ describe("getTopicById", () => {
     }
   });
 
-  it("returns the placeholder travel topic by its literal id", () => {
+  it("returns the prep/travel/short topic by its literal id", () => {
     expect(getTopicById("prep-travel-short")).toStrictEqual({
       id: "prep-travel-short",
       category: "travel",
