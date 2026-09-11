@@ -1,7 +1,7 @@
 import { defaultState, migrateState, type StateDocument } from "../../core/state";
 
 /** The one `localStorage` key the whole state document lives under. */
-const STORAGE_KEY = "english-opinion-trainer";
+export const STORAGE_KEY = "english-opinion-trainer";
 
 /**
  * The stored state document, or {@link defaultState} when nothing readable is

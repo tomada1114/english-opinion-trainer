@@ -153,6 +153,39 @@ describe("useStateDocument", () => {
     expect(result.current.state).toStrictEqual(makeDocument());
   });
 
+  it("re-reads storage when setState is called with no consumer mounted", () => {
+    const { result, unmount } = renderHook(() => useStateDocument());
+    const { setState } = result.current;
+    unmount();
+
+    setState(makeDocument());
+    // A second write made directly, as another tab would, after our own
+    // setState call above: only distinguishes a retained stale `current`
+    // from a cleared one, since the two writes produce different documents.
+    writeState({ ...makeDocument(), level: "B2" });
+
+    const { result: remounted } = renderHook(() => useStateDocument());
+
+    expect(remounted.current.state.level).toBe("B2");
+  });
+
+  it("picks up a change another tab makes while mounted", () => {
+    const { result } = renderHook(() => useStateDocument());
+
+    act(() => {
+      writeState(makeDocument());
+      window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
+    });
+
+    expect(result.current.state).toStrictEqual(makeDocument());
+
+    act(() => {
+      result.current.setState((current) => ({ ...current, level: "B2" }));
+    });
+
+    expect(readState()).toStrictEqual({ ...makeDocument(), level: "B2" });
+  });
+
   it("renders the default document, not yet loaded, on the server", () => {
     writeState(makeDocument());
 
