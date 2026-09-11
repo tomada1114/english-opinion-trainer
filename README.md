@@ -25,9 +25,11 @@ pnpm install
 pnpm dev
 ```
 
-Then open <http://localhost:3000>, which redirects to the locale your browser asks for —
-`/en` or `/ja`. The page it renders is `src/app/[locale]/page.tsx`, and the text on it
-comes from `messages/en.json` and `messages/ja.json`.
+Then open <http://localhost:3000>, which redirects to `/en` — the app is English-only
+for now (owner decision 2026-09-10; see `building-the-drill`). The page it renders is
+`src/app/[locale]/page.tsx`, and the text on it comes from `messages/en.json`. The
+`/[locale]/` tree and the typed catalogs stay in place so a locale can be added back by
+reverting that decision; see `starting-an-app`'s "The locale decision".
 
 There is one API route, `POST /api/ask`, which takes
 `{ "prompt": "...", "locale": "en" }` and answers `{ "answer": "..." }`. The `locale` is
