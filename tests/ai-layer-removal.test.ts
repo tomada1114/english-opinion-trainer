@@ -162,7 +162,15 @@ const REMOVED_SKILL_NAMES = [
  * `tests/server-smoke.test.ts` asks the running application for
  * `POST /api/feedback`, the one route the layer answers, so the removal
  * deletes those cases the same way it deletes the route; it is a test of the
- * composed application, not a module the layer is embedded in. This
+ * composed application, not a module the layer is embedded in. The drill page
+ * is the route's one caller, and the one application module on this half:
+ * `request-feedback.ts` beside it names the URL and the `ERR_LLM_*` codes it
+ * has a message for, `messages/en.json` holds those messages under the code
+ * they answer (with `tests/messages.test.ts` listing their keys), and
+ * `tests/units-drill.test.tsx` stubs the route's answers. A page whose whole
+ * purpose is showing the model's feedback cannot keep calling a route that is
+ * gone, so the removal edits all four — it does not mean the layer has leaked
+ * into anything that works without it. This
  * half is where the separability property lives: it is the one that has to stay
  * near-empty, and an entry joining it means an application module now has to
  * be edited by the removal — the moment the layer has stopped coming out in
@@ -171,12 +179,16 @@ const REMOVED_SKILL_NAMES = [
 const EDITED_CODE_FILES = [
   ".env.example",
   "eslint.config.mjs",
+  "messages/en.json",
   "package.json",
+  "src/app/[locale]/units/[unitId]/_client/request-feedback.ts",
   "src/server/env.ts",
   "tests/boundaries.test.ts",
+  "tests/messages.test.ts",
   "tests/proxy.test.ts",
   "tests/server-env.test.ts",
   "tests/server-smoke.test.ts",
+  "tests/units-drill.test.tsx",
   "vitest.config.ts",
 ];
 

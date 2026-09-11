@@ -1,4 +1,4 @@
-import type { Level } from "../drill";
+import { type Level, structureForUnit, type UnitId } from "../drill";
 import { type Seed, seedsSchema, type Topic, topicsSchema } from "./schema";
 import seedsJson from "./seeds.json";
 import topicsJson from "./topics.json";
@@ -36,6 +36,17 @@ export function getTopics(): readonly Topic[] {
  */
 export function getTopicById(id: string): Topic | undefined {
   return TOPICS_BY_ID.get(id);
+}
+
+/**
+ * The topics `unit` draws from: its structure's topics, or every topic for the
+ * mixed unit, in the order `topics.json` lists them.
+ */
+export function getTopicsForUnit(unit: UnitId): readonly Topic[] {
+  const structure = structureForUnit(unit);
+  return structure === "mixed"
+    ? TOPICS
+    : TOPICS.filter((topic) => topic.structure === structure);
 }
 
 /** The seeds for `topicId` at `level`; empty when there are none. */
