@@ -41,31 +41,54 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
+            HEAD SHA: ${{ github.event.pull_request.head.sha }}
+
             Review this pull request. The pull request is already checked out in
-            the working directory; read its diff with `gh pr diff` and its title
-            and description with `gh pr view`.
+            the working directory; read its diff with `gh pr diff`, and its
+            title, description and earlier comments with `gh pr view --comments`.
 
             1. Read AGENTS.md. It is the project guide every change is held to.
             2. From the "Skills" table in AGENTS.md, pick every skill whose
                subject covers a file this pull request changes, and read its
                `.claude/skills/<name>/SKILL.md`, plus any file under that skill's
                `references/` the SKILL.md points to for the kind of change made.
-            3. Look for exactly two kinds of issue in the changed lines:
-               - a bug: code that will behave wrongly, fail, or break a contract
-                 AGENTS.md names;
-               - a violation of a rule stated in AGENTS.md or in a skill picked
-                 in step 2, where you can quote the rule and name its file.
-            4. Before reporting an issue, confirm it against the code. Drop
-               anything you cannot confirm, anything formatting, ESLint, the type
-               checker or the test suite already catches, style preferences, and
-               problems in lines this pull request does not touch.
-            5. Post each confirmed issue as an inline comment with
+            3. Read every earlier comment whose first line starts with
+               `<!-- claude-review-response`. It answers an earlier round of this
+               review, one line per finding: fixed, rejected with a reason, or
+               deferred to an issue. Do not raise a rejected or deferred finding
+               again, unless the stated reason is factually wrong about the code
+               — then raise it and say why the reason does not hold.
+            4. Look for a bug (code that will behave wrongly, fail, or break a
+               contract AGENTS.md names) or a violation of a rule stated in
+               AGENTS.md or in a skill picked in step 2 (quote the rule and name
+               its file). Give each finding exactly one severity:
+               - `must-fix`: the change is wrong — a bug, a broken contract, or
+                 a rule violation with a concrete consequence;
+               - `should-fix`: real and in the changed lines, but low risk
+                 today — a missing test for an edge the change introduced, a
+                 rule broken without breakage yet;
+               - `nit`: a suggestion — naming, simplification, a comment;
+               - `pre-existing`: a defect in lines this pull request does not
+                 touch, worth an issue of its own.
+            5. Before reporting a finding, confirm it against the code. Drop
+               anything you cannot confirm and anything formatting, ESLint, the
+               type checker or the test suite already catches.
+            6. Number the findings R1, R2, … Post each one except `pre-existing`
+               as an inline comment with
                `mcp__github_inline_comment__create_inline_comment` (with
-               `confirmed: true`), on the changed line it concerns. For a rule
-               violation, quote the rule and name the file it comes from.
-            6. Finish with one top-level `gh pr comment` that lists the skills
-               you applied and the number of issues posted, or states
-               "No issues found." followed by the skills you applied.
+               `confirmed: true`) on the changed line it concerns, starting with
+               `[<severity>] R<n>:`.
+            7. Last, post exactly one top-level comment with `gh pr comment`,
+               even when there are no findings. Its first line must be exactly
+               this, with the four counts filled in:
+               <!-- claude-review v1 sha=${{ github.event.pull_request.head.sha }} must=<n> should=<n> nit=<n> pre=<n> -->
+               Then the skills you applied, then one line per finding in exactly
+               this shape:
+               - [<severity>] R<n> `<path>:<line>` — <what is wrong> — <why it matters>
+               or "No issues found." when there are none. A program parses this
+               comment: keep the marker line and the finding lines exactly as
+               shown, and make each count equal the number of lines with that
+               severity.
 
             Write every comment in English.
           claude_args: '--allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"'
