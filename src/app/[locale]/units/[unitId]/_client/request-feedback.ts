@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 import type { Topic } from "../../../../../core/content/index";
-import { DEFAULT_LEVEL } from "../../../../../core/drill";
+import type { Level } from "../../../../../core/drill";
 import { type Feedback, feedbackSchemaFor } from "../../../../../core/feedback";
 import { err, ok, type Result } from "../../../../../core/result";
 
@@ -47,13 +47,14 @@ function toFeedbackErrorCode(code: string): FeedbackErrorCode {
 export async function requestFeedback(
   topic: Topic,
   answer: string,
+  level: Level,
 ): Promise<Result<Feedback, FeedbackErrorCode>> {
   let response: Response;
   try {
     response = await fetch("/api/feedback", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ topicId: topic.id, answer, level: DEFAULT_LEVEL }),
+      body: JSON.stringify({ topicId: topic.id, answer, level }),
     });
   } catch {
     return err("unknown");

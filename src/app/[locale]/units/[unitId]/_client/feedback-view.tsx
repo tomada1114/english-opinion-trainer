@@ -1,7 +1,12 @@
 import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 
-import { elementsFor, type Mode, type StructureType } from "../../../../../core/drill";
+import {
+  elementsFor,
+  type Level,
+  type Mode,
+  type StructureType,
+} from "../../../../../core/drill";
 import type { Feedback, Verdict } from "../../../../../core/feedback";
 
 interface ElementJudgement {
@@ -13,17 +18,21 @@ interface ElementJudgement {
 export function FeedbackView({
   structure,
   mode,
+  level,
+  usedSeed,
   feedback,
 }: Readonly<{
   structure: StructureType;
   mode: Mode;
+  level: Level;
+  usedSeed: boolean;
   feedback: Feedback;
 }>): ReactElement {
   const t = useTranslations("Drill");
   const judgements: Readonly<Record<string, ElementJudgement>> = feedback.structure;
 
   return (
-    <section>
+    <section data-answer-level={level} data-used-seed={usedSeed}>
       <h3>{t("feedback.heading")}</h3>
 
       <h4>{t("feedback.structureHeading")}</h4>

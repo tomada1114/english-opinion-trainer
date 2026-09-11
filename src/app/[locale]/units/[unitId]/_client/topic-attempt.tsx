@@ -6,7 +6,8 @@ import {
   type AnswerViolation,
   checkAnswer,
 } from "../../../../../core/answer-rules";
-import type { Topic } from "../../../../../core/content/index";
+import { getSeedsForTopic, type Topic } from "../../../../../core/content/index";
+import type { Level } from "../../../../../core/drill";
 import { STRUCTURE_TEMPLATES } from "../../../../../core/drill";
 import type { Feedback } from "../../../../../core/feedback";
 import { FeedbackView } from "./feedback-view";
@@ -29,10 +30,12 @@ type Phase =
  */
 export function TopicAttempt({
   topic,
+  level,
   onAnswered,
   onSkip,
 }: Readonly<{
   topic: Topic;
+  level: Level;
   onAnswered: () => void;
   onSkip: () => void;
 }>): ReactElement {
@@ -42,6 +45,9 @@ export function TopicAttempt({
   const [answer, setAnswer] = useState("");
   const [violation, setViolation] = useState<AnswerViolation | undefined>(undefined);
   const [phase, setPhase] = useState<Phase>({ kind: "writing" });
+  const [showSeeds, setShowSeeds] = useState(false);
+  const [usedSeed, setUsedSeed] = useState(false);
+  const [submittedLevel, setSubmittedLevel] = useState<Level | undefined>(undefined);
   const ceiling = ANSWER_CEILING[topic.mode];
 
   async function send(): Promise<void> {
@@ -52,7 +58,9 @@ export function TopicAttempt({
     }
     setViolation(undefined);
     setPhase({ kind: "sending" });
-    const result = await requestFeedback(topic, checked.value);
+    const requestLevel = submittedLevel ?? level;
+    setSubmittedLevel(requestLevel);
+    const result = await requestFeedback(topic, checked.value, requestLevel);
     setPhase(
       result.ok
         ? { kind: "answered", feedback: result.value }
@@ -86,6 +94,41 @@ export function TopicAttempt({
         {t("structureLabel")}: {STRUCTURE_TEMPLATES[topic.structure]}
       </p>
       <p>{t(`mode.${topic.mode}`)}</p>
+
+      <p>
+        <button
+          type="button"
+          disabled={answered || sending}
+          onClick={() => {
+            setShowSeeds(true);
+            setUsedSeed(true);
+          }}
+        >
+          {t("showSeeds")}
+        </button>
+      </p>
+      {showSeeds ? (
+        <section>
+          <h3>{t("seeds.heading")}</h3>
+          <ul>
+            {getSeedsForTopic(topic.id, level).map((seed, index) => (
+              <li key={`${seed.topicId}-${seed.level}-${String(index)}`}>
+                <p>
+                  <strong>{t("seeds.stance")}:</strong> {seed.stance}
+                </p>
+                <p>
+                  <strong>{t("seeds.keyPhrases")}:</strong>
+                </p>
+                <ul>
+                  {seed.keyPhrases.map((phrase) => (
+                    <li key={phrase}>{phrase}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <form onSubmit={handleSubmit}>
         <label htmlFor={answerId}>{t("answerLabel")}</label>
@@ -131,6 +174,8 @@ export function TopicAttempt({
           <FeedbackView
             structure={topic.structure}
             mode={topic.mode}
+            level={submittedLevel ?? level}
+            usedSeed={usedSeed}
             feedback={phase.feedback}
           />
           <p>

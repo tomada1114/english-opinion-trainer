@@ -8,7 +8,7 @@ import {
   type StateDocumentHandle,
 } from "../../../../_client/use-state-document";
 import type { Topic } from "../../../../../core/content/index";
-import type { UnitId } from "../../../../../core/drill";
+import type { Level, UnitId } from "../../../../../core/drill";
 import {
   isCompleted,
   nextTopic,
@@ -76,6 +76,7 @@ export function UnitDrill({
       key={unit}
       unit={unit}
       topics={topics}
+      level={state.level}
       initialProgress={initialProgress}
       setState={setState}
     />
@@ -85,11 +86,13 @@ export function UnitDrill({
 function DrillSession({
   unit,
   topics,
+  level,
   initialProgress,
   setState,
 }: Readonly<{
   unit: UnitId;
   topics: readonly Topic[];
+  level: Level;
   initialProgress: UnitProgressState;
   setState: StateDocumentHandle["setState"];
 }>): ReactElement {
@@ -148,6 +151,7 @@ function DrillSession({
       <TopicAttempt
         key={turn}
         topic={topic}
+        level={level}
         onAnswered={() => {
           const nextProgress = recordAnswered(progress, topic.id);
           persistProgress(nextProgress);
