@@ -103,15 +103,14 @@ const VENDOR_TREES = [ADAPTER_TREE, ".agents/skills/", ".claude/skills/", "tests
  * author of agent skills, which has nothing to do with which model this
  * application calls. `scripts/lib/guard/credentials.mjs` matches `sk-ant-` so a
  * leaked key is caught before it is committed, and a repository stops wanting
- * that only when no contributor anywhere holds such a key. The two Claude
- * workflows run this vendor's action as a pull-request reviewer, a tool choice
- * as independent of the application's model as the plugin is. None is edited
- * by a swap, and listing them here is what lets {@link VENDOR} stay a single
+ * that only when no contributor anywhere holds such a key. `claude.yml` runs
+ * this vendor's action on an `@claude` mention, a tool choice as independent
+ * of the application's model as the plugin is. None is edited by a swap, and
+ * listing them here is what lets {@link VENDOR} stay a single
  * unspellable-around pattern instead of three tokens chosen to dodge them.
  */
 const NOT_THE_MODEL_PROVIDER = [
   ".claude/settings.json",
-  ".github/workflows/claude-code-review.yml",
   ".github/workflows/claude.yml",
   "scripts/lib/guard/credentials.mjs",
 ];
