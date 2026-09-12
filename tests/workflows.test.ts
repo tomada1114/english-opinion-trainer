@@ -2857,6 +2857,12 @@ function workflowSource(name: string): string {
 
 describe("the workflows in .github/workflows", () => {
   it("includes every workflow spec 02 §5.2 makes mandatory", () => {
+    // Deliberate deviation from spec 02 §5.2: check-pr-title.yml and
+    // pr-label.yml are gone by the repository owner's explicit decision — one
+    // validated a PR title's Conventional Commit prefix, the other derived a
+    // label from that same prefix, and keeping both was redundant. The spec
+    // itself is unchanged; this repository just no longer implements that
+    // one clause of it.
     expect(workflowNames).toEqual([
       "ci.yml",
       "claude-code-review.yml",
