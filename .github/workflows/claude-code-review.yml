@@ -1,8 +1,11 @@
 name: Claude Code Review
 
 on:
-  pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
+  # Temporarily disabled. Restore the block below (and drop workflow_dispatch)
+  # to turn the automatic review back on.
+  # pull_request:
+  #   types: [opened, synchronize, ready_for_review, reopened]
+  workflow_dispatch:
 
 permissions: {}
 
