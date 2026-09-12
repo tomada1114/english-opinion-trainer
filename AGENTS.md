@@ -208,11 +208,11 @@ names its own boundary with its neighbours.
 - **Commit, push, and pull request always need a human.** No file this repository ships
   blocks the dangerous spellings — `--no-verify`, a plain force-push, workflow dispatch
   — mechanically; this instruction is the rule itself, not a pattern enforcing it. The
-  committed `.claude/settings.json` declares only plugins, and `.mcp.json` only MCP
-  servers; an agent may still carry its own personal permission allow/deny list on top
-  (a Claude Code session's own `~/.claude/settings.json` or the gitignored
-  `.claude/settings.local.json`), but that list is a choice made outside this
-  repository, not something it ships or requires.
+  committed `.claude/settings.json` declares plugins and the team's default model and
+  per-model reasoning effort, and `.mcp.json` only MCP servers; an agent may still carry
+  its own personal permission allow/deny list on top (a Claude Code session's own
+  `~/.claude/settings.json` or the gitignored `.claude/settings.local.json`), but that
+  list is a choice made outside this repository, not something it ships or requires.
 - Never read or write `.env*` (the `.example`, `.sample` and `.template` variants are
   fine), anything under `secrets/`, or `.claude/settings.local.json`. A `.env` in a
   checkout of this template holds a real provider credential, so reading one is already
