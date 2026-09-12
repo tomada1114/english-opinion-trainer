@@ -155,7 +155,7 @@ const REMOVED_SKILL_NAMES = [
  * `package.json` declares the vendor SDK, which is the AI layer's one runtime
  * dependency and leaves with it — a manifest entry, not an application module,
  * which is why it can join this half without weakening what it claims.
- * `tests/proxy.test.ts` picked `/api/ask` as its example of a nested API path
+ * `tests/proxy.test.ts` picked `/api/feedback` as its example of a nested API path
  * the locale matcher leaves alone — a case named `"a nested API route"` — and a
  * matcher test choosing a path that no longer exists needs a different
  * example, even though the matcher's own behaviour does not change.
