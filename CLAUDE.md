@@ -22,10 +22,11 @@ only records what Claude Code adds on top of them.
   both copies are real files rather than a symlink.
 - AGENTS.md's "Security and human approval" records what the committed configuration
   does declare; for Claude Code that means no permission entry is committed here or
-  carried into a generated project. A personal permission allowlist (model choice, extra
-  permissions, a deny list you configure for yourself) belongs in your own
-  `~/.claude/settings.json` or the gitignored `.claude/settings.local.json`, never
-  committed to this repository.
+  carried into a generated project, though the default model and per-model reasoning
+  effort are (`.claude/settings.json`'s `model` and `modelSettings` keys). A personal
+  permission allowlist (extra permissions, a deny list you configure for yourself)
+  belongs in your own `~/.claude/settings.json` or the gitignored
+  `.claude/settings.local.json`, never committed to this repository.
 
 When an instruction in AGENTS.md would block something that looks necessary, the answer
 is to fix what made the bypass look necessary, or to ask. It is not to find another
