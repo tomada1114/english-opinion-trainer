@@ -341,6 +341,23 @@ describe("the drill page's client leaf", () => {
     expect(calls).toStrictEqual([]);
   });
 
+  it("announces the near-limit count only when crossing the threshold", () => {
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer("a".repeat(361));
+    expect(screen.getByRole("status")).toHaveTextContent("361 / 400 characters");
+
+    typeAnswer("a".repeat(362));
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.getByText("362 / 400 characters")).toBeInTheDocument();
+
+    typeAnswer("a".repeat(359));
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+
+    typeAnswer("a".repeat(361));
+    expect(screen.getByRole("status")).toHaveTextContent("361 / 400 characters");
+  });
+
   it("flags a topic once and keeps its control visibly flagged", () => {
     renderDrill([SHORT_PREP]);
 
