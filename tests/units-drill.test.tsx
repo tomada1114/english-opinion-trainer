@@ -320,6 +320,45 @@ describe("the drill page's client leaf", () => {
     expect(calls).toStrictEqual([]);
   });
 
+  it("flags a topic once and keeps its control visibly flagged", () => {
+    renderDrill([SHORT_PREP]);
+
+    clickButton(en.Drill.flag);
+    clickButton(en.Drill.flagged);
+
+    expect(screen.getByRole("button", { name: en.Drill.flagged })).toBeInTheDocument();
+    expect(
+      JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
+    ).toMatchObject({ flaggedTopicIds: [SHORT_PREP.id] });
+  });
+
+  it("persists a shown seed under its topic, level, and stance key", () => {
+    renderDrill([SEEDED_SHORT_PREP]);
+    clickButton(en.Drill.showSeeds);
+
+    expect(
+      screen.getByRole("button", { name: `${en.Drill.flag}: for` }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: `${en.Drill.flag}: against` }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: `${en.Drill.flag}: conditional` }),
+    ).toBeInTheDocument();
+    const firstSeedFlag = screen.getByRole("button", {
+      name: `${en.Drill.flag}: for`,
+    });
+    fireEvent.click(firstSeedFlag);
+    fireEvent.click(firstSeedFlag);
+
+    expect(
+      JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
+    ).toMatchObject({ flaggedSeedIds: ["prep-travel-short:B1:for"] });
+    expect(
+      screen.getByRole("button", { name: `${en.Drill.flagged}: for` }),
+    ).toBeInTheDocument();
+  });
+
   it("uses the persisted level when choosing seed rows", () => {
     window.localStorage.setItem(
       STORAGE_KEY,
