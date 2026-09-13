@@ -1,18 +1,335 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* The design tokens this file carries are documented in docs/design/design-system.md, and
+   the reasoning behind their values in docs/design/design-concept.md. Three rules hold:
+
+   1. UI code reads the semantic layer only (--color-*, --space-*, --text-*, --motion-*).
+      A primitive name (--neutral-600, --accent-400) in a component is a bug: it is the
+      one place a later theme change would miss.
+   2. DARK ONLY, deliberately. `color-scheme: dark` is fixed and there is no light theme;
+      see the concept document's "Theme policy". Every semantic NAME is final and only the
+      light VALUES are absent, so adding light later is a change to this file alone. Do not
+      invent light values to fill the gap.
+   3. The primary action token is --color-primary, never --color-accent. In shadcn/ui's
+      vocabulary `accent` means a subtle hover surface, and Tailwind v4 gives both
+      vocabularies the same --color-* namespace, so the name can only mean one thing. */
+
 :root {
-  color-scheme: light dark;
+  color-scheme: dark; /* also settles form controls, scrollbars and the UA's own colours */
+
+  /* Primitive: neutrals on the accent's own hue, mixed in at C 0.004-0.016 so every
+     surface, border and label sits on one hue axis with the primary colour. */
+  --neutral-50: oklch(0.965 0.004 248);
+  --neutral-300: oklch(0.755 0.016 248);
+  --neutral-400: oklch(0.665 0.014 248);
+  --neutral-500: oklch(0.62 0.012 248);
+  --neutral-600: oklch(0.53 0.01 248);
+  --neutral-700: oklch(0.49 0.008 248);
+  --neutral-800: oklch(0.29 0.012 248);
+  --neutral-850: oklch(0.25 0.01 248);
+  --neutral-900: oklch(0.215 0.008 248);
+  --neutral-950: oklch(0.175 0.006 248);
+  --neutral-1000: oklch(0.145 0.006 248);
+  /* 300 is the floor for secondary body text, 400 for a placeholder on --color-surface,
+     600 for a control border against --color-surface. Measured, not estimated — the table
+     is in design-system.md. Lowering any of the three breaks a WCAG requirement. */
+
+  /* Primitive: accent hue 248, 14 degrees cyan-side of Tailwind's blue so the app does not
+     read as the framework default. C stays at or below 0.130: higher chroma haloes on a
+     dark ground, which costs legibility in exactly the long passages this app is for. */
+  --accent-300: oklch(0.775 0.095 248);
+  --accent-400: oklch(0.715 0.115 248);
+  --accent-500: oklch(0.655 0.13 248);
+  --accent-900: oklch(0.3 0.05 248);
+  --accent-950: oklch(0.18 0.035 248);
+
+  /* Primitive: status. Independent of the accent hue on purpose, so that changing the
+     primary colour never moves the meaning of "error". */
+  --green-400: oklch(0.78 0.14 152);
+  --green-900: oklch(0.29 0.055 152);
+  --green-950: oklch(0.2 0.045 152);
+  --amber-400: oklch(0.8 0.14 75);
+  --amber-900: oklch(0.29 0.055 75);
+  --amber-950: oklch(0.205 0.045 75);
+  --red-400: oklch(0.72 0.15 25);
+  --red-900: oklch(0.29 0.055 25);
+  --red-950: oklch(0.195 0.055 25);
+  --blue-400: oklch(0.76 0.1 250);
+  --blue-900: oklch(0.29 0.055 250);
 }
 
-* {
-  box-sizing: border-box;
+/* Semantic colours. `inline` keeps the var() references intact, so a utility emits
+   `color: var(--color-text)` rather than a copy of the resolved value — which is what lets
+   the media-query overrides at the bottom of this file reach code that used a utility. */
+@theme inline {
+  /* Surfaces. In a dark theme depth is lightness, not shadow. */
+  --color-bg: var(--neutral-950);
+  --color-bg-subtle: var(--neutral-1000);
+  --color-bg-elevated: var(--neutral-900);
+  --color-surface: var(--neutral-850);
+  --color-surface-hover: var(--neutral-800);
+
+  /* Text */
+  --color-text: var(--neutral-50);
+  --color-text-muted: var(--neutral-300);
+  --color-text-subtle: var(--neutral-400);
+  --color-text-on-primary: var(--accent-950);
+  --color-text-on-danger: var(--red-950);
+  --color-text-on-success: var(--green-950);
+  --color-text-on-warning: var(--amber-950);
+
+  /* Lines */
+  --color-border: var(--neutral-600);
+  --color-border-strong: var(--neutral-500);
+  --color-focus: var(--accent-400);
+  --color-overlay: oklch(0 0 0 / 0.7);
+
+  /* Primary action and status */
+  --color-primary: var(--accent-400);
+  --color-primary-hover: var(--accent-300);
+  --color-primary-active: var(--accent-500);
+  --color-primary-subtle: var(--accent-900);
+  --color-success: var(--green-400);
+  --color-success-subtle: var(--green-900);
+  --color-warning: var(--amber-400);
+  --color-warning-subtle: var(--amber-900);
+  --color-danger: var(--red-400);
+  --color-danger-subtle: var(--red-900);
+  --color-info: var(--blue-400);
+  --color-info-subtle: var(--blue-900);
+  --color-disabled-bg: var(--neutral-850);
+  --color-disabled-text: var(--neutral-700);
+
+  /* shadcn/ui's own vocabulary, bound to the names above. The table in
+     design-system.md is the authority; note that `accent` here is the hover surface. */
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-card: var(--color-bg-elevated);
+  --color-card-foreground: var(--color-text);
+  --color-popover: var(--color-bg-elevated);
+  --color-popover-foreground: var(--color-text);
+  --color-primary-foreground: var(--color-text-on-primary);
+  --color-secondary: var(--color-surface);
+  --color-secondary-foreground: var(--color-text);
+  --color-muted: var(--color-surface);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-accent: var(--color-surface-hover);
+  --color-accent-foreground: var(--color-text);
+  --color-destructive: var(--color-danger);
+  --color-destructive-foreground: var(--color-text-on-danger);
+  --color-input: var(--color-border);
+  --color-ring: var(--color-focus);
 }
 
-body {
-  margin: 0;
-  padding: 2rem;
-  font-family:
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
-  line-height: 1.5;
+/* Scales where Tailwind owns the namespace, so each is defined once and serves both the
+   utilities and hand-written `var()` use. */
+@theme {
+  /* 4px base: `p-3` is therefore exactly --space-3, by construction rather than by
+     coincidence, which is why there is no second spacing scale to keep in step. */
+  --spacing: 0.25rem;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", monospace;
+
+  /* base and below stay in rem so the browser's own font-size setting is honoured; only lg
+     and up are fluid, because a body size in vw breaks reflow at 400% zoom. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1.125rem, 1.09rem + 0.17vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.16rem + 0.45vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.33rem + 0.85vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.52rem + 1.78vw, 3rem);
+
+  /* 1.6 rather than the 1.7 a Japanese catalog would need: every UI string here is Latin. */
+  --leading-tight: 1.25;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.8;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --animate-pulse-dot: pulse-dot 1.2s ease-in-out infinite;
+  --animate-feedback-in: feedback-in var(--motion-duration-slow) var(--ease-emphasized)
+    both;
+}
+
+:root {
+  /* Spacing aliases for hand-written CSS. 1-8 line up with Tailwind's `p-1`..`p-8`; 9-12
+     deliberately jump, because past 2rem the useful steps are not 4px apart. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.5rem;
+  --space-10: 3rem;
+  --space-11: 4rem;
+  --space-12: 6rem;
+
+  /* The reading measure. The prose here is the user's own multi-sentence English and the
+     model's reply, so an uncapped column is the worst single defect on a wide screen. */
+  --measure: 68ch;
+  /* 44px. The WCAG 2.2 AA floor is 24px; this is the design value, because 24px is smaller
+     than a fingertip. */
+  --tap-min: 2.75rem;
+
+  --shadow-color: oklch(0 0 0 / 0.55);
+  --shadow-1: 0 1px 2px var(--shadow-color);
+  --shadow-2: 0 4px 12px var(--shadow-color);
+  --shadow-3: 0 12px 32px var(--shadow-color);
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-overlay: 1200;
+  --z-modal: 1300;
+  --z-toast: 1400;
+
+  --motion-duration-fast: 100ms;
+  --motion-duration-base: 200ms;
+  --motion-duration-slow: 400ms;
+
+  /* hover and pressed add no new colour; they lay opacity over the existing face, so one
+     rule serves the primary colour and a neutral surface alike. */
+  --state-hover-opacity: 0.08;
+  --state-pressed-opacity: 0.12;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    line-height: var(--leading-normal);
+  }
+
+  /* One focus ring for the whole app, drawn with `outline`: a `border` would shift layout,
+     and a `box-shadow` disappears under `forced-colors: active`. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* The page shell, stated once here rather than as a class on each page's own
+     `<main>`: there is one layout, and four copies of it would drift. The side
+     padding grows at the lg breakpoint; the column itself never splits, because
+     the drill is one topic at a time. */
+  main {
+    margin-inline: auto;
+    max-width: 48rem;
+    padding-inline: var(--space-4);
+    padding-block: var(--space-8);
+  }
+
+  @media (width >= 1024px) {
+    main {
+      padding-inline: var(--space-8);
+    }
+  }
+
+  main > h1 {
+    margin-block-end: var(--space-2);
+    font-size: var(--text-3xl);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+  }
+
+  /* Links. `Button` carries `no-underline` and its own colour in the utility
+     layer, which beats this base rule, so `<Button asChild><Link/></Button>`
+     needs no exception written here. */
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+
+  /* Neither side of this app produces Markdown — the user writes prose and the model
+     answers structured JSON — so a typed newline is the only formatting there is, and it
+     has to survive being rendered. */
+  [data-plain-text] {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+@utility measure {
+  max-width: var(--measure);
+}
+
+/* Movement is replaced rather than removed: cutting animation entirely loses the
+   continuity that told the user a state changed, so the pulse dots become static dots and
+   the feedback panel appears without the translate. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0.01ms;
+    --motion-duration-base: 0.01ms;
+    --motion-duration-slow: 0.01ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Lift the three tokens whose whole job is to be quiet. */
+@media (prefers-contrast: more) {
+  :root {
+    --color-text-muted: var(--neutral-50);
+    --color-text-subtle: var(--neutral-300);
+    --color-border: var(--neutral-500);
+  }
+}
+
+/* box-shadow and backdrop-filter are dropped here, so anything whose boundary was a shadow
+   needs a real border. Components pair `--shadow-*` with a `border` for this reason. */
+@media (forced-colors: active) {
+  :root {
+    --shadow-1: none;
+    --shadow-2: none;
+    --shadow-3: none;
+  }
 }
