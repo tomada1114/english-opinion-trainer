@@ -29,16 +29,16 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
 
 ## Vocabulary
 
-| Term                 | Values / shape                                                                                                                                                                                          |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Structure type       | `prep` (elements `point`, `reason`, `example`, `restatement`), `concession` (`acknowledgement`, `opinion`, `reason`), `comparison` (`contrast`, `choice`, `reason`)                                     |
-| Question → structure | recommendation/opinion → `prep`; agree/disagree → `concession`; either/or → `comparison`; the app assigns it, the user never chooses                                                                    |
-| Mode                 | `short` (1–2 sentences; judges only the structure's first two elements), `long` (4–6 sentences; judges all elements)                                                                                    |
-| Unit                 | `1`=`prep`, `2`=`concession`, `3`=`comparison`, `4`=mixed (all topics); one pass = 8 `short` + 8 `long` topics, each shuffled, no repeat until the pass ends; completion = 16 answered topics           |
-| Level                | `A2`, `B1`, `B2`; default `B1`; changes only the rewrite's vocabulary/strictness, not which topics appear                                                                                               |
-| Category (8)         | `travel` (旅行・おすすめ), `food` (食), `work` (仕事・働き方), `hobbies` (趣味・休日), `technology` (技術・習慣), `city-life` (街・暮らし), `relationships` (人間関係・マナー), `learning` (学び・言語) |
-| Topic grid           | 3 structure types × 8 categories × 2 (one `short`, one `long` per cell) = 48 topics                                                                                                                     |
-| Seeds                | 48 topics × 3 levels × 3 seeds each = 432 rows; a seed is a stance + one or two key phrases, never a full sentence                                                                                      |
+| Term                 | Values / shape                                                                                                                                                                                                             |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Structure type       | `prep` (elements `point`, `reason`, `example`, `restatement`), `concession` (`acknowledgement`, `opinion`, `reason`), `comparison` (`contrast`, `choice`, `reason`)                                                        |
+| Question → structure | recommendation/opinion → `prep`; agree/disagree → `concession`; either/or → `comparison`; the app assigns it, the user never chooses                                                                                       |
+| Mode                 | `short` (1–2 sentences; judges only the structure's first two elements), `long` (4–6 sentences; judges all elements)                                                                                                       |
+| Unit                 | `1`=`prep`, `2`=`concession`, `3`=`comparison`, `4`=mixed (all topics); one pass = 8 `short` + 8 `long` topics, each shuffled, no repeat until the pass ends; completion = 16 answered topics                              |
+| Level                | `A2`, `B1`, `B2`; default `B1`; changes only the rewrite's vocabulary/strictness, not which topics appear. `LEVEL_GUIDANCE` in `src/core/feedback-prompt.ts` is where each level's concrete instruction to the model lives |
+| Category (8)         | `travel` (旅行・おすすめ), `food` (食), `work` (仕事・働き方), `hobbies` (趣味・休日), `technology` (技術・習慣), `city-life` (街・暮らし), `relationships` (人間関係・マナー), `learning` (学び・言語)                    |
+| Topic grid           | 3 structure types × 8 categories × 2 (one `short`, one `long` per cell) = 48 topics                                                                                                                                        |
+| Seeds                | 48 topics × 3 levels × 3 seeds each = 432 rows; a seed is a stance + one or two key phrases, never a full sentence                                                                                                         |
 
 ## Core loop
 

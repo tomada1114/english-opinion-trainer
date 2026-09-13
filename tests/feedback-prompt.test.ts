@@ -70,6 +70,35 @@ describe("buildFeedbackPrompt", () => {
     expect(prompt).toContain("A2");
   });
 
+  it.each([
+    ["A2" as const, "lenient in the grammar notes about minor errors"],
+    [
+      "B1" as const,
+      "moderately varied sentences with everyday-to-intermediate vocabulary",
+    ],
+    ["B2" as const, "idiomatic phrasing"],
+  ])("states level %s's own guidance and no other level's", (level, ownPhrase) => {
+    const levelPrompt = buildFeedbackPrompt({
+      topicText: "Should companies let employees work from home?",
+      structure: "concession",
+      elements,
+      level,
+      mode: "long",
+      answer,
+    });
+
+    const otherPhrases = [
+      "lenient in the grammar notes about minor errors",
+      "moderately varied sentences with everyday-to-intermediate vocabulary",
+      "idiomatic phrasing",
+    ].filter((phrase) => phrase !== ownPhrase);
+
+    expect(levelPrompt).toContain(ownPhrase);
+    for (const otherPhrase of otherPhrases) {
+      expect(levelPrompt).not.toContain(otherPhrase);
+    }
+  });
+
   it("contains the answer text verbatim", () => {
     expect(prompt).toContain(answer);
   });
