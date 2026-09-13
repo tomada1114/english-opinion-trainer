@@ -8,7 +8,6 @@ import {
   createAnthropicClient,
   DEFAULT_MAX_RETRIES,
   DEFAULT_MAX_TOKENS,
-  DEFAULT_MODEL,
   DEFAULT_TIMEOUT_MS,
 } from "./client";
 import { requestSignal, resolveDeadlineMs } from "./deadline";
@@ -31,8 +30,8 @@ export interface AnthropicAdapterOptions extends Omit<
    */
   readonly apiKey: string | undefined;
 
-  /** @see DEFAULT_MODEL */
-  readonly model?: string;
+  /** The provider's model id — required, so composition.ts stays the only place one is written. */
+  readonly model: string;
 
   /** @see DEFAULT_MAX_TOKENS */
   readonly maxTokens?: number;
@@ -81,7 +80,7 @@ function missingKeyError(): LlmError {
 export function createAnthropicAdapter(options: AnthropicAdapterOptions): LlmPort {
   const {
     apiKey,
-    model = DEFAULT_MODEL,
+    model,
     maxTokens = DEFAULT_MAX_TOKENS,
     timeoutMs = DEFAULT_TIMEOUT_MS,
     maxRetries = DEFAULT_MAX_RETRIES,

@@ -37,6 +37,16 @@ export const CONTRACT_ANSWER = {
 };
 
 /**
+ * The model every replayed contract case constructs the adapter with.
+ *
+ * @remarks
+ * Never sent to a real provider — `fetch` is stubbed in every case below — so
+ * any value works; named rather than left to a removed default so a future
+ * default cannot silently drift from what production actually runs.
+ */
+const REPLAY_MODEL = "claude-sonnet-5";
+
+/**
  * The four ports an adapter must be able to produce to be measured against the
  * contract.
  *
@@ -327,6 +337,7 @@ const FIXTURE_FOR_CODE = {
 function replaying(fixture: string): LlmPort {
   return createAnthropicAdapter({
     apiKey: "test-key",
+    model: REPLAY_MODEL,
     maxRetries: 0,
     fetch: replayFetch(fixture),
   });
@@ -339,6 +350,7 @@ describeLlmPortContract("createAnthropicAdapter", {
     code === "ERR_LLM_TIMEOUT"
       ? createAnthropicAdapter({
           apiKey: "test-key",
+          model: REPLAY_MODEL,
           maxRetries: 0,
           // Short enough that the SDK's own deadline, not the test runner's,
           // is what ends the request.
@@ -349,6 +361,7 @@ describeLlmPortContract("createAnthropicAdapter", {
   neverAnswers: () =>
     createAnthropicAdapter({
       apiKey: "test-key",
+      model: REPLAY_MODEL,
       maxRetries: 0,
       // Far longer than the suite's budget, so only the caller's abort ends it.
       timeoutMs: 60_000,
@@ -463,6 +476,10 @@ describe.runIf(isRecording())("recording the Anthropic fixtures", () => {
   it("records a successful exchange", async () => {
     const result = await createAnthropicAdapter({
       apiKey: process.env["ANTHROPIC_API_KEY"],
+      // The model composition.ts actually runs in production, not
+      // REPLAY_MODEL: a fixture recorded against a different model no longer
+      // reflects what a real request would return.
+      model: "claude-haiku-4-5",
       maxRetries: 0,
       fetch: recordingFetch("success", 200),
     }).generate({
@@ -484,6 +501,7 @@ describe.runIf(isRecording())("recording the Anthropic fixtures", () => {
       await ask(
         createAnthropicAdapter({
           apiKey: "sk-ant-invalid",
+          model: "claude-haiku-4-5",
           maxRetries: 0,
           fetch: recordingFetch("auth-401", 401),
         }),
