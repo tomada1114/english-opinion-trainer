@@ -130,7 +130,27 @@ describe("PhrasesPage", () => {
     await renderPhrasesPage();
 
     expect(screen.getByRole("heading", { name: en.Phrases.title })).toBeInTheDocument();
-    expect(screen.getByText(en.Phrases.empty)).toBeInTheDocument();
+    expect(screen.getByText(en.Phrases.empty.heading)).toBeInTheDocument();
+    expect(screen.getByText(en.Phrases.empty.body)).toBeInTheDocument();
+    // The filters are absent, not merely empty: five selects above an onboarding
+    // message would say the list is filtered rather than unstarted.
+    expect(screen.queryByLabelText(en.Phrases.category.label)).not.toBeInTheDocument();
+  });
+
+  it("distinguishes an excluding filter from nothing having been saved", async () => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(makeState()));
+    await renderPhrasesPage();
+
+    fireEvent.change(screen.getByLabelText(en.Phrases.category.label), {
+      target: { value: "work" },
+    });
+
+    expect(screen.getByText(en.Phrases.noMatches.heading)).toBeInTheDocument();
+    expect(screen.queryByText(en.Phrases.empty.heading)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: en.Phrases.clearFilters }));
+
+    expect(screen.queryByText(en.Phrases.noMatches.heading)).not.toBeInTheDocument();
   });
 
   it("renders flagged topic and seed ids in read-only copyable fields", async () => {
@@ -139,9 +159,19 @@ describe("PhrasesPage", () => {
 
     await renderPhrasesPage();
 
-    expect(
-      screen.getByRole("heading", { name: en.Phrases.flagged.heading }),
-    ).toBeInTheDocument();
+    // Behind a disclosure now: raw ids are for reporting a bad topic, not for
+    // practising, so they no longer compete with the phrases above them.
+    const flagged = screen
+      .getAllByRole("group")
+      .flatMap((details) => Array.from(details.querySelectorAll("summary")))
+      .filter((summary) => summary.textContent.includes(en.Phrases.flagged.heading));
+    expect(flagged).toHaveLength(1);
+    const [flaggedSummary] = flagged;
+    if (flaggedSummary === undefined) {
+      throw new Error("the flagged-ids disclosure was not rendered");
+    }
+    fireEvent.click(flaggedSummary);
+
     const topicIds = screen.getByLabelText(en.Phrases.flagged.topicIds);
     const seedIds = screen.getByLabelText(en.Phrases.flagged.seedIds);
     expect(topicIds).toHaveValue(state.flaggedTopicIds.join("\n"));

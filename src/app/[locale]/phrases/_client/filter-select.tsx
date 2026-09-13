@@ -2,6 +2,9 @@
 
 import { type ReactElement, useId } from "react";
 
+import { Label } from "../../../_client/ui/label";
+import { Select } from "../../../_client/ui/select";
+
 export interface FilterOption<T extends string> {
   readonly value: T;
   readonly label: string;
@@ -24,10 +27,11 @@ export function FilterSelect<T extends string>({
   const id = useId();
 
   return (
-    <p>
-      <label htmlFor={id}>{label}</label>{" "}
-      <select
+    <div className="space-y-1">
+      <Label htmlFor={id}>{label}</Label>
+      <Select
         id={id}
+        className="w-full"
         value={value}
         onChange={(event) => {
           const selected = options.find(
@@ -42,7 +46,7 @@ export function FilterSelect<T extends string>({
             {option.label}
           </option>
         ))}
-      </select>
-    </p>
+      </Select>
+    </div>
   );
 }

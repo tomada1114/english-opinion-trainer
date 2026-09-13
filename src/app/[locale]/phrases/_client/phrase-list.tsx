@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { type ChangeEvent, type ReactElement, useId, useState } from "react";
+import { type ReactElement, useState } from "react";
 
 import {
   CATEGORIES,
@@ -13,10 +13,15 @@ import {
   type Mode,
   type StructureType,
 } from "../../../../core/drill";
+import { Button } from "../../../_client/ui/button";
+import { EmptyState } from "../../../_client/ui/empty-state";
+import { Separator } from "../../../_client/ui/separator";
 import { useStateDocument } from "../../../_client/use-state-document";
+import { Link } from "../../../../i18n/navigation";
 import { FlaggedIdList } from "./flagged-id-list";
 import { FilterSelect, type FilterOption } from "./filter-select";
-import { downloadState, readStateFile } from "./state-transfer";
+import { PhraseRow } from "./phrase-row";
+import { StateIo } from "./state-io";
 
 type UsedSeedFilter = "" | "true" | "false";
 interface PhraseFilters {
@@ -46,10 +51,8 @@ export function PhraseList(): ReactElement {
   const t = useTranslations("Phrases");
   const { state, loaded, setState } = useStateDocument();
   const [filters, setFilters] = useState<PhraseFilters>(EMPTY_FILTERS);
-  const [importError, setImportError] = useState(false);
-  const importInputId = useId();
   if (!loaded) {
-    return <p>{t("loading")}</p>;
+    return <p className="text-text-muted">{t("loading")}</p>;
   }
   const filterDefinitions = [
     {
@@ -111,87 +114,75 @@ export function PhraseList(): ReactElement {
       phrases: current.phrases.filter((phrase) => phrase.id !== id),
     }));
   }
-  function exportState(): void {
-    downloadState(state);
-  }
-  function importState(event: ChangeEvent<HTMLInputElement>): void {
-    const file = event.currentTarget.files?.[0];
-    event.currentTarget.value = "";
-    if (file === undefined) {
-      return;
-    }
-    setImportError(false);
-    readStateFile(
-      file,
-      (nextState) => {
-        setState(nextState);
-      },
-      () => {
-        setImportError(true);
-      },
-    );
-  }
+  const nothingSavedYet = state.phrases.length === 0;
   return (
-    <section>
-      <p>
-        <button type="button" onClick={exportState}>
-          {t("export")}
-        </button>{" "}
-        <label htmlFor={importInputId}>{t("import")}</label>{" "}
-        <input
-          id={importInputId}
-          type="file"
-          accept="application/json,.json"
-          onChange={importState}
-        />
-      </p>
-      {importError ? <p role="alert">{t("importError")}</p> : null}
-      <FlaggedIdList state={state} />
-      <fieldset>
-        <legend>{t("filters")}</legend>
-        {filterDefinitions.map((filter) => (
-          <FilterSelect
-            key={filter.key}
-            label={filter.label}
-            allLabel={t("all")}
-            options={filter.options}
-            value={filters[filter.key]}
-            onChange={changeFilter(filter.key)}
-          />
-        ))}
-      </fieldset>
+    <section className="measure space-y-6">
+      <StateIo state={state} onImport={setState} />
+      <Separator />
+      {/* Hidden entirely while there is nothing to filter: five selects above an
+          onboarding message would suggest the list is filtered rather than empty. */}
+      {nothingSavedYet ? null : (
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-medium text-text">{t("filters")}</legend>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-3">
+            {filterDefinitions.map((filter) => (
+              <FilterSelect
+                key={filter.key}
+                label={filter.label}
+                allLabel={t("all")}
+                options={filter.options}
+                value={filters[filter.key]}
+                onChange={changeFilter(filter.key)}
+              />
+            ))}
+          </div>
+        </fieldset>
+      )}
+      {/* Two distinct states, deliberately not one shared message: "you have not
+          saved anything" and "your filters excluded everything" lead the reader to
+          different next actions, and a single line would strand whoever is in the
+          case it was not written for. */}
       {visiblePhrases.length === 0 ? (
-        <p>{state.phrases.length === 0 ? t("empty") : t("noMatches")}</p>
+        nothingSavedYet ? (
+          <EmptyState
+            variant="onboarding"
+            heading={t("empty.heading")}
+            body={t("empty.body")}
+            action={
+              <Button asChild variant="primary">
+                <Link href="/">{t("empty.action")}</Link>
+              </Button>
+            }
+          />
+        ) : (
+          <EmptyState
+            variant="filtered-out"
+            heading={t("noMatches.heading")}
+            body={t("noMatches.body")}
+            action={
+              <Button
+                onClick={() => {
+                  setFilters(EMPTY_FILTERS);
+                }}
+              >
+                {t("clearFilters")}
+              </Button>
+            }
+          />
+        )
       ) : (
-        <ul>
+        <ul className="space-y-3">
           {visiblePhrases.map((phrase) => (
-            <li key={phrase.id}>
-              <p>{phrase.text}</p>
-              <p>
-                <span>
-                  {t("category.label")}: {t(`category.${phrase.category}`)}
-                </span>{" "}
-                <span>
-                  {t("structure.label")}: {t(`structure.${phrase.structure}`)}
-                </span>{" "}
-                <span>
-                  {t("mode.label")}: {t(`mode.${phrase.mode}`)}
-                </span>{" "}
-                <span>
-                  {t("level")}: {phrase.level}
-                </span>{" "}
-                <span>
-                  {t("usedSeed.label")}:{" "}
-                  {t(phrase.usedSeed ? "usedSeed.yes" : "usedSeed.no")}
-                </span>
-              </p>
-              <button type="button" onClick={deletePhrase.bind(null, phrase.id)}>
-                {t("delete")}
-              </button>
-            </li>
+            <PhraseRow
+              key={phrase.id}
+              phrase={phrase}
+              onDelete={deletePhrase.bind(null, phrase.id)}
+            />
           ))}
         </ul>
       )}
+      <Separator />
+      <FlaggedIdList state={state} />
     </section>
   );
 }

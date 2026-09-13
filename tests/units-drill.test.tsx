@@ -167,16 +167,27 @@ describe("the drill page's client leaf", () => {
 
     expect(await screen.findByText(REWRITE)).toBeInTheDocument();
     expect(screen.getByText(en.Drill.element.point)).toBeInTheDocument();
-    expect(screen.getByText(/Present — The answer names Kyoto\./)).toBeInTheDocument();
-    expect(screen.getByText(/Weak — The reason is thin\./)).toBeInTheDocument();
+    // The verdict is its own badge and the reason its own line, so that neither
+    // depends on the status colour to be read.
+    expect(screen.getByText(en.Drill.verdict.present)).toBeInTheDocument();
+    expect(screen.getByText("The answer names Kyoto.")).toBeInTheDocument();
+    expect(screen.getByText(en.Drill.verdict.weak)).toBeInTheDocument();
+    expect(screen.getByText("The reason is thin.")).toBeInTheDocument();
+    // Fixes and grammar notes are collapsed, so their contents are reached by
+    // opening the disclosure the count badge describes.
+    fireEvent.click(screen.getByText(en.Drill.feedback.fixesHeading));
     expect(screen.getByText("centuries-old temples")).toBeInTheDocument();
+    fireEvent.click(screen.getByText(en.Drill.feedback.grammarHeading));
     expect(screen.getByText(en.Drill.feedback.noGrammar)).toBeInTheDocument();
     const feedbackHeading = screen.getByRole("heading", {
       name: en.Drill.feedback.heading,
     });
     expect(feedbackHeading.parentElement).toHaveAttribute("data-answer-level", "B1");
     expect(feedbackHeading.parentElement).toHaveAttribute("data-used-seed", "true");
-    expect(screen.getByRole("button", { name: en.Drill.showSeeds })).toBeDisabled();
+    // Revealed seeds replace the button that revealed them.
+    expect(
+      screen.queryByRole("button", { name: en.Drill.showSeeds }),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: en.Drill.feedback.savePhrase }),
     ).toBeEnabled();
@@ -206,8 +217,12 @@ describe("the drill page's client leaf", () => {
     });
     clickButton(en.Drill.feedback.savePhrase);
 
-    expect(await screen.findByRole("status")).toHaveTextContent(
-      en.Drill.feedback.savedToPhrases,
+    // Two live regions are on the page once feedback has arrived: the one that
+    // announced the arrival, and this one. Asserting over both is what keeps the
+    // confirmation from being satisfied by the wrong region.
+    const statuses = await screen.findAllByRole("status");
+    expect(statuses.map((region) => region.textContent)).toContainEqual(
+      expect.stringContaining(en.Drill.feedback.savedToPhrases),
     );
     const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null") as {
       readonly phrases: readonly StoredPhrase[];
@@ -225,7 +240,11 @@ describe("the drill page's client leaf", () => {
     expect(Number.isNaN(Date.parse(stored.phrases[0]?.savedAt ?? ""))).toBe(false);
 
     clickButton(en.Drill.feedback.dismissSaved);
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    // The arrival announcement is its own `role="status"` and stays, so what has
+    // to be gone is the confirmation's text, not every live region on the page.
+    expect(
+      screen.queryByText(en.Drill.feedback.savedToPhrases),
+    ).not.toBeInTheDocument();
     clickButton(en.Drill.next);
     expect(
       screen.getByRole("heading", { name: en.Drill.complete.heading }),
@@ -240,14 +259,16 @@ describe("the drill page's client leaf", () => {
     clickButton(en.Drill.send);
     await screen.findByText(REWRITE);
     clickButton(en.Drill.feedback.savePhrase);
-    expect(await screen.findByRole("status")).toHaveTextContent(
-      en.Drill.feedback.savedToPhrases,
-    );
+    expect(
+      await screen.findByText(en.Drill.feedback.savedToPhrases),
+    ).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText(en.Drill.feedback.editRewriteLabel), {
       target: { value: "A newly edited rewrite." },
     });
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(en.Drill.feedback.savedToPhrases),
+    ).not.toBeInTheDocument();
   });
 
   it("appends distinct entries and keeps the submitted level after a state change", async () => {
@@ -501,11 +522,11 @@ describe("the drill page's client leaf", () => {
     });
   });
 
-  it("keeps the answer and offers a resend when the endpoint fails", async () => {
+  it("keeps the answer and offers a resend when the endpoint fails recoverably", async () => {
     const calls = stubFetch(
       Response.json(
-        { error: { code: "ERR_LLM_AUTH", message: "not shown" } },
-        { status: 500 },
+        { error: { code: "ERR_LLM_TIMEOUT", message: "not shown" } },
+        { status: 504 },
       ),
       Response.json(feedbackBody(SHORT_PREP)),
     );
@@ -515,7 +536,7 @@ describe("the drill page's client leaf", () => {
     clickButton(en.Drill.send);
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      en.Drill.errors.ERR_LLM_AUTH,
+      en.Drill.errors.ERR_LLM_TIMEOUT,
     );
     expect(screen.getByLabelText(en.Drill.answerLabel)).toHaveValue(ANSWER);
 
@@ -524,6 +545,28 @@ describe("the drill page's client leaf", () => {
     expect(await screen.findByText(REWRITE)).toBeInTheDocument();
     expect(calls).toHaveLength(2);
   });
+
+  it.each([["ERR_LLM_AUTH"], ["ERR_FORBIDDEN_ORIGIN"]] as const)(
+    "replaces the composer rather than offering a resend for %s",
+    async (code) => {
+      stubFetch(Response.json({ error: { code } }, { status: 500 }));
+      renderDrill([SHORT_PREP]);
+
+      typeAnswer(ANSWER);
+      clickButton(en.Drill.send);
+
+      // Terminal: nobody can fix these from this page, so a "Send again" button
+      // would be a control that cannot work.
+      expect(
+        await screen.findByRole("heading", { name: en.Drill.errors.terminalHeading }),
+      ).toBeInTheDocument();
+      expect(screen.getByText(en.Drill.errors[code])).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: en.Drill.resend }),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(en.Drill.answerLabel)).not.toBeInTheDocument();
+    },
+  );
 
   it.each([
     [

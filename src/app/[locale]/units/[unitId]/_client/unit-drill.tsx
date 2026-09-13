@@ -16,6 +16,8 @@ import {
   recordSkipped,
   type UnitProgressState,
 } from "../../../../../core/unit-progress";
+import { Button } from "../../../../_client/ui/button";
+import { Card } from "../../../../_client/ui/card";
 import { Link } from "../../../../../i18n/navigation";
 import { TopicAttempt } from "./topic-attempt";
 
@@ -62,7 +64,7 @@ export function UnitDrill({
   const { state, loaded, setState } = useStateDocument();
 
   if (!loaded) {
-    return <p>{t("loading")}</p>;
+    return <p className="text-text-muted">{t("loading")}</p>;
   }
 
   const storedProgress = state.units[unit];
@@ -132,22 +134,24 @@ function DrillSession({
 
   if (topic === undefined || isCompleted(progress)) {
     return (
-      <section>
-        <h2>{t("complete.heading")}</h2>
-        <p>{t("complete.body")}</p>
-        <p>
-          <button type="button" onClick={restart}>
+      <Card className="measure space-y-3 text-center">
+        <h2 className="text-2xl font-semibold text-text">{t("complete.heading")}</h2>
+        <p className="text-base text-text-muted">{t("complete.body")}</p>
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+          <Button variant="primary" onClick={restart}>
             {t("complete.restart")}
-          </button>{" "}
+          </Button>
           <Link href="/">{t("complete.homeLink")}</Link>
-        </p>
-      </section>
+        </div>
+      </Card>
     );
   }
 
   return (
-    <>
-      <p>{t("progress", { count: progress.answeredTopicIds.length })}</p>
+    <div className="space-y-4">
+      <p className="text-sm text-text-muted">
+        {t("progress", { count: progress.answeredTopicIds.length })}
+      </p>
       <TopicAttempt
         key={turn}
         topic={topic}
@@ -163,6 +167,6 @@ function DrillSession({
           );
         }}
       />
-    </>
+    </div>
   );
 }
