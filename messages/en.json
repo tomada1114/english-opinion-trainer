@@ -21,6 +21,43 @@
     "description": "The page you requested does not exist.",
     "homeLink": "Return to the home page"
   },
+  "Phrases": {
+    "title": "Saved phrases",
+    "loading": "Loading saved phrases…",
+    "empty": "No saved phrases yet.",
+    "noMatches": "No phrases match these filters.",
+    "filters": "Filter phrases",
+    "all": "All",
+    "category": {
+      "label": "Category",
+      "travel": "Travel",
+      "food": "Food",
+      "work": "Work",
+      "hobbies": "Hobbies",
+      "technology": "Technology",
+      "city-life": "City life",
+      "relationships": "Relationships",
+      "learning": "Learning"
+    },
+    "structure": {
+      "label": "Structure",
+      "prep": "Point, reason, example",
+      "concession": "Concession",
+      "comparison": "Comparison"
+    },
+    "mode": {
+      "label": "Mode",
+      "short": "Short",
+      "long": "Long"
+    },
+    "level": "Level",
+    "usedSeed": {
+      "label": "Used a seed",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "delete": "Delete"
+  },
   "Drill": {
     "title": "Unit {unit}",
     "loading": "Loading a topic…",

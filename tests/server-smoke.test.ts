@@ -426,6 +426,18 @@ describe("the built application, served by `next start`", () => {
     }
   });
 
+  it.each(LOCALES)("serves /%s/phrases as the phrase list page", async (locale) => {
+    const response = await fetch(`${baseUrl}/${locale}/phrases`, {
+      redirect: "manual",
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    const document = await response.text();
+    expect(document).toMatch(new RegExp(`<html[^>]*\\slang="${locale}"`));
+    expect(document).toContain(`<h1>${MESSAGES[locale].Phrases.title}</h1>`);
+  });
+
   it.each(LOCALES)("serves /%s/units/1 as the drill page", async (locale) => {
     const response = await fetch(`${baseUrl}/${locale}/units/1`, {
       redirect: "manual",
