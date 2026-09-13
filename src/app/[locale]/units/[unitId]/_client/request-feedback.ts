@@ -73,3 +73,34 @@ export async function requestFeedback(
     .safeParse(body);
   return success.success ? ok(success.data.feedback) : err("unknown");
 }
+
+/**
+ * The codes no amount of retrying from the browser can turn into a success: the
+ * server is not configured to reach the model, or the request did not look
+ * same-origin. Both need someone to change something outside this page, so the
+ * drill replaces the composer rather than offering "Send again".
+ */
+const TERMINAL_FEEDBACK_ERROR_CODES: readonly FeedbackErrorCode[] = [
+  "ERR_LLM_AUTH",
+  "ERR_FORBIDDEN_ORIGIN",
+];
+
+/**
+ * The codes that are the server's own verdict on a rule the client already
+ * checked. Reaching one means the two disagree, so it reads to the user as the
+ * validation message it is — under the textarea — and not as a network failure.
+ */
+const ANSWER_RULE_FEEDBACK_ERROR_CODES: readonly FeedbackErrorCode[] = [
+  "ERR_ANSWER_TOO_LONG",
+  "ERR_ANSWER_NOT_ENGLISH",
+];
+
+/** Whether `code` is one the user cannot recover from by sending again. */
+export function isTerminalFeedbackError(code: FeedbackErrorCode): boolean {
+  return TERMINAL_FEEDBACK_ERROR_CODES.includes(code);
+}
+
+/** Whether `code` restates an answer rule, and so belongs beside the answer. */
+export function isAnswerRuleFeedbackError(code: FeedbackErrorCode): boolean {
+  return ANSWER_RULE_FEEDBACK_ERROR_CODES.includes(code);
+}

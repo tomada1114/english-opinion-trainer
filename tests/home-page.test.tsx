@@ -110,7 +110,9 @@ describe("HomePage", () => {
         en.HomePage.progress.replace("{answered}", "5").replace("{total}", "16"),
       ),
     ).toBeInTheDocument();
-    expect(screen.getByText(`✓ ${en.HomePage.completed}`)).toBeInTheDocument();
+    // A glyph plus the word, not a colour: the completion badge has to read in
+    // greyscale and under forced colours.
+    expect(screen.getByText(en.HomePage.completed)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: en.HomePage.phrasesLink })).toHaveAttribute(
       "href",
       "/en/phrases",

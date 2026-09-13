@@ -5,6 +5,8 @@ import { type ReactElement } from "react";
 
 import { getSeedsForTopic } from "../../../../../core/content/index";
 import type { Level } from "../../../../../core/drill";
+import { Badge } from "../../../../_client/ui/badge";
+import { Card } from "../../../../_client/ui/card";
 import { useStateDocument } from "../../../../_client/use-state-document";
 import { FlagButton } from "./flag-button";
 
@@ -29,32 +31,37 @@ export function SeedList({
   }
 
   return (
-    <section>
-      <h3>{t("seeds.heading")}</h3>
-      <ul>
+    <section className="space-y-2">
+      <h3 className="text-lg font-semibold text-text">{t("seeds.heading")}</h3>
+      <ul className="space-y-2">
         {getSeedsForTopic(topicId, level).map((seed) => {
           const id = seedIdFor(seed.topicId, seed.level, seed.stance);
           const flagged = state.flaggedSeedIds.includes(id);
           return (
             <li key={id}>
-              <p>
-                <strong>{t("seeds.stance")}:</strong> {seed.stance}{" "}
-                <FlagButton
-                  accessibleLabel={`${flagged ? t("flagged") : t("flag")}: ${seed.stance}`}
-                  flagged={flagged}
-                  onFlag={() => {
-                    flagSeed(id);
-                  }}
-                />
-              </p>
-              <p>
-                <strong>{t("seeds.keyPhrases")}:</strong>
-              </p>
-              <ul>
-                {seed.keyPhrases.map((phrase) => (
-                  <li key={phrase}>{phrase}</li>
-                ))}
-              </ul>
+              <Card className="space-y-2 bg-bg-subtle">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-base text-text">
+                    <span className="text-text-muted">{t("seeds.stance")}: </span>
+                    {seed.stance}
+                  </p>
+                  <FlagButton
+                    accessibleLabel={`${flagged ? t("flagged") : t("flag")}: ${seed.stance}`}
+                    flagged={flagged}
+                    onFlag={() => {
+                      flagSeed(id);
+                    }}
+                  />
+                </div>
+                <p className="text-sm text-text-muted">{t("seeds.keyPhrases")}:</p>
+                <ul className="flex flex-wrap gap-1.5">
+                  {seed.keyPhrases.map((phrase) => (
+                    <li key={phrase}>
+                      <Badge>{phrase}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
             </li>
           );
         })}
