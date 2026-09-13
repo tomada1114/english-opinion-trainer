@@ -66,6 +66,7 @@ export function buildFeedbackPrompt<S extends StructureType>({
     `Structure: ${structure}`,
     `Elements to judge: ${elements.join(", ")}`,
     `Target level: ${level}`,
+    LEVEL_GUIDANCE[level],
     "",
     "Judge each listed element as present, weak, or absent, wherever it appears in the answer. The list above is only the drill's presentation order — deviating from it in the answer is never a fault; an element counts wherever the answer places it.",
     'List the "fixes" array and the "grammar" array in order of importance, most important first.',
@@ -79,6 +80,21 @@ export function buildFeedbackPrompt<S extends StructureType>({
     fence,
   ].join("\n");
 }
+
+/**
+ * Per-level instruction telling the model what the target level means for the
+ * rewrite's vocabulary/sentence complexity and the grammar notes' strictness.
+ *
+ * @remarks
+ * Level never changes which topics appear or which elements are judged — see
+ * `Level` in `./drill` — so this table is the only place level reaches model
+ * behavior at all, and it reaches only the rewrite and the grammar notes.
+ */
+export const LEVEL_GUIDANCE = {
+  A2: "For this level, write the rewrite in short sentences with common, everyday vocabulary, and be lenient in the grammar notes about minor errors that do not block understanding.",
+  B1: "For this level, write the rewrite in clear, moderately varied sentences with everyday-to-intermediate vocabulary, and note grammar errors a B1 learner would be expected to fix.",
+  B2: "For this level, write the rewrite with natural, varied sentence structure and idiomatic phrasing, and flag subtler grammar issues too.",
+} as const satisfies Record<Level, string>;
 
 /** A backtick fence longer than any backtick run in `text`, and at least three long. */
 function fenceFor(text: string): string {
