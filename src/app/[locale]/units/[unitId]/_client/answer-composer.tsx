@@ -4,6 +4,7 @@ import {
   type ReactElement,
   type SyntheticEvent,
   useId,
+  useState,
 } from "react";
 
 import { BusyStatus } from "../../../../_client/ui/busy-status";
@@ -54,6 +55,18 @@ export function AnswerComposer({
   const answerId = useId();
   const hintId = useId();
   const trimmed = answer.trim().length;
+  const nearLimit = isNearLimit(trimmed, ceiling);
+  const [nearLimitAnnounced, setNearLimitAnnounced] = useState(false);
+
+  function handleAnswerChange(next: string): void {
+    const nextNearLimit = isNearLimit(next.trim().length, ceiling);
+    if (!nextNearLimit || !nearLimit) {
+      setNearLimitAnnounced(false);
+    } else {
+      setNearLimitAnnounced(true);
+    }
+    onAnswerChange(next);
+  }
 
   /**
    * Cmd/Ctrl+Enter sends; a bare Enter is always a newline.
@@ -92,7 +105,7 @@ export function AnswerComposer({
         aria-describedby={hintId}
         onKeyDown={handleKeyDown}
         onChange={(event) => {
-          onAnswerChange(event.target.value);
+          handleAnswerChange(event.target.value);
         }}
       />
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -103,7 +116,8 @@ export function AnswerComposer({
         </p>
         <CharacterCount
           label={t("characterCount", { count: trimmed, max: ceiling })}
-          near={isNearLimit(trimmed, ceiling)}
+          near={nearLimit}
+          announce={nearLimit && !nearLimitAnnounced}
         />
       </div>
 

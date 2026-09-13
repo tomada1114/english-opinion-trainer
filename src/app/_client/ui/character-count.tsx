@@ -18,15 +18,17 @@ export function isNearLimit(count: number, max: number): boolean {
  * that changes on every keystroke is re-read on every keystroke, which makes
  * composing a sentence impossible. The ceiling is described statically instead,
  * and only crossing {@link NEAR_LIMIT_SHARE} is announced — once, by the
- * `role="status"` this renders when `near` is true.
+ * `role="status"` this renders when `announce` is true. The caller owns when
+ * that crossing has already been announced.
  */
 export function CharacterCount({
   label,
   near,
-}: Readonly<{ label: string; near: boolean }>): ReactElement {
+  announce,
+}: Readonly<{ label: string; near: boolean; announce: boolean }>): ReactElement {
   return (
     <p
-      {...(near ? { role: "status" } : {})}
+      {...(announce ? { role: "status" } : {})}
       className={cn("text-sm tabular-nums", near ? "text-warning" : "text-text-subtle")}
     >
       {label}
