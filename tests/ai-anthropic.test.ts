@@ -10,6 +10,9 @@ import { headersThenStallFetch, LLM_FIXTURES_DIR, replayFetch } from "./llm-repl
 
 const SCHEMA = z.object({ answer: z.string() });
 
+/** The model every test in this file constructs the adapter with. */
+const MODEL = "claude-sonnet-5";
+
 /**
  * A `fetch` that answers every call with `status` and `body`, recording what it
  * got. `headers` is merged in after `content-type`, so a case can dictate the
@@ -79,7 +82,12 @@ function ask(
   fetch: typeof globalThis.fetch,
   apiKey: string | undefined = "test-key",
 ): Promise<Result<z.infer<typeof SCHEMA>, LlmError>> {
-  return createAnthropicAdapter({ apiKey, maxRetries: 0, fetch }).generate({
+  return createAnthropicAdapter({
+    apiKey,
+    model: MODEL,
+    maxRetries: 0,
+    fetch,
+  }).generate({
     schema: SCHEMA,
     prompt: "What is the answer?",
     outputLanguage: "ja",
@@ -103,6 +111,7 @@ describe("createAnthropicAdapter without a credential", () => {
       // would quietly substitute a key for the `undefined` case.
       const result = await createAnthropicAdapter({
         apiKey,
+        model: MODEL,
         maxRetries: 0,
         fetch,
       }).generate({ schema: SCHEMA, prompt: "?", outputLanguage: "en" });
@@ -236,6 +245,7 @@ describe("createAnthropicAdapter validates the answer itself", () => {
     const { fetch } = respondWith(200, messageWithText('{"answer":"no"}'));
 
     const result = await createAnthropicAdapter({
+      model: MODEL,
       apiKey: "test-key",
       maxRetries: 0,
       fetch,
@@ -256,6 +266,7 @@ describe("createAnthropicAdapter when the abort lands after the response headers
     const controller = new AbortController();
     const { fetch, bodyRead } = headersThenStallFetch();
     const pending = createAnthropicAdapter({
+      model: MODEL,
       apiKey: "test-key",
       maxRetries: 0,
       timeoutMs: 60_000,
@@ -293,6 +304,7 @@ describe("createAnthropicAdapter when the provider stalls after the response hea
     // under test — the anchor `installFakeDeadlineTimer`'s stub reproduces the
     // identity of below, so that reproduction is not circular.
     const result = await createAnthropicAdapter({
+      model: MODEL,
       apiKey: "test-key",
       maxRetries: 0,
       timeoutMs: 60_000,
@@ -318,6 +330,7 @@ describe("createAnthropicAdapter when the provider stalls after the response hea
     const { fetch } = respondWith(200, messageWithText('{"answer":"x"}'));
 
     const result = await createAnthropicAdapter({
+      model: MODEL,
       apiKey: "test-key",
       maxRetries: 0,
       deadlineMs: 60_000,
@@ -347,7 +360,11 @@ describe("createAnthropicAdapter under its real retry configuration", () => {
 
     vi.useFakeTimers();
     try {
-      const pending = createAnthropicAdapter({ apiKey: "test-key", fetch }).generate({
+      const pending = createAnthropicAdapter({
+        model: MODEL,
+        apiKey: "test-key",
+        fetch,
+      }).generate({
         schema: SCHEMA,
         prompt: "?",
         outputLanguage: "en",
@@ -383,6 +400,7 @@ describe("createAnthropicAdapter under its real retry configuration", () => {
     installFakeDeadlineTimer();
     try {
       const pending = createAnthropicAdapter({
+        model: MODEL,
         apiKey: "test-key",
         deadlineMs: 200,
         fetch,
@@ -435,7 +453,12 @@ const RATE_LIMITED = {
 function askUnderRetries(
   fetch: typeof globalThis.fetch,
 ): Promise<Result<z.infer<typeof SCHEMA>, LlmError>> {
-  return createAnthropicAdapter({ apiKey: "test-key", maxRetries: 1, fetch }).generate({
+  return createAnthropicAdapter({
+    model: MODEL,
+    apiKey: "test-key",
+    maxRetries: 1,
+    fetch,
+  }).generate({
     schema: SCHEMA,
     prompt: "?",
     outputLanguage: "en",
@@ -551,9 +574,9 @@ describe("createAnthropicAdapter rejects a deadline the platform cannot arm", ()
       // never happens. The last two rows are *inside* that range and throw
       // nothing at all: Node clamps them to a ~1 ms delay, so left unchecked
       // they would surface as a deadline firing at once instead.
-      expect(() => createAnthropicAdapter({ apiKey: "test-key", deadlineMs })).toThrow(
-        RangeError,
-      );
+      expect(() =>
+        createAnthropicAdapter({ model: MODEL, apiKey: "test-key", deadlineMs }),
+      ).toThrow(RangeError);
     },
   );
 });
@@ -590,6 +613,7 @@ describe("createAnthropicAdapter arms a near-ceiling deadline instead of firing 
       // permanently pending request and its abort listener still registered.
       const controller = new AbortController();
       const pending = createAnthropicAdapter({
+        model: MODEL,
         apiKey: "test-key",
         maxRetries: 0,
         deadlineMs,
@@ -646,7 +670,12 @@ describe("createAnthropicAdapter derives its default deadline from timeoutMs and
     "timeoutMs %i with maxRetries %i %s",
     (timeoutMs, maxRetries, outcome) => {
       const build = () =>
-        createAnthropicAdapter({ apiKey: "test-key", timeoutMs, maxRetries });
+        createAnthropicAdapter({
+          model: MODEL,
+          apiKey: "test-key",
+          timeoutMs,
+          maxRetries,
+        });
 
       if (outcome === "constructs") {
         expect(build).not.toThrow();
@@ -663,7 +692,7 @@ describe("createAnthropicAdapter derives its default deadline from timeoutMs and
     // default of `1`: 2 * 300_000 + 1 * 8_000 + 2_000 = 610_000, comfortably
     // under `MAX_DEADLINE_MS`.
     expect(() =>
-      createAnthropicAdapter({ apiKey: "test-key", timeoutMs: 300_000 }),
+      createAnthropicAdapter({ model: MODEL, apiKey: "test-key", timeoutMs: 300_000 }),
     ).not.toThrow();
   });
 
@@ -674,6 +703,7 @@ describe("createAnthropicAdapter derives its default deadline from timeoutMs and
     // rule pinned in one assertion.
     expect(() =>
       createAnthropicAdapter({
+        model: MODEL,
         apiKey: "test-key",
         timeoutMs: 1_073_736_824,
         deadlineMs: 60_000,
@@ -686,24 +716,24 @@ describe("createAnthropicAdapter rejects timeoutMs and maxRetries on their own t
   it.each([0, -1, 100.5, Number.NaN, Number.POSITIVE_INFINITY, 2_147_483_648])(
     "rejects timeoutMs %o naming the option, not the deadline it would derive",
     (timeoutMs: number) => {
-      expect(() => createAnthropicAdapter({ apiKey: "test-key", timeoutMs })).toThrow(
-        /timeoutMs/,
-      );
+      expect(() =>
+        createAnthropicAdapter({ model: MODEL, apiKey: "test-key", timeoutMs }),
+      ).toThrow(/timeoutMs/);
     },
   );
 
   it.each([-1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])(
     "rejects maxRetries %o naming the option, not the deadline it would derive",
     (maxRetries: number) => {
-      expect(() => createAnthropicAdapter({ apiKey: "test-key", maxRetries })).toThrow(
-        /maxRetries/,
-      );
+      expect(() =>
+        createAnthropicAdapter({ model: MODEL, apiKey: "test-key", maxRetries }),
+      ).toThrow(/maxRetries/);
     },
   );
 
   it("rejects maxRetries: 0 nowhere — it is the valid boundary the rest of this suite relies on", () => {
     expect(() =>
-      createAnthropicAdapter({ apiKey: "test-key", maxRetries: 0 }),
+      createAnthropicAdapter({ model: MODEL, apiKey: "test-key", maxRetries: 0 }),
     ).not.toThrow();
   });
 
@@ -714,6 +744,7 @@ describe("createAnthropicAdapter rejects timeoutMs and maxRetries on their own t
     // silently turning retries off.
     expect(() =>
       createAnthropicAdapter({
+        model: MODEL,
         apiKey: "test-key",
         maxRetries: -1,
         deadlineMs: 60_000,

@@ -2,9 +2,6 @@ import Anthropic from "@anthropic-ai/sdk";
 
 import { declineLongRetryAfter } from "./retry-after";
 
-/** The provider model this adapter calls when its caller names none. */
-export const DEFAULT_MODEL = "claude-sonnet-5";
-
 /** Ceiling on one answer's length, in tokens, when its caller names none. */
 export const DEFAULT_MAX_TOKENS = 1024;
 
@@ -62,7 +59,7 @@ const BODY_READ_MARGIN_MS = 2_000;
  *
  * Derived rather than fixed, because a fixed constant computed from the
  * *default* `timeoutMs` and `maxRetries` silently under-cuts a caller who
- * configures either: `createAnthropicAdapter({ apiKey, timeoutMs: 300_000 })`
+ * configures either: `createAnthropicAdapter({ apiKey, model, timeoutMs: 300_000 })`
  * implies a single attempt can take five minutes, but a fixed `130_000` total
  * bound would abort before even that first attempt's own header timeout could
  * fire. Deriving from the resolved values instead means the two options stay
