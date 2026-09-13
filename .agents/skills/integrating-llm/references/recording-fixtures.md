@@ -27,11 +27,18 @@ inspects every staged blob whatever its extension.
 replaying it must produce, and asserts that the map and the directory agree exactly — a
 fixture nothing has an expectation for is a file that could decay into anything.
 
-Only `success` and `auth-401` are recordings of real exchanges. A `429` and a `529`
-cannot be provoked on demand, so those are written by hand against the documented error
-shape; `ERR_LLM_TIMEOUT` has no fixture at all, because a deadline is a property of the
-connection rather than of a response and is arranged with a `fetch` that never answers.
-Prefer a hand-written fixture over inventing a way to make a provider misbehave.
+`success`, `auth-401`, and the three `level-a2`/`level-b1`/`level-b2` fixtures are
+recordings of real exchanges. A `429` and a `529` cannot be provoked on demand, so those
+are written by hand against the documented error shape; `ERR_LLM_TIMEOUT` has no fixture
+at all, because a deadline is a property of the connection rather than of a response and
+is arranged with a `fetch` that never answers. Prefer a hand-written fixture over
+inventing a way to make a provider misbehave.
+
+The three `level-<level>` fixtures ask for genuine feedback on the same fixed answer
+(`tests/llm-fixture-contract.ts`'s `buildLevelFixturePrompt`), one real request per
+`Level` — unlike `success`'s "copy this JSON verbatim" trick, their content cannot be
+predicted, so recording only checks `ok: true`. Whether the rewrite's register actually
+differs by level is a human read of the recorded fixtures, done once after recording.
 
 ## Recording
 

@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "model": "claude-haiku-4-5-20251001",
+    "id": "msg_011Cf1fZHW8T9e3WRmUV536f",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"structure\":{\"point\":{\"verdict\":\"present\",\"reason\":\"The learner clearly states the recommendation: Kyoto is a good city.\"},\"reason\":{\"verdict\":\"present\",\"reason\":\"A reason is provided: it has many old temples and beautiful gardens.\"}},\"fixes\":[{\"before\":\"it have many old temple and beautiful garden\",\"after\":\"it has many old temples and beautiful gardens\",\"why\":\"Subject-verb agreement: 'it' (singular) requires 'has' not 'have'. Both nouns need plural forms when preceded by 'many'.\"},{\"before\":\"a good city\",\"after\":\"an excellent choice / a wonderful destination\",\"why\":\"At B2 level, opt for more sophisticated descriptors than 'good'; use more varied and precise vocabulary.\"}],\"rewrite\":\"I would recommend Kyoto to a friend because it has countless ancient temples and exquisitely maintained gardens that reflect traditional Japanese aesthetics. The city perfectly captures the essence of classical Japan in a way few other destinations can.\",\"grammar\":[{\"excerpt\":\"it have many old temple\",\"correction\":\"it has many old temples\",\"note\":\"Verb conjugation error with third-person singular subject (agreement); also noun number (temple → temples after 'many')\"},{\"excerpt\":\"beautiful garden\",\"correction\":\"beautiful gardens\",\"note\":\"Noun number: 'many' requires plural form\"}]}"
+      }
+    ],
+    "container": null,
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 928,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 293,
+      "service_tier": "standard",
+      "inference_geo": "not_available"
+    }
+  }
+}
