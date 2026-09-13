@@ -56,6 +56,7 @@ const REMOVED_PATHS = [
   "tests/ai-port.test.ts",
   "tests/ai-vendor-swap.test.ts",
   "tests/fixtures/llm",
+  "tests/llm-fixture-contract.ts",
   "tests/llm-replay.ts",
   "tests/server-handler.test.ts",
 ];

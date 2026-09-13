@@ -6,6 +6,7 @@ import * as z from "zod";
 
 import { createAnthropicAdapter, LlmError } from "../src/ai/index";
 import type { Result } from "../src/core/result";
+import { CONTRACT_SCHEMA } from "./llm-fixture-contract";
 import { headersThenStallFetch, LLM_FIXTURES_DIR, replayFetch } from "./llm-replay";
 
 const SCHEMA = z.object({ answer: z.string() });
@@ -841,6 +842,26 @@ describe("createAnthropicClient closes the SDK's own environment reads (#88)", (
   });
 });
 
+/**
+ * The Anthropic adapter, constructed against `CONTRACT_SCHEMA` rather than
+ * this file's own generic `SCHEMA` — `tests/fixtures/llm/success.json` is a
+ * real recording of a feedback-shaped answer, not a `{ answer: string }` one.
+ */
+function askFixtureContract(
+  fetch: typeof globalThis.fetch,
+): Promise<Result<z.infer<typeof CONTRACT_SCHEMA>, LlmError>> {
+  return createAnthropicAdapter({
+    apiKey: "test-key",
+    model: MODEL,
+    maxRetries: 0,
+    fetch,
+  }).generate({
+    schema: CONTRACT_SCHEMA,
+    prompt: "What is the answer?",
+    outputLanguage: "en",
+  });
+}
+
 describe("the committed LLM fixtures", () => {
   /**
    * What replaying each fixture must actually produce.
@@ -874,7 +895,7 @@ describe("the committed LLM fixtures", () => {
       const networkFetch = vi.fn(() => Promise.reject(new Error("network reached")));
       vi.stubGlobal("fetch", networkFetch);
 
-      const result = await ask(replayFetch(name));
+      const result = await askFixtureContract(replayFetch(name));
 
       if (expected === "ok") {
         expect(result.ok).toBe(true);
@@ -893,7 +914,9 @@ describe("the committed LLM fixtures", () => {
     const networkFetch = vi.fn(() => Promise.reject(new Error("network reached")));
     vi.stubGlobal("fetch", networkFetch);
 
-    await Promise.all(onDisk.map(async (name) => ask(replayFetch(name))));
+    await Promise.all(
+      onDisk.map(async (name) => askFixtureContract(replayFetch(name))),
+    );
 
     expect(networkFetch).not.toHaveBeenCalled();
   });

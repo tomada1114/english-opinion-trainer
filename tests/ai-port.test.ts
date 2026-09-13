@@ -9,32 +9,13 @@ import {
   type LlmPort,
 } from "../src/ai/index";
 import type { Result } from "../src/core/result";
+import { CONTRACT_ANSWER, CONTRACT_SCHEMA } from "./llm-fixture-contract";
 import {
   isRecording,
   neverResolvingFetch,
   recordingFetch,
   replayFetch,
 } from "./llm-replay";
-
-/**
- * The shape every contract case asks a port to fill.
- *
- * @remarks
- * Exported because an adapter's harness has to produce data matching it — a
- * recorded fixture, in the Anthropic adapter's case — and a second copy of the
- * shape would drift from this one.
- */
-export const CONTRACT_SCHEMA = z.object({
-  answer: z.string(),
-  confidence: z.number(),
-});
-
-/** The value {@link LlmPortContractHarness.succeeds} must resolve to. */
-export const CONTRACT_ANSWER = {
-  answer:
-    "The Answer to the Ultimate Question of Life, the Universe, and Everything is 42.",
-  confidence: 0.42,
-};
 
 /**
  * The model every replayed contract case constructs the adapter with.
@@ -149,8 +130,16 @@ export function describeLlmPortContract(
     it("infers the value type from the request schema", async () => {
       const value = valueOf(await ask(harness.succeeds()));
 
-      expectTypeOf(value).toEqualTypeOf<{ answer: string; confidence: number }>();
-      expect(value.answer).toBe(CONTRACT_ANSWER.answer);
+      expectTypeOf(value).toEqualTypeOf<{
+        structure: {
+          point: { verdict: "present" | "weak" | "absent"; reason: string };
+          reason: { verdict: "present" | "weak" | "absent"; reason: string };
+        };
+        fixes: { before: string; after: string; why: string }[];
+        rewrite: string;
+        grammar: { excerpt: string; correction: string; note: string }[];
+      }>();
+      expect(value.rewrite).toBe(CONTRACT_ANSWER.rewrite);
     });
 
     it("answers when the caller passes no signal at all", async () => {
@@ -171,10 +160,10 @@ export function describeLlmPortContract(
       // directions are asserted, because only checking the accepting one would
       // pass against an adapter that swallowed the failure branch entirely.
       const accepts = CONTRACT_SCHEMA.refine(async (value) =>
-        Promise.resolve(value.confidence <= 1),
+        Promise.resolve(value.rewrite.length > 0),
       );
       const rejects = CONTRACT_SCHEMA.refine(async (value) =>
-        Promise.resolve(value.confidence > 1),
+        Promise.resolve(value.rewrite.length === 0),
       );
       const port = harness.succeeds();
 
@@ -302,7 +291,7 @@ export function describeLlmPortContract(
 describeLlmPortContract("createFakeLlmPort", {
   succeeds: () => createFakeLlmPort({ response: CONTRACT_ANSWER }),
   returnsInvalidOutput: () =>
-    createFakeLlmPort({ response: { answer: 42, confidence: "high" } }),
+    createFakeLlmPort({ response: { rewrite: 42, fixes: "not-an-array" } }),
   failsWith: (code) => createFakeLlmPort({ failWith: code }),
   // Far longer than the unit project's 5s budget, so only an abort ends it.
   neverAnswers: () => createFakeLlmPort({ response: CONTRACT_ANSWER, delayMs: 60_000 }),
@@ -378,7 +367,7 @@ describe("createFakeLlmPort", () => {
 
   it("keeps the schema's own validation error on cause", async () => {
     const error = failureOf(
-      await ask(createFakeLlmPort({ response: { answer: 1, confidence: 2 } })),
+      await ask(createFakeLlmPort({ response: { rewrite: 1, fixes: [] } })),
     );
 
     expect(error.cause).toBeInstanceOf(z.ZodError);
@@ -459,10 +448,10 @@ describe("createFakeLlmPort", () => {
  *
  * @remarks
  * Skipped unless `LLM_RECORD=1`, which is a local operation: it spends money
- * and needs a real credential, so it is never what CI runs. It lives here, next
- * to {@link CONTRACT_ANSWER}, because the recorded answer has to *be* that
- * value for the contract suite above to assert on it — building the prompt from
- * the constant is what stops the fixture and the assertion drifting apart.
+ * and needs a real credential, so it is never what CI runs. The recorded
+ * answer has to *be* {@link CONTRACT_ANSWER} for the contract suite above to
+ * assert on it — building the prompt from the constant is what stops the
+ * fixture and the assertion drifting apart.
  *
  * `ERR_LLM_RATE_LIMIT` and `ERR_LLM_UNAVAILABLE` have no entry here: neither a
  * 429 nor a 529 can be provoked on demand, so their fixtures are written by

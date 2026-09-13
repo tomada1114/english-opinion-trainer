@@ -4,16 +4,24 @@
     "id": "msg_fixture_invalid_output",
     "type": "message",
     "role": "assistant",
-    "model": "claude-sonnet-5",
+    "model": "claude-haiku-4-5",
     "content": [
       {
         "type": "text",
         "citations": null,
-        "text": "{\"answer\": 42, \"confidence\": \"high\"}"
+        "text": "{\"structure\":{\"point\":{\"verdict\":\"present\",\"reason\":\"ok\"},\"reason\":{\"verdict\":\"present\",\"reason\":\"ok\"}},\"fixes\":\"not-an-array\",\"rewrite\":42,\"grammar\":[]}"
       }
     ],
     "stop_reason": "end_turn",
     "stop_sequence": null,
-    "usage": { "input_tokens": 24, "output_tokens": 17 }
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 24,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "output_tokens": 17,
+      "output_tokens_details": { "thinking_tokens": 0 },
+      "service_tier": "standard"
+    }
   }
 }
