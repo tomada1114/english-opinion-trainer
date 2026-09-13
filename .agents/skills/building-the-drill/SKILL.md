@@ -107,11 +107,13 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
   the mode's sentence ceiling (2 `short` / 6 `long`) is logged, not regenerated. No
   retry beyond the adapter's own one.
 - **Prompt rules.** Built by a pure function from (topic text, structure type, the
-  mode's element list, level, answer). The topic's text is sent, never its id. Seeds are
-  never sent; whether one was opened is a browser-only attribute. Output language is
-  always English: the handler passes `outputLanguage: "en"` as a constant, not a value
-  derived from a locale. The `ask` handler's `OUTPUT_LANGUAGE_BY_LOCALE` map is not
-  carried over.
+  mode's element list, level, mode, answer). The topic's text is sent, never its id.
+  Seeds are never sent; whether one was opened is a browser-only attribute. Output
+  language is always English: the handler passes `outputLanguage: "en"` as a constant,
+  not a value derived from a locale. The `ask` handler's `OUTPUT_LANGUAGE_BY_LOCALE` map
+  is not carried over. The prompt also states the mode's rewrite sentence ceiling
+  (`REWRITE_SENTENCE_CEILING`) as an instruction, since `clampFeedback` can only log an
+  over-ceiling rewrite afterward, never regenerate it.
 - **Model.** `src/server/composition.ts` wires `createAnthropicAdapter` with
   `claude-haiku-4-5` as the initial model, chosen for speed against the five-minute
   session — a one-line choice, revisited by a separate measurement issue. Tests keep

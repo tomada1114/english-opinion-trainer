@@ -140,6 +140,7 @@ export function createFeedbackHandler(
         structure: topic.structure,
         elements: elementsFor(topic.structure, topic.mode),
         level,
+        mode: topic.mode,
         answer,
       }),
       // A constant: the app is English-only, so the request carries no locale.
