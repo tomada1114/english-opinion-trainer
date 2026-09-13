@@ -235,6 +235,12 @@ const EDITED_DOCUMENT_FILES = [
   ".agents/skills/writing-typescript/SKILL.md",
   "AGENTS.md",
   "README.md",
+  // The design documents name the AI layer where the wait it causes drives a UI
+  // decision — the model call's `max_tokens` is why the busy state is narrated.
+  // Removing the layer means removing the wait, so those passages are part of
+  // the removal's edit set rather than incidental prose.
+  "docs/design/design-concept.md",
+  "docs/design/design-system.md",
 ];
 
 /**
