@@ -2,8 +2,10 @@ import Anthropic from "@anthropic-ai/sdk";
 
 import { declineLongRetryAfter } from "./retry-after";
 
-/** Ceiling on one answer's length, in tokens, when its caller names none. */
-export const DEFAULT_MAX_TOKENS = 1024;
+/** Ceiling on one answer's length, in tokens, when its caller names none — a
+ * `long`-mode feedback answer left little headroom below 1024, and output is
+ * billed per token actually generated. */
+export const DEFAULT_MAX_TOKENS = 4096;
 
 /**
  * How long one attempt may wait for the response *headers*, in milliseconds.
