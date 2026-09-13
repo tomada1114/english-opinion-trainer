@@ -30,6 +30,11 @@
     "export": "Export",
     "import": "Import",
     "importError": "The selected file is not a valid saved state.",
+    "flagged": {
+      "heading": "Flagged content IDs",
+      "topicIds": "Flagged topic IDs",
+      "seedIds": "Flagged seed IDs"
+    },
     "all": "All",
     "category": {
       "label": "Category",
@@ -78,6 +83,8 @@
     "skip": "Skip this topic",
     "next": "Next topic",
     "showSeeds": "Show seeds",
+    "flag": "Flag",
+    "flagged": "Flagged",
     "seeds": {
       "heading": "Starting points",
       "stance": "Stance",

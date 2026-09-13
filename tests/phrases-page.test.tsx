@@ -133,6 +133,23 @@ describe("PhrasesPage", () => {
     expect(screen.getByText(en.Phrases.empty)).toBeInTheDocument();
   });
 
+  it("renders flagged topic and seed ids in read-only copyable fields", async () => {
+    const state = makeState();
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+    await renderPhrasesPage();
+
+    expect(
+      screen.getByRole("heading", { name: en.Phrases.flagged.heading }),
+    ).toBeInTheDocument();
+    const topicIds = screen.getByLabelText(en.Phrases.flagged.topicIds);
+    const seedIds = screen.getByLabelText(en.Phrases.flagged.seedIds);
+    expect(topicIds).toHaveValue(state.flaggedTopicIds.join("\n"));
+    expect(seedIds).toHaveValue(state.flaggedSeedIds.join("\n"));
+    expect(topicIds).toHaveAttribute("readonly");
+    expect(seedIds).toHaveAttribute("readonly");
+  });
+
   it("combines category and level filters with AND semantics and sorts newest first", async () => {
     const olderMatch = makePhrase({
       id: "travel-b1-older",

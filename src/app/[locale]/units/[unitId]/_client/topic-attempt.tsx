@@ -6,12 +6,15 @@ import {
   type AnswerViolation,
   checkAnswer,
 } from "../../../../../core/answer-rules";
-import { getSeedsForTopic, type Topic } from "../../../../../core/content/index";
+import type { Topic } from "../../../../../core/content/index";
 import type { Level } from "../../../../../core/drill";
 import { STRUCTURE_TEMPLATES } from "../../../../../core/drill";
 import type { Feedback } from "../../../../../core/feedback";
+import { useStateDocument } from "../../../../_client/use-state-document";
+import { FlagButton } from "./flag-button";
 import { FeedbackView } from "./feedback-view";
 import { type FeedbackErrorCode, requestFeedback } from "./request-feedback";
+import { SeedList } from "./seed-list";
 
 /** Where one attempt at a topic stands. */
 type Phase =
@@ -40,6 +43,7 @@ export function TopicAttempt({
   onSkip: () => void;
 }>): ReactElement {
   const t = useTranslations("Drill");
+  const { state, setState } = useStateDocument();
   const answerId = useId();
   const countId = useId();
   const [answer, setAnswer] = useState("");
@@ -49,6 +53,14 @@ export function TopicAttempt({
   const [usedSeed, setUsedSeed] = useState(false);
   const [submittedLevel, setSubmittedLevel] = useState<Level | undefined>(undefined);
   const ceiling = ANSWER_CEILING[topic.mode];
+
+  function flagTopic(): void {
+    setState((current) =>
+      current.flaggedTopicIds.includes(topic.id)
+        ? current
+        : { ...current, flaggedTopicIds: [...current.flaggedTopicIds, topic.id] },
+    );
+  }
 
   async function send(): Promise<void> {
     const checked = checkAnswer(answer, topic.mode);
@@ -89,7 +101,13 @@ export function TopicAttempt({
 
   return (
     <article>
-      <h2>{topic.text}</h2>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+        <h2>{topic.text}</h2>
+        <FlagButton
+          flagged={state.flaggedTopicIds.includes(topic.id)}
+          onFlag={flagTopic}
+        />
+      </div>
       <p>
         {t("structureLabel")}: {STRUCTURE_TEMPLATES[topic.structure]}
       </p>
@@ -107,28 +125,7 @@ export function TopicAttempt({
           {t("showSeeds")}
         </button>
       </p>
-      {showSeeds ? (
-        <section>
-          <h3>{t("seeds.heading")}</h3>
-          <ul>
-            {getSeedsForTopic(topic.id, level).map((seed, index) => (
-              <li key={`${seed.topicId}-${seed.level}-${String(index)}`}>
-                <p>
-                  <strong>{t("seeds.stance")}:</strong> {seed.stance}
-                </p>
-                <p>
-                  <strong>{t("seeds.keyPhrases")}:</strong>
-                </p>
-                <ul>
-                  {seed.keyPhrases.map((phrase) => (
-                    <li key={phrase}>{phrase}</li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+      {showSeeds ? <SeedList topicId={topic.id} level={level} /> : null}
 
       <form onSubmit={handleSubmit}>
         <label htmlFor={answerId}>{t("answerLabel")}</label>

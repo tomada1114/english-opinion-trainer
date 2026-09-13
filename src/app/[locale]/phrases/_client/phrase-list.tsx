@@ -14,6 +14,7 @@ import {
   type StructureType,
 } from "../../../../core/drill";
 import { useStateDocument } from "../../../_client/use-state-document";
+import { FlaggedIdList } from "./flagged-id-list";
 import { FilterSelect, type FilterOption } from "./filter-select";
 import { downloadState, readStateFile } from "./state-transfer";
 
@@ -145,6 +146,7 @@ export function PhraseList(): ReactElement {
         />
       </p>
       {importError ? <p role="alert">{t("importError")}</p> : null}
+      <FlaggedIdList state={state} />
       <fieldset>
         <legend>{t("filters")}</legend>
         {filterDefinitions.map((filter) => (
@@ -183,12 +185,7 @@ export function PhraseList(): ReactElement {
                   {t(phrase.usedSeed ? "usedSeed.yes" : "usedSeed.no")}
                 </span>
               </p>
-              <button
-                type="button"
-                onClick={() => {
-                  deletePhrase(phrase.id);
-                }}
-              >
+              <button type="button" onClick={deletePhrase.bind(null, phrase.id)}>
                 {t("delete")}
               </button>
             </li>
