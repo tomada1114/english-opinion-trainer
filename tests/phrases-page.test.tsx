@@ -10,7 +10,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import PhrasesPage from "../src/app/[locale]/phrases/page";
-import { defaultState, type PhraseEntry } from "../src/core/state";
+import { defaultState, type PhraseEntry, type StateDocument } from "../src/core/state";
 import en from "../messages/en.json";
 
 const STORAGE_KEY = "english-opinion-trainer";
@@ -39,6 +39,66 @@ function seedPhrases(phrases: readonly PhraseEntry[]): void {
     STORAGE_KEY,
     JSON.stringify({ ...defaultState(), phrases }),
   );
+}
+
+function makeState(): StateDocument {
+  return {
+    version: 1,
+    level: "A2",
+    units: {
+      1: { answeredTopicIds: ["prep-travel-short"], completed: false },
+      4: { answeredTopicIds: ["comparison-food-long"], completed: true },
+    },
+    phrases: [
+      makePhrase({
+        id: "round-trip",
+        text: "A phrase to export.",
+        usedSeed: true,
+      }),
+    ],
+    flaggedTopicIds: ["concession-work-short"],
+    flaggedSeedIds: ["seed-concession-work-short-b1-1"],
+  };
+}
+
+let latestRead: Promise<void> | undefined;
+
+class MockFileReader {
+  result: string | null = null;
+  done: Promise<void> = Promise.resolve();
+  private readonly listeners = new Map<string, (event: Event) => void>();
+
+  addEventListener(type: string, listener: (event: Event) => void): void {
+    this.listeners.set(type, listener);
+  }
+
+  readAsText(file: Blob): void {
+    this.done = file.text().then((text) => {
+      this.result = text;
+      this.listeners.get("load")?.(new Event("load"));
+    });
+    latestRead = this.done;
+  }
+}
+
+function stubFileReader(): void {
+  latestRead = undefined;
+  vi.stubGlobal("FileReader", MockFileReader);
+}
+
+async function importFile(content: string): Promise<void> {
+  fireEvent.change(screen.getByLabelText(en.Phrases.import), {
+    target: {
+      files: [new File([content], "state.json", { type: "application/json" })],
+    },
+  });
+  const read = latestRead;
+  if (read === undefined) {
+    throw new Error("FileReader was not created");
+  }
+  await act(async () => {
+    await read;
+  });
 }
 
 async function renderPhrasesPage(): Promise<RenderResult> {
@@ -134,4 +194,91 @@ describe("PhrasesPage", () => {
       JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
     ).toMatchObject({ phrases: [retained] });
   });
+
+  it("exports the complete state as pretty-printed JSON with a dated filename", async () => {
+    const state = makeState();
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    stubFileReader();
+
+    let exportedBlob: Blob | undefined;
+    vi.stubGlobal("URL", {
+      createObjectURL: vi.fn((blob: Blob) => {
+        exportedBlob = blob;
+        return "blob:state";
+      }),
+      revokeObjectURL: vi.fn(),
+    });
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => undefined);
+
+    await renderPhrasesPage();
+    fireEvent.click(screen.getByRole("button", { name: en.Phrases.export }));
+
+    if (exportedBlob === undefined) {
+      throw new Error("Export did not create a Blob");
+    }
+    expect(exportedBlob.type).toBe("application/json");
+    expect(await exportedBlob.text()).toBe(JSON.stringify(state, null, 2));
+    expect(click).toHaveBeenCalledTimes(1);
+    const clickedAnchor = click.mock.instances[0];
+    if (!(clickedAnchor instanceof HTMLAnchorElement)) {
+      throw new Error("Export did not click an anchor");
+    }
+    expect(clickedAnchor.download).toMatch(
+      /^english-opinion-trainer-\d{4}-\d{2}-\d{2}\.json$/,
+    );
+  });
+
+  it("round-trips the exact state document from export to import", async () => {
+    const state = makeState();
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    stubFileReader();
+
+    let exportedBlob: Blob | undefined;
+    vi.stubGlobal("URL", {
+      createObjectURL: vi.fn((blob: Blob) => {
+        exportedBlob = blob;
+        return "blob:state";
+      }),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {
+      return undefined;
+    });
+
+    await renderPhrasesPage();
+    fireEvent.click(screen.getByRole("button", { name: en.Phrases.export }));
+    if (exportedBlob === undefined) {
+      throw new Error("Export did not create a Blob");
+    }
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultState()));
+    await importFile(await exportedBlob.text());
+
+    expect(
+      JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
+    ).toStrictEqual(state);
+  });
+
+  it.each([
+    ["malformed JSON", "{not json"],
+    ["schema-invalid JSON", JSON.stringify({ ...defaultState(), level: "C2" })],
+  ] as const)(
+    "shows a translated error and retains state for %s import",
+    async (_label, content) => {
+      const phrase = makePhrase({ id: "retained", text: "Retain this phrase." });
+      const state = { ...defaultState(), phrases: [phrase] };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      stubFileReader();
+
+      await renderPhrasesPage();
+      await importFile(content);
+
+      expect(screen.getByRole("alert")).toHaveTextContent(en.Phrases.importError);
+      expect(
+        JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
+      ).toStrictEqual(state);
+      expect(screen.getByText(phrase.text)).toBeInTheDocument();
+    },
+  );
 });

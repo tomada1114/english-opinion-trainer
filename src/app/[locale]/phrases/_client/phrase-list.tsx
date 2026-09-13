@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { type ReactElement, useState } from "react";
+import { type ChangeEvent, type ReactElement, useId, useState } from "react";
 
 import {
   CATEGORIES,
@@ -15,6 +15,7 @@ import {
 } from "../../../../core/drill";
 import { useStateDocument } from "../../../_client/use-state-document";
 import { FilterSelect, type FilterOption } from "./filter-select";
+import { downloadState, readStateFile } from "./state-transfer";
 
 type UsedSeedFilter = "" | "true" | "false";
 interface PhraseFilters {
@@ -32,7 +33,6 @@ interface FilterDefinition {
   readonly label: string;
   readonly options: readonly FilterOption<string>[];
 }
-
 const EMPTY_FILTERS: PhraseFilters = {
   category: "",
   structure: "",
@@ -45,11 +45,11 @@ export function PhraseList(): ReactElement {
   const t = useTranslations("Phrases");
   const { state, loaded, setState } = useStateDocument();
   const [filters, setFilters] = useState<PhraseFilters>(EMPTY_FILTERS);
-
+  const [importError, setImportError] = useState(false);
+  const importInputId = useId();
   if (!loaded) {
     return <p>{t("loading")}</p>;
   }
-
   const filterDefinitions = [
     {
       key: "category",
@@ -89,13 +89,11 @@ export function PhraseList(): ReactElement {
       ],
     },
   ] satisfies readonly FilterDefinition[];
-
   function changeFilter(key: FilterKey): (value: string) => void {
     return (value) => {
       setFilters((current) => ({ ...current, [key]: value }));
     };
   }
-
   const visiblePhrases = state.phrases
     .filter(
       (phrase) =>
@@ -106,16 +104,47 @@ export function PhraseList(): ReactElement {
         (filters.usedSeed === "" || String(phrase.usedSeed) === filters.usedSeed),
     )
     .sort((left, right) => Date.parse(right.savedAt) - Date.parse(left.savedAt));
-
   function deletePhrase(id: string): void {
     setState((current) => ({
       ...current,
       phrases: current.phrases.filter((phrase) => phrase.id !== id),
     }));
   }
-
+  function exportState(): void {
+    downloadState(state);
+  }
+  function importState(event: ChangeEvent<HTMLInputElement>): void {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = "";
+    if (file === undefined) {
+      return;
+    }
+    setImportError(false);
+    readStateFile(
+      file,
+      (nextState) => {
+        setState(nextState);
+      },
+      () => {
+        setImportError(true);
+      },
+    );
+  }
   return (
     <section>
+      <p>
+        <button type="button" onClick={exportState}>
+          {t("export")}
+        </button>{" "}
+        <label htmlFor={importInputId}>{t("import")}</label>{" "}
+        <input
+          id={importInputId}
+          type="file"
+          accept="application/json,.json"
+          onChange={importState}
+        />
+      </p>
+      {importError ? <p role="alert">{t("importError")}</p> : null}
       <fieldset>
         <legend>{t("filters")}</legend>
         {filterDefinitions.map((filter) => (
@@ -129,7 +158,6 @@ export function PhraseList(): ReactElement {
           />
         ))}
       </fieldset>
-
       {visiblePhrases.length === 0 ? (
         <p>{state.phrases.length === 0 ? t("empty") : t("noMatches")}</p>
       ) : (
