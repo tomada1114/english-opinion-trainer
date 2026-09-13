@@ -52,6 +52,7 @@ describe("buildFeedbackPrompt", () => {
     structure: "concession",
     elements,
     level: "A2",
+    mode: "long",
     answer,
   });
 
@@ -83,6 +84,22 @@ describe("buildFeedbackPrompt", () => {
     expect(prompt.toLowerCase()).toContain("never a fault");
   });
 
+  it.each([
+    ["short" as const, 2],
+    ["long" as const, 6],
+  ])("states mode %s's rewrite sentence ceiling of %i", (mode, ceiling) => {
+    const modePrompt = buildFeedbackPrompt({
+      topicText: "Should companies let employees work from home?",
+      structure: "concession",
+      elements: elementsFor("concession", mode),
+      level: "A2",
+      mode,
+      answer,
+    });
+
+    expect(modePrompt).toContain(`at most ${String(ceiling)} sentences`);
+  });
+
   it("delimits the answer from the instruction with a labelled fenced block", () => {
     const match = /Answer:\n```\n([\s\S]*)\n```/.exec(prompt);
     expect(match?.[1]).toBe(answer);
@@ -96,6 +113,7 @@ describe("buildFeedbackPrompt", () => {
       structure: "concession",
       elements,
       level: "A2",
+      mode: "long",
       answer: pathologicalAnswer,
     });
     const match = /Answer:\n```\n([\s\S]*)\n```/.exec(injected);
@@ -109,6 +127,7 @@ describe("buildFeedbackPrompt", () => {
       structure: "concession",
       elements,
       level: "A2",
+      mode: "long",
       answer: fencedAnswer,
     });
     const match = /Answer:\n(`{3,})\n([\s\S]*)\n\1$/.exec(injected);

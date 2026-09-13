@@ -292,6 +292,7 @@ describe("the feedback handler", () => {
         structure: "prep",
         elements: ["point", "reason"],
         level: "B2",
+        mode: "short",
         answer: "I recommend Kyoto.",
       }),
     );
