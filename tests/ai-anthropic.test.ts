@@ -771,6 +771,21 @@ describe("createAnthropicAdapter builds the provider request", () => {
       system: expect.stringContaining("ja") as unknown,
     });
   });
+
+  it("sends the default max_tokens ceiling when the caller names none (#62)", async () => {
+    const { fetch, calls } = respondWith(200, messageWithText('{"answer":"x"}'));
+
+    await ask(fetch);
+
+    const raw = calls[0]?.body;
+    if (typeof raw !== "string") {
+      throw new Error("the SDK sent a request body that was not a JSON string");
+    }
+
+    // A `long`-mode structured feedback answer left little headroom below the
+    // previous default of 1024, per `DEFAULT_MAX_TOKENS`'s own TSDoc.
+    expect(JSON.parse(raw)).toMatchObject({ max_tokens: 4096 });
+  });
 });
 
 describe("createAnthropicClient closes the SDK's own environment reads (#88)", () => {
