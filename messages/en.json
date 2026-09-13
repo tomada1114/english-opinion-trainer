@@ -27,6 +27,9 @@
     "empty": "No saved phrases yet.",
     "noMatches": "No phrases match these filters.",
     "filters": "Filter phrases",
+    "export": "Export",
+    "import": "Import",
+    "importError": "The selected file is not a valid saved state.",
     "all": "All",
     "category": {
       "label": "Category",
