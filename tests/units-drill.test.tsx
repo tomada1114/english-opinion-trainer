@@ -127,7 +127,7 @@ interface StoredPhrase {
 }
 
 /** Stubs `fetch` to answer each call with the next response, recording every call. */
-function stubFetch(...responses: Response[]): RecordedCall[] {
+function stubFetch(...responses: (Response | Promise<Response>)[]): RecordedCall[] {
   const calls: RecordedCall[] = [];
   vi.stubGlobal("fetch", (input: string, init?: RequestInit): Promise<Response> => {
     calls.push({ url: input, init });
@@ -202,6 +202,49 @@ describe("the drill page's client leaf", () => {
       answer: ANSWER,
       level: "B1",
     });
+  });
+
+  it.each([
+    ["bare Enter", {}],
+    ["Shift+Enter", { shiftKey: true }],
+  ] as const)("does not submit on %s", (_label, modifiers) => {
+    const calls = stubFetch();
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    const textarea = screen.getByRole("textbox", { name: en.Drill.answerLabel });
+    fireEvent.keyDown(textarea, { key: "Enter", ...modifiers });
+
+    expect(calls).toStrictEqual([]);
+  });
+
+  it.each([
+    ["Meta+Enter", { metaKey: true }],
+    ["Ctrl+Enter", { ctrlKey: true }],
+  ] as const)("submits once on %s and focuses feedback", async (_label, modifiers) => {
+    let resolveResponse: (response: Response) => void = () => undefined;
+    const pendingResponse = new Promise<Response>((resolve) => {
+      resolveResponse = resolve;
+    });
+    const calls = stubFetch(pendingResponse);
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    const textarea = screen.getByRole("textbox", { name: en.Drill.answerLabel });
+    fireEvent.keyDown(textarea, { key: "Enter", ...modifiers });
+
+    expect(calls).toHaveLength(1);
+    expect(textarea).toBeDisabled();
+    expect(textarea).not.toHaveAttribute("readonly");
+    expect(screen.getByRole("status")).toHaveTextContent(en.Drill.busy);
+    expect(screen.getByRole("button", { name: en.Drill.sending })).toBeDisabled();
+
+    resolveResponse(Response.json(feedbackBody(SHORT_PREP)));
+    const feedbackHeading = await screen.findByRole("heading", {
+      name: en.Drill.feedback.heading,
+    });
+    expect(document.activeElement).toBe(feedbackHeading);
+    expect(calls).toHaveLength(1);
   });
 
   it("saves an edited rewrite with its feedback context and allows dismissal", async () => {
