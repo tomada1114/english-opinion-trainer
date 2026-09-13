@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "model": "claude-haiku-4-5-20251001",
+    "id": "msg_011Cf1fYkeEZZUnXCtaYxgcB",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"structure\":{\"point\":{\"verdict\":\"present\",\"reason\":\"The learner clearly identifies Kyoto as the recommended place.\"},\"reason\":{\"verdict\":\"present\",\"reason\":\"The learner provides reasons: old temples and beautiful gardens are mentioned as qualities that make it good.\"}}, \"fixes\":[{\"before\":\"it have many old temple\",\"after\":\"it has many old temples\",\"why\":\"Subject-verb agreement: 'has' (not 'have') with singular 'it'; plural 'temples' (not 'temple').\"},{\"before\":\"beautiful garden\",\"after\":\"beautiful gardens\",\"why\":\"Consistency in pluralization; 'many' requires plural form.\"}],\"rewrite\":\"I think Kyoto is a good city to visit. It has many old temples and beautiful gardens.\",\"grammar\":[{\"excerpt\":\"it have many old temple\",\"correction\":\"it has many old temples\",\"note\":\"Use 'has' with 'it' (third person singular). Use plural 'temples' after 'many'.\"}]}"
+      }
+    ],
+    "container": null,
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 932,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 228,
+      "service_tier": "standard",
+      "inference_geo": "not_available"
+    }
+  }
+}

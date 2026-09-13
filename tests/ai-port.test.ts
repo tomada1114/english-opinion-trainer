@@ -9,7 +9,11 @@ import {
   type LlmPort,
 } from "../src/ai/index";
 import type { Result } from "../src/core/result";
-import { CONTRACT_ANSWER, CONTRACT_SCHEMA } from "./llm-fixture-contract";
+import {
+  buildLevelFixturePrompt,
+  CONTRACT_ANSWER,
+  CONTRACT_SCHEMA,
+} from "./llm-fixture-contract";
 import {
   isRecording,
   neverResolvingFetch,
@@ -444,7 +448,7 @@ describe("createFakeLlmPort", () => {
 });
 
 /**
- * Re-captures the two fixtures that are recordings of real exchanges.
+ * Re-captures every fixture that is a recording of a real exchange.
  *
  * @remarks
  * Skipped unless `LLM_RECORD=1`, which is a local operation: it spends money
@@ -456,6 +460,13 @@ describe("createFakeLlmPort", () => {
  * `ERR_LLM_RATE_LIMIT` and `ERR_LLM_UNAVAILABLE` have no entry here: neither a
  * 429 nor a 529 can be provoked on demand, so their fixtures are written by
  * hand against the documented error shape.
+ *
+ * `#65`'s three `level-<level>` fixtures ask for genuine feedback on the same
+ * fixed answer, one real request per `Level` — unlike the "copy verbatim"
+ * trick above, their content cannot be predicted, so each is only checked for
+ * `ok: true` at record time. Whether the rewrite's register actually differs
+ * by level the way `LEVEL_GUIDANCE` intends is a human read, done once after
+ * recording, not an assertion this suite can make.
  */
 describe.runIf(isRecording())("recording the Anthropic fixtures", () => {
   it("has a credential to record with", () => {
@@ -499,4 +510,22 @@ describe.runIf(isRecording())("recording the Anthropic fixtures", () => {
 
     expect(error.code).toBe("ERR_LLM_AUTH");
   });
+
+  it.each(["A2", "B1", "B2"] as const)(
+    "records a level-%s feedback exchange (#65)",
+    async (level) => {
+      const result = await createAnthropicAdapter({
+        apiKey: process.env["ANTHROPIC_API_KEY"],
+        model: "claude-haiku-4-5",
+        maxRetries: 0,
+        fetch: recordingFetch(`level-${level.toLowerCase()}`, 200),
+      }).generate({
+        schema: CONTRACT_SCHEMA,
+        prompt: buildLevelFixturePrompt(level),
+        outputLanguage: "en",
+      });
+
+      expect(result.ok).toBe(true);
+    },
+  );
 });

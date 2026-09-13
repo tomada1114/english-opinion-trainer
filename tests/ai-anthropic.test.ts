@@ -878,6 +878,9 @@ describe("the committed LLM fixtures", () => {
     "auth-401": "ERR_LLM_AUTH",
     "rate-limit-429": "ERR_LLM_RATE_LIMIT",
     "overloaded-529": "ERR_LLM_UNAVAILABLE",
+    "level-a2": "ok",
+    "level-b1": "ok",
+    "level-b2": "ok",
   } as const;
 
   const onDisk = readdirSync(LLM_FIXTURES_DIR)
@@ -920,6 +923,18 @@ describe("the committed LLM fixtures", () => {
 
     expect(networkFetch).not.toHaveBeenCalled();
   });
+
+  it.each(["level-a2", "level-b1", "level-b2"] as const)(
+    "replays %s with a non-empty rewrite (#65)",
+    async (name) => {
+      const result = await askFixtureContract(replayFetch(name));
+
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.rewrite.length).toBeGreaterThan(0);
+      }
+    },
+  );
 
   it.each(onDisk)("carries no credential in %s", (name) => {
     const text = readFileSync(path.join(LLM_FIXTURES_DIR, `${name}.json`), "utf8");
