@@ -4,8 +4,8 @@ description: >
   Covers the shared component layer at src/app/_client/ui/, the token source in
   src/app/globals.css, and docs/design/: reading the semantic token layer only, never
   inventing a colour, radius, space or duration, the --color-primary vs shadcn
-  --color-accent distinction, why the theme is dark-only, and implementing every state
-  in a component's state matrix. Use when adding or changing a component under
+  --color-accent distinction, the light-dark() theme tokens, and implementing every
+  state in a component's state matrix. Use when adding or changing a component under
   src/app/_client/ui/, editing a token in src/app/globals.css, reading
   docs/design/design-system.md or design-concept.md, or choosing a colour, spacing,
   radius, or duration for a new piece of UI.
@@ -64,14 +64,19 @@ shadcn/ui component brings its own CSS variable names, alias them through the ta
 `design-system.md`'s "Mapping to shadcn/ui's token names" rather than guessing —
 reaching for `--accent` to mean "primary" repaints every hovered row the primary colour.
 
-## Dark-only is a decision, not an omission
+## Both themes, OS-following only
 
-`color-scheme: dark` is fixed in `globals.css` and there is no light theme; see
-`design-concept.md`'s "Theme policy" for why. Every semantic token _name_ is final and
-only the light _values_ are absent — do not fill that gap with a guessed light column,
-in a component, in `design-system.md`, or anywhere else. Adding light later is a change
-to `globals.css` alone, which is what the token layer exists to make possible; inventing
-values ahead of that decision forecloses it instead.
+Every semantic colour in `globals.css`'s `@theme inline` block is a
+`light-dark(<light>, <dark>)` pair, and `color-scheme: light dark` is what makes
+`light-dark()` resolve against the OS setting. See `design-concept.md`'s "Theme policy"
+for why the earlier dark-only decision (kept in its decision log as superseded) changed.
+**There is no in-app toggle** — that would need the choice persisted in the state
+document and a first-paint flash suppressed, and neither is built; do not add one. A new
+semantic token needs both halves derived from the recipe in `design-system.md` (reversed
+lightness ladder for a neutral, adjusted L/C for a hue) and measured with
+`check_contrast.py` in both modes — never a light or dark half invented without
+measuring it, and never a component reading `light-dark()` or a `prefers-color-scheme`
+query directly instead of the semantic token.
 
 ## Implement every state in the state matrix
 

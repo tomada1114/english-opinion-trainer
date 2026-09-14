@@ -9,8 +9,9 @@ Read the semantic layer only (`--color-*`, `--space-*`, `--text-*`, `--motion-*`
 Reading a primitive (`--neutral-600`, `--accent-400`) from a component is what makes a
 later theme change miss that one place.
 
-**Dark only.** Every table below has a single value column on purpose. See the concept
-document's "Theme policy"; do not fill a light column with guesses.
+**Both themes, OS-following only.** The colour table below carries a light and a dark
+column because every semantic colour is `light-dark(<light>, <dark>)`; see the concept
+document's "Theme policy". There is no in-app toggle.
 
 ## Component inventory
 
@@ -69,47 +70,61 @@ of which the native element gives for free.
 
 ## Colour tokens
 
-| Token                                                                                             | Dark value                        | Use                                                    |
-| ------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------ |
-| `--color-bg`                                                                                      | `--neutral-950`                   | page ground                                            |
-| `--color-bg-subtle`                                                                               | `--neutral-1000`                  | a recessed band; the only surface darker than the page |
-| `--color-bg-elevated`                                                                             | `--neutral-900`                   | cards, the feedback panel                              |
-| `--color-surface`                                                                                 | `--neutral-850`                   | textarea and select faces, chips                       |
-| `--color-surface-hover`                                                                           | `--neutral-800`                   | pointer over the above                                 |
-| `--color-text`                                                                                    | `--neutral-50`                    | headings and body                                      |
-| `--color-text-muted`                                                                              | `--neutral-300`                   | labels, the progress line, `why` text                  |
-| `--color-text-subtle`                                                                             | `--neutral-400`                   | placeholder, character count                           |
-| `--color-text-on-primary`                                                                         | `--accent-950`                    | text on an accent face                                 |
-| `--color-text-on-danger` / `--color-text-on-success` / `--color-text-on-warning`                  | `--red-950` etc.                  | text on a filled status face                           |
-| `--color-border`                                                                                  | `--neutral-600`                   | control and input borders, separators                  |
-| `--color-border-strong`                                                                           | `--neutral-500`                   | hovered control border, emphasised divider             |
-| `--color-focus`                                                                                   | `--accent-400`                    | focus ring                                             |
-| `--color-overlay`                                                                                 | `oklch(0 0 0/.7)`                 | scrim (none in use yet; reserved for a future modal)   |
-| `--color-primary` / `--color-primary-hover` / `--color-primary-active` / `--color-primary-subtle` | accent 400/300/500/900            | the primary action and its states                      |
-| `--color-success` / `--color-success-subtle`                                                      | green 400/900                     | `present`                                              |
-| `--color-warning` / `--color-warning-subtle`                                                      | amber 400/900                     | `weak`, and the near-limit character count             |
-| `--color-danger` / `--color-danger-subtle`                                                        | red 400/900                       | `absent`, validation errors, Delete                    |
-| `--color-info` / `--color-info-subtle`                                                            | blue 400/900                      | neutral notices (unused today; reserved)               |
-| `--color-disabled-bg` / `--color-disabled-text`                                                   | `--neutral-850` / `--neutral-700` | disabled controls                                      |
-| `--color-background`                                                                              | `--color-bg`                      | shadcn/ui alias                                        |
-| `--color-foreground`                                                                              | `--color-text`                    | shadcn/ui alias                                        |
-| `--color-card` / `--color-popover`                                                                | `--color-bg-elevated`             | shadcn/ui aliases                                      |
-| `--color-card-foreground` / `--color-popover-foreground`                                          | `--color-text`                    | shadcn/ui aliases                                      |
-| `--color-primary-foreground`                                                                      | `--color-text-on-primary`         | shadcn/ui alias                                        |
-| `--color-secondary`                                                                               | `--color-surface`                 | shadcn/ui alias                                        |
-| `--color-secondary-foreground`                                                                    | `--color-text`                    | shadcn/ui alias                                        |
-| `--color-muted`                                                                                   | `--color-surface`                 | shadcn/ui alias                                        |
-| `--color-muted-foreground`                                                                        | `--color-text-muted`              | shadcn/ui alias                                        |
-| `--color-accent`                                                                                  | `--color-surface-hover`           | shadcn/ui alias                                        |
-| `--color-accent-foreground`                                                                       | `--color-text`                    | shadcn/ui alias                                        |
-| `--color-destructive`                                                                             | `--color-danger`                  | shadcn/ui alias                                        |
-| `--color-destructive-foreground`                                                                  | `--color-text-on-danger`          | shadcn/ui alias                                        |
-| `--color-input`                                                                                   | `--color-border`                  | shadcn/ui alias                                        |
-| `--color-ring`                                                                                    | `--color-focus`                   | shadcn/ui alias                                        |
+Light values are `oklch()` literals — see "Measured contrast" for how each one was
+chosen — because the light theme has no separate primitive scale of its own; only the
+dark half is built from the `--neutral-*` / `--accent-*` / status primitives in
+`src/app/globals.css`. A shadcn/ui alias carries no light value of its own: each is a
+`var()` of a semantic token above, so it follows that token's `light-dark()` pair
+automatically — the alias layer never needed to change for this issue.
 
-Depth in this theme is lightness, never shadow: `bg` → `bg-elevated` → `surface` climbs
-in lightness. `--shadow-*` exists, but a shadow alone must never be a boundary, because
-`forced-colors: active` removes it — pair it with a `border`.
+| Token                                                                            | Light value                                                                                                               | Dark value                        | Use                                                    |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------ |
+| `--color-bg`                                                                     | `oklch(0.99 0.003 248)`                                                                                                   | `--neutral-950`                   | page ground                                            |
+| `--color-bg-subtle`                                                              | `oklch(0.968 0.006 248)`                                                                                                  | `--neutral-1000`                  | a recessed band; the only surface darker than the page |
+| `--color-bg-elevated`                                                            | `oklch(1 0 248)`                                                                                                          | `--neutral-900`                   | cards, the feedback panel                              |
+| `--color-surface`                                                                | `oklch(0.945 0.008 248)`                                                                                                  | `--neutral-850`                   | textarea and select faces, chips                       |
+| `--color-surface-hover`                                                          | `oklch(0.918 0.01 248)`                                                                                                   | `--neutral-800`                   | pointer over the above                                 |
+| `--color-text`                                                                   | `oklch(0.255 0.02 248)`                                                                                                   | `--neutral-50`                    | headings and body                                      |
+| `--color-text-muted`                                                             | `oklch(0.46 0.016 248)`                                                                                                   | `--neutral-300`                   | labels, the progress line, `why` text                  |
+| `--color-text-subtle`                                                            | `oklch(0.5 0.014 248)`, deviates from 0.550 — see below                                                                   | `--neutral-400`                   | placeholder, character count                           |
+| `--color-text-on-primary`                                                        | `oklch(1 0 0)` (white)                                                                                                    | `--accent-950`                    | text on an accent face                                 |
+| `--color-text-on-danger` / `--color-text-on-success` / `--color-text-on-warning` | `oklch(1 0 0)` (white) for all three                                                                                      | `--red-950` etc.                  | text on a filled status face                           |
+| `--color-border`                                                                 | `oklch(0.6 0.01 248)`, deviates from 0.655 — see below                                                                    | `--neutral-600`                   | control and input borders, separators                  |
+| `--color-border-strong`                                                          | `oklch(0.56 0.012 248)`                                                                                                   | `--neutral-500`                   | hovered control border, emphasised divider             |
+| `--color-focus`                                                                  | `oklch(0.52 0.14 248)`                                                                                                    | `--accent-400`                    | focus ring                                             |
+| `--color-overlay`                                                                | `oklch(0 0 0/.45)`                                                                                                        | `oklch(0 0 0/.7)`                 | scrim (none in use yet; reserved for a future modal)   |
+| `--color-primary` / `--color-primary-hover` / `--color-primary-active`           | `oklch(0.52 0.14 248)` / `oklch(0.47 0.13 248)` / `oklch(0.425 0.118 248)`, L shifted from ~0.545/0.495/0.450 — see below | accent 400/300/500                | the primary action and its states                      |
+| `--color-primary-subtle`                                                         | `oklch(0.95 0.022 248)`                                                                                                   | accent 900                        | the primary action's subtle face                       |
+| `--color-success` / `--color-success-subtle`                                     | `oklch(0.505 0.125 152)` / `oklch(0.955 0.026 152)`                                                                       | green 400/900                     | `present`                                              |
+| `--color-warning` / `--color-warning-subtle`                                     | `oklch(0.51 0.1 75)` / `oklch(0.955 0.028 75)`                                                                            | amber 400/900                     | `weak`, and the near-limit character count             |
+| `--color-danger` / `--color-danger-subtle`                                       | `oklch(0.515 0.185 25)` / `oklch(0.955 0.02 25)`                                                                          | red 400/900                       | `absent`, validation errors, Delete                    |
+| `--color-info` / `--color-info-subtle`                                           | `oklch(0.52 0.135 250)` / `oklch(0.955 0.02 250)`                                                                         | blue 400/900                      | neutral notices (unused today; reserved)               |
+| `--color-disabled-bg` / `--color-disabled-text`                                  | `oklch(0.945 0.004 248)` / `oklch(0.7 0.008 248)`                                                                         | `--neutral-850` / `--neutral-700` | disabled controls                                      |
+| `--color-background`                                                             | follows `--color-bg`                                                                                                      | `--color-bg`                      | shadcn/ui alias                                        |
+| `--color-foreground`                                                             | follows `--color-text`                                                                                                    | `--color-text`                    | shadcn/ui alias                                        |
+| `--color-card` / `--color-popover`                                               | follows `--color-bg-elevated`                                                                                             | `--color-bg-elevated`             | shadcn/ui aliases                                      |
+| `--color-card-foreground` / `--color-popover-foreground`                         | follows `--color-text`                                                                                                    | `--color-text`                    | shadcn/ui aliases                                      |
+| `--color-primary-foreground`                                                     | follows `--color-text-on-primary`                                                                                         | `--color-text-on-primary`         | shadcn/ui alias                                        |
+| `--color-secondary`                                                              | follows `--color-surface`                                                                                                 | `--color-surface`                 | shadcn/ui alias                                        |
+| `--color-secondary-foreground`                                                   | follows `--color-text`                                                                                                    | `--color-text`                    | shadcn/ui alias                                        |
+| `--color-muted`                                                                  | follows `--color-surface`                                                                                                 | `--color-surface`                 | shadcn/ui alias                                        |
+| `--color-muted-foreground`                                                       | follows `--color-text-muted`                                                                                              | `--color-text-muted`              | shadcn/ui alias                                        |
+| `--color-accent`                                                                 | follows `--color-surface-hover`                                                                                           | `--color-surface-hover`           | shadcn/ui alias                                        |
+| `--color-accent-foreground`                                                      | follows `--color-text`                                                                                                    | `--color-text`                    | shadcn/ui alias                                        |
+| `--color-destructive`                                                            | follows `--color-danger`                                                                                                  | `--color-danger`                  | shadcn/ui alias                                        |
+| `--color-destructive-foreground`                                                 | follows `--color-text-on-danger`                                                                                          | `--color-text-on-danger`          | shadcn/ui alias                                        |
+| `--color-input`                                                                  | follows `--color-border`                                                                                                  | `--color-border`                  | shadcn/ui alias                                        |
+| `--color-ring`                                                                   | follows `--color-focus`                                                                                                   | `--color-focus`                   | shadcn/ui alias                                        |
+
+Depth is lightness, never shadow, in both themes — but the direction flips. In dark,
+`bg` → `bg-elevated` → `surface` → `surface-hover` climbs in lightness: a raised face is
+a lighter face. In light, `bg` → `bg-elevated` rises slightly to a flat white, and
+`surface` → `surface-hover` then sits _below_ both: an inset face (textarea, select,
+chip) reads as a light-grey recess against the page, which is the familiar light-UI
+convention for an editable field. Neither direction is a bug in the other; each is
+copied from the reference recipe's own light and dark columns. `--shadow-*` exists, but
+a shadow alone must never be a boundary, because `forced-colors: active` removes it —
+pair it with a `border`.
 
 Hover and pressed add no colour. They lay `--state-hover-opacity` (0.08) or
 `--state-pressed-opacity` (0.12) of `currentColor` over the existing face, so the same
@@ -379,7 +394,10 @@ and announce the count only on crossing the near-limit threshold.
 
 ### Measured contrast
 
-Output of `check_contrast.py` for the dark palette, pasted verbatim. Exit code 0.
+Output of `check_contrast.py`, one table per theme, both pasted verbatim. Exit code 0
+for both.
+
+#### Dark
 
 ```
 name                         fg                      bg                      kind  ratio  required  result
@@ -437,27 +455,98 @@ on-warning / warning         oklch(0.205 0.045 75)   oklch(0.800 0.140 75)   tex
 on-danger / danger           oklch(0.195 0.055 25)   oklch(0.720 0.150 25)   text  7.00   4.50      PASS
 ```
 
+#### Light
+
+```
+name                         fg                      bg                      kind  ratio  required  result
+---------------------------  ----------------------  ----------------------  ----  -----  --------  ------
+text / bg                    oklch(0.255 0.020 248)  oklch(0.990 0.003 248)  text  15.30  4.50      PASS
+text / bg-subtle             oklch(0.255 0.020 248)  oklch(0.968 0.006 248)  text  14.36  4.50      PASS
+text / bg-elevated           oklch(0.255 0.020 248)  oklch(1.000 0.000 248)  text  15.74  4.50      PASS
+text / surface               oklch(0.255 0.020 248)  oklch(0.945 0.008 248)  text  13.42  4.50      PASS
+text / surface-hover         oklch(0.255 0.020 248)  oklch(0.918 0.010 248)  text  12.36  4.50      PASS
+text-muted / bg              oklch(0.460 0.016 248)  oklch(0.990 0.003 248)  text  6.91   4.50      PASS
+text-muted / bg-subtle       oklch(0.460 0.016 248)  oklch(0.968 0.006 248)  text  6.49   4.50      PASS
+text-muted / bg-elevated     oklch(0.460 0.016 248)  oklch(1.000 0.000 248)  text  7.11   4.50      PASS
+text-muted / surface         oklch(0.460 0.016 248)  oklch(0.945 0.008 248)  text  6.06   4.50      PASS
+text-muted / surface-hover   oklch(0.460 0.016 248)  oklch(0.918 0.010 248)  text  5.58   4.50      PASS
+text-subtle / bg             oklch(0.500 0.014 248)  oklch(0.990 0.003 248)  text  5.82   4.50      PASS
+text-subtle / bg-subtle      oklch(0.500 0.014 248)  oklch(0.968 0.006 248)  text  5.46   4.50      PASS
+text-subtle / bg-elevated    oklch(0.500 0.014 248)  oklch(1.000 0.000 248)  text  5.99   4.50      PASS
+text-subtle / surface        oklch(0.500 0.014 248)  oklch(0.945 0.008 248)  text  5.10   4.50      PASS
+text-subtle / surface-hover  oklch(0.500 0.014 248)  oklch(0.918 0.010 248)  text  4.70   4.50      PASS
+border / bg                  oklch(0.600 0.010 248)  oklch(0.990 0.003 248)  ui    3.83   3.00      PASS
+border / bg-elevated         oklch(0.600 0.010 248)  oklch(1.000 0.000 248)  ui    3.94   3.00      PASS
+border / surface             oklch(0.600 0.010 248)  oklch(0.945 0.008 248)  ui    3.36   3.00      PASS
+border-strong / bg           oklch(0.560 0.012 248)  oklch(0.990 0.003 248)  ui    4.52   3.00      PASS
+border-strong / bg-elevated  oklch(0.560 0.012 248)  oklch(1.000 0.000 248)  ui    4.65   3.00      PASS
+border-strong / surface      oklch(0.560 0.012 248)  oklch(0.945 0.008 248)  ui    3.96   3.00      PASS
+accent / bg                  oklch(0.520 0.140 248)  oklch(0.990 0.003 248)  ui    5.34   3.00      PASS
+accent / bg-elevated         oklch(0.520 0.140 248)  oklch(1.000 0.000 248)  ui    5.49   3.00      PASS
+accent / surface             oklch(0.520 0.140 248)  oklch(0.945 0.008 248)  ui    4.68   3.00      PASS
+accent / bg                  oklch(0.520 0.140 248)  oklch(0.990 0.003 248)  text  5.34   4.50      PASS
+accent / bg-elevated         oklch(0.520 0.140 248)  oklch(1.000 0.000 248)  text  5.49   4.50      PASS
+accent / surface             oklch(0.520 0.140 248)  oklch(0.945 0.008 248)  text  4.68   4.50      PASS
+on-accent / accent           oklch(1.000 0.000 0)    oklch(0.520 0.140 248)  text  5.49   4.50      PASS
+on-accent / accent-hover     oklch(1.000 0.000 0)    oklch(0.470 0.130 248)  text  6.79   4.50      PASS
+on-accent / accent-active    oklch(1.000 0.000 0)    oklch(0.425 0.118 248)  text  8.24   4.50      PASS
+accent / accent-subtle       oklch(0.520 0.140 248)  oklch(0.950 0.022 248)  text  4.76   4.50      PASS
+text / accent-subtle         oklch(0.255 0.020 248)  oklch(0.950 0.022 248)  text  13.64  4.50      PASS
+success / bg                 oklch(0.505 0.125 152)  oklch(0.990 0.003 248)  text  5.38   4.50      PASS
+success / bg-elevated        oklch(0.505 0.125 152)  oklch(1.000 0.000 248)  text  5.54   4.50      PASS
+success / success-subtle     oklch(0.505 0.125 152)  oklch(0.955 0.026 152)  text  4.90   4.50      PASS
+text / success-subtle        oklch(0.255 0.020 248)  oklch(0.955 0.026 152)  text  13.94  4.50      PASS
+warning / bg                 oklch(0.510 0.100 75)   oklch(0.990 0.003 248)  text  5.69   4.50      PASS
+warning / bg-elevated        oklch(0.510 0.100 75)   oklch(1.000 0.000 248)  text  5.85   4.50      PASS
+warning / warning-subtle     oklch(0.510 0.100 75)   oklch(0.955 0.028 75)   text  5.12   4.50      PASS
+text / warning-subtle        oklch(0.255 0.020 248)  oklch(0.955 0.028 75)   text  13.78  4.50      PASS
+danger / bg                  oklch(0.515 0.185 25)   oklch(0.990 0.003 248)  text  6.02   4.50      PASS
+danger / bg-elevated         oklch(0.515 0.185 25)   oklch(1.000 0.000 248)  text  6.20   4.50      PASS
+danger / danger-subtle       oklch(0.515 0.185 25)   oklch(0.955 0.020 25)   text  5.40   4.50      PASS
+text / danger-subtle         oklch(0.255 0.020 248)  oklch(0.955 0.020 25)   text  13.72  4.50      PASS
+info / bg                    oklch(0.520 0.135 250)  oklch(0.990 0.003 248)  text  5.35   4.50      PASS
+info / bg-elevated           oklch(0.520 0.135 250)  oklch(1.000 0.000 248)  text  5.51   4.50      PASS
+info / info-subtle           oklch(0.520 0.135 250)  oklch(0.955 0.020 250)  text  4.84   4.50      PASS
+text / info-subtle           oklch(0.255 0.020 248)  oklch(0.955 0.020 250)  text  13.83  4.50      PASS
+on-success / success         oklch(1.000 0.000 0)    oklch(0.505 0.125 152)  text  5.54   4.50      PASS
+on-warning / warning         oklch(1.000 0.000 0)    oklch(0.510 0.100 75)   text  5.85   4.50      PASS
+on-danger / danger           oklch(1.000 0.000 0)    oklch(0.515 0.185 25)   text  6.20   4.50      PASS
+```
+
 Measured separately because it is exempt from both 1.4.3 and 1.4.11, and so would fail a
 run that gates on 3:1 while still being correct:
 
-| Pair                                            | Ratio | Requirement | Verdict         |
-| ----------------------------------------------- | ----- | ----------- | --------------- |
-| `--color-disabled-text` / `--color-disabled-bg` | 2.56  | exempt      | distinguishable |
+| Pair                                            | Mode  | Ratio | Requirement | Verdict         |
+| ----------------------------------------------- | ----- | ----- | ----------- | --------------- |
+| `--color-disabled-text` / `--color-disabled-bg` | dark  | 2.56  | exempt      | distinguishable |
+| `--color-disabled-text` / `--color-disabled-bg` | light | 2.27  | exempt      | distinguishable |
 
-Two values in `src/app/globals.css` deviate from the palette recipe they came from, and
-the measurements are why. Do not "restore" them:
+Three values in `src/app/globals.css` deviate from the palette recipe they came from,
+and the measurements are why. Do not "restore" them:
 
-- `--color-text-subtle` is L 0.665, not 0.590. At 0.590 a placeholder on
+- `--color-text-subtle` (dark) is L 0.665, not 0.590. At 0.590 a placeholder on
   `--color-surface` measured **3.90**, and a placeholder is body text needing 4.5.
-- `--color-border` is L 0.530, not 0.495. At 0.495 a border on `--color-bg-elevated`
-  measured **2.86**, below the 3:1 of 1.4.11.
-- `--color-text-muted` then moved to L 0.755 so that muted and subtle stay visibly
-  apart.
+- `--color-border` (dark) is L 0.530, not 0.495. At 0.495 a border on
+  `--color-bg-elevated` measured **2.86**, below the 3:1 of 1.4.11.
+- `--color-text-muted` (dark) then moved to L 0.755 so that muted and subtle stay
+  visibly apart.
+- `--color-text-subtle` (light) is L 0.500, not the recipe's 0.550. At 0.550 the same
+  placeholder-on-`surface-hover` case measured **3.80**.
+- `--color-border` (light) is L 0.600, not the recipe's 0.655. At 0.655 `border` on
+  `surface` measured **2.70**.
+- `--color-primary` / `--color-primary-hover` / `--color-primary-active` (light) are L
+  0.520 / 0.470 / 0.425, not the recipe's ~0.545 / 0.495 / 0.450 (all three shifted by
+  the same −0.025, so the state spacing is unchanged). At the recipe's L 0.545,
+  `--color-primary` as text on `--color-surface` measured **4.21**, and as text on
+  `--color-primary-subtle` measured **4.28** — both need 4.5. `--color-primary` is read
+  as text wherever a link renders (`a { color: var(--color-primary) }`), so both had to
+  clear 4.5, not only the 3:1 a filled control needs.
 
-Re-run the script and rebuild both tables whenever a value changes:
+Re-run the script and rebuild both tables whenever a value changes, once for each theme:
 
 ```sh
-python3 ~/.claude/skills/ui-ux-designing/scripts/check_contrast.py pairs.json
+python3 ~/.claude/skills/ui-ux-designing/scripts/check_contrast.py pairs-dark.json
+python3 ~/.claude/skills/ui-ux-designing/scripts/check_contrast.py pairs-light.json
 ```
 
 ## Verification log

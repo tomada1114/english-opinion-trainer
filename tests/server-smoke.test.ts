@@ -600,7 +600,7 @@ describe("the design token layer, served by `next start`", () => {
     expect(css).toMatch(/--color-primary-foreground:\s*var\(--color-text-on-primary\)/);
   });
 
-  it("fixes color-scheme to dark", () => {
-    expect(css).toMatch(/color-scheme:\s*dark/);
+  it("sets color-scheme to light dark, OS-following", () => {
+    expect(css).toMatch(/color-scheme:\s*light dark/);
   });
 });

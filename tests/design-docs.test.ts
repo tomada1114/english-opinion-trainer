@@ -31,6 +31,19 @@ function definedColourTokens(source: string): Set<string> {
   );
 }
 
+/** The semantic colour declarations inside `@theme inline`, keyed by token name, each
+ * holding the full right-hand side of its declaration (before the terminating `;`). A
+ * shadcn/ui alias (`var(--color-*)` with no `light-dark(`) is intentionally excluded —
+ * it follows the token it points at rather than carrying its own light/dark pair. */
+function semanticColourDeclarations(source: string): Map<string, string> {
+  const themeInline = /@theme inline \{([\s\S]*?)\n\}/u.exec(source)?.[1] ?? "";
+  return new Map(
+    [...themeInline.matchAll(/^[ \t]*(--color-[\w-]+)[ \t]*:[ \t]*([^;]+);/gmu)]
+      .map(([, token = "", value = ""]): [string, string] => [token, value])
+      .filter(([, value]) => !value.startsWith("var(--color-")),
+  );
+}
+
 function inventoryComponents(source: string): Set<string> {
   const section =
     /## Component inventory\n([\s\S]*?)(?=\n## Colour tokens)/u.exec(source)?.[1] ?? "";
@@ -71,5 +84,19 @@ describe("design documentation stays aligned with the shipped UI", () => {
 
   it("keeps the legacy token path as a pointer rather than a second declaration layer", () => {
     expect(readText(tokensPointerPath)).not.toMatch(/^[ \t]*--color-[\w-]+[ \t]*:/gmu);
+  });
+
+  it("wraps every semantic colour token in light-dark(), not a single dark value", () => {
+    const declarations = semanticColourDeclarations(globals);
+    expect(declarations.size).toBeGreaterThan(0);
+    for (const [token, value] of declarations) {
+      expect(value, `${token} should be light-dark(<light>, <dark>)`).toMatch(
+        /^light-dark\(/u,
+      );
+    }
+  });
+
+  it("sets color-scheme to light dark so light-dark() follows the OS", () => {
+    expect(globals).toMatch(/color-scheme:\s*light dark/u);
   });
 });
