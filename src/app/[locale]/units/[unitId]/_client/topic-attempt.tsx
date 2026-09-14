@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { type ReactElement, useEffect, useRef, useState } from "react";
+import { type ReactElement, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import {
   ANSWER_CEILING,
@@ -19,6 +19,15 @@ import { SeedReveal } from "./seed-reveal";
 import { TopicHeader } from "./topic-header";
 import { useCancellableRequest } from "./use-cancellable-request";
 import { useFeedbackMessages } from "./use-feedback-messages";
+
+// `useLayoutEffect` warns when it runs during server rendering, where it is a
+// no-op anyway because there is no DOM to focus; `useEffect` there is silent
+// and equivalent. On the client, using the layout variant matters: a passive
+// `useEffect` is scheduled after paint, which leaves a window where the
+// heading has committed to the DOM but `focus()` has not fired yet, so an
+// observer that reacts to the DOM mutation itself (`@testing-library`'s
+// `findByRole`, a screen reader) can see the heading before it is focused.
+const useFocusEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /** Where one attempt at a topic stands. */
 type Phase =
@@ -65,7 +74,7 @@ export function TopicAttempt({
   // button that has just gone, and a screen reader announces the heading. The
   // scroll honours `prefers-reduced-motion` through `tokens.css`'s
   // `scroll-behavior: auto`.
-  useEffect(() => {
+  useFocusEffect(() => {
     if (answered) {
       feedbackHeadingRef.current?.focus();
     }

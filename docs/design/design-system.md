@@ -19,7 +19,8 @@ first.
 
 | Component         | Origin                                                                                                                 | Variants                                     | Sizes   | States                                    |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ------- | ----------------------------------------- |
-| `Button`          | shadcn/ui `button`                                                                                                     | primary / secondary / ghost / destructive    | sm / md | see state matrix                          |
+| `Button`          | shadcn/ui `button`, with `asChild` implemented by a local `Slot` instead of Radix's                                    | primary / secondary / ghost / destructive    | sm / md | see state matrix                          |
+| `Slot`            | custom, narrowed from Radix's `Slot` — clones its single child, merging `className` and forwarding the rest            | —                                            | —       | —                                         |
 | `Textarea`        | shadcn/ui `textarea`                                                                                                   | default                                      | md      | default / focus / error / disabled / busy |
 | `Select`          | styled native `<select>` — keyboard/screen-reader complete, phone picker, and the existing `value`/`onChange` contract | default                                      | md      | default / focus / disabled                |
 | `Label`           | shadcn/ui `label`                                                                                                      | default                                      | —       | default                                   |
