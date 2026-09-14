@@ -33,6 +33,7 @@ export function AnswerComposer({
   canResend,
   onAnswerChange,
   onSend,
+  onCancel,
   onSkip,
 }: Readonly<{
   answer: string;
@@ -49,6 +50,8 @@ export function AnswerComposer({
   canResend: boolean;
   onAnswerChange: (next: string) => void;
   onSend: () => void;
+  /** Gives up on the in-flight request. Only ever reachable while `busy`. */
+  onCancel: () => void;
   onSkip: () => void;
 }>): ReactElement {
   const t = useTranslations("Drill");
@@ -123,7 +126,17 @@ export function AnswerComposer({
 
       {answerError === undefined ? null : <InlineError>{answerError}</InlineError>}
       {sendError === undefined ? null : <InlineError>{sendError}</InlineError>}
-      {busy ? <BusyStatus label={t("busy")} /> : null}
+      {busy ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <BusyStatus label={t("busy")} />
+          {/* `ghost`, not `secondary`: the primary send action is busy and
+              unavailable, so Cancel must not compete visually as though it
+              were the button to reach for. */}
+          <Button variant="ghost" size="sm" onClick={onCancel}>
+            {t("cancel")}
+          </Button>
+        </div>
+      ) : null}
 
       {settled ? null : (
         <div className="flex flex-wrap items-center gap-2 pt-1">

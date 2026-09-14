@@ -356,6 +356,7 @@ const MESSAGE_KEYS = [
   "Drill.send",
   "Drill.sending",
   "Drill.busy",
+  "Drill.cancel",
   "Drill.feedbackReady",
   "Drill.resend",
   "Drill.skip",
