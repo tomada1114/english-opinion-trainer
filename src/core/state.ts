@@ -75,7 +75,7 @@ export const stateDocumentSchema = z.object({
   flaggedTopicIds: z.array(z.string()),
   flaggedSeedIds: z.array(z.string()),
   /** Topics answered per local `YYYY-MM-DD` day; see {@link recordAnsweredDay}. */
-  answeredByDay: z.record(z.string(), z.number()).default({}),
+  answeredByDay: z.record(z.string(), z.number().int().nonnegative()).default({}),
   /** The count of today's answers the home screen compares against. */
   dailyTarget: z.number().int().positive().default(DEFAULT_DAILY_TARGET),
 });

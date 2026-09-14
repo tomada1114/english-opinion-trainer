@@ -127,6 +127,8 @@ describe("migrateState", () => {
       "an answeredByDay count that is not a number",
       { answeredByDay: { "2026-09-13": "2" } },
     ],
+    ["a negative answeredByDay count", { answeredByDay: { "2026-09-13": -1 } }],
+    ["a fractional answeredByDay count", { answeredByDay: { "2026-09-13": 1.5 } }],
     ["a dailyTarget that is not a number", { dailyTarget: "3" }],
     ["a dailyTarget of zero", { dailyTarget: 0 }],
   ])("resets a document with %s to the default", (_label, override) => {
