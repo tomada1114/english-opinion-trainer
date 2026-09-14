@@ -552,3 +552,55 @@ describe("the built application, served by `next start`", () => {
     },
   );
 });
+
+// Issue #81: `src/app/globals.css` hand-binds shadcn/ui's colour vocabulary to
+// this app's semantic tokens, and nothing but a real stylesheet proves the
+// binding is right — jsdom, which every other suite runs under, never applies
+// CSS at all. This fetches the page, follows its `<link rel="stylesheet">`,
+// and asserts the served CSS by custom-property *name*, never by a resolved
+// colour value: `check_contrast.py` already measures colour, and a value
+// asserted here would have to be edited every time a token moves.
+describe("the design token layer, served by `next start`", () => {
+  let css = "";
+
+  beforeAll(async () => {
+    const page = await fetch(`${baseUrl}/en`);
+    const document = await page.text();
+    const stylesheetLink = document
+      .match(/<link[^>]*>/g)
+      ?.find((tag) => tag.includes('rel="stylesheet"'));
+    const stylesheetHref = stylesheetLink?.match(/href="([^"]+)"/)?.[1];
+    if (stylesheetHref === undefined) {
+      throw new Error(
+        `no <link rel="stylesheet"> found in the document served for /en:\n${document}`,
+      );
+    }
+
+    const stylesheet = await fetch(new URL(stylesheetHref, baseUrl));
+    css = await stylesheet.text();
+  });
+
+  it.each(["--color-bg", "--color-text", "--color-primary", "--color-focus"])(
+    "declares %s",
+    (token) => {
+      expect(css).toMatch(new RegExp(`${token}:`));
+    },
+  );
+
+  // The one binding whose inversion is invisible: shadcn's vocabulary calls
+  // `accent` a hover surface, not the primary colour, and swapping the two
+  // would paint every hovered row blue without failing the build or a jsdom
+  // test.
+  it("binds shadcn's --color-accent to the hover surface, not the primary colour", () => {
+    expect(css).toMatch(/--color-accent:\s*var\(--color-surface-hover\)/);
+    expect(css).not.toMatch(/--color-accent:\s*var\(--color-primary\)/);
+  });
+
+  it("binds shadcn's --color-primary-foreground to --color-text-on-primary", () => {
+    expect(css).toMatch(/--color-primary-foreground:\s*var\(--color-text-on-primary\)/);
+  });
+
+  it("fixes color-scheme to dark", () => {
+    expect(css).toMatch(/color-scheme:\s*dark/);
+  });
+});
