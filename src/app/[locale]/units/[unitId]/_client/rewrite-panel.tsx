@@ -53,6 +53,7 @@ export function RewritePanel({
           level,
           usedSeed,
           savedAt: new Date().toISOString(),
+          lastReviewedAt: null,
         },
       ],
     }));

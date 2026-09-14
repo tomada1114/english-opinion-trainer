@@ -41,6 +41,14 @@ export const phraseEntrySchema = z.object({
   level: z.enum(LEVELS),
   usedSeed: z.boolean(),
   savedAt: z.string(),
+  /**
+   * When the reader last marked this phrase reviewed, or `null` when they
+   * never have. Absent on a document written before this field existed;
+   * defaults to `null` rather than failing the parse, so a freshly saved
+   * phrase and a never-migrated one are indistinguishable — both are exactly
+   * the phrase worth seeing again first.
+   */
+  lastReviewedAt: z.string().nullable().default(null),
 });
 
 /** A phrase-list entry; the schema is the only definition of its shape. */
