@@ -14,14 +14,11 @@ import { SurfaceError } from "../../../../_client/ui/surface-error";
 import { useStateDocument } from "../../../../_client/use-state-document";
 import { AnswerComposer } from "./answer-composer";
 import { FeedbackView } from "./feedback-view";
-import {
-  type FeedbackErrorCode,
-  isAnswerRuleFeedbackError,
-  isTerminalFeedbackError,
-  requestFeedback,
-} from "./request-feedback";
+import { type FeedbackErrorCode, requestFeedback } from "./request-feedback";
 import { SeedReveal } from "./seed-reveal";
 import { TopicHeader } from "./topic-header";
+import { useCancellableRequest } from "./use-cancellable-request";
+import { useFeedbackMessages } from "./use-feedback-messages";
 
 /** Where one attempt at a topic stands. */
 type Phase =
@@ -59,6 +56,7 @@ export function TopicAttempt({
   const [usedSeed, setUsedSeed] = useState(false);
   const [submittedLevel, setSubmittedLevel] = useState<Level | undefined>(undefined);
   const feedbackHeadingRef = useRef<HTMLHeadingElement>(null);
+  const request = useCancellableRequest();
   const ceiling = ANSWER_CEILING[topic.mode];
   const answered = phase.kind === "answered";
 
@@ -91,42 +89,37 @@ export function TopicAttempt({
     setPhase({ kind: "sending" });
     const requestLevel = submittedLevel ?? level;
     setSubmittedLevel(requestLevel);
-    const result = await requestFeedback(topic, checked.value, requestLevel);
-    setPhase(
-      result.ok
-        ? { kind: "answered", feedback: result.value }
-        : { kind: "failed", code: result.error },
-    );
-  }
-
-  function violationMessage(broken: AnswerViolation): string {
-    switch (broken) {
-      case "empty":
-        return t("validation.empty");
-      case "too-long":
-        return t("validation.tooLong", { max: ceiling });
-      case "not-english":
-        return t("validation.notEnglish");
+    const signal = request.start();
+    try {
+      const result = await requestFeedback(topic, checked.value, requestLevel, signal);
+      setPhase(
+        result.ok
+          ? { kind: "answered", feedback: result.value }
+          : { kind: "failed", code: result.error },
+      );
+    } catch (error) {
+      // Cancelled, by the reader or by unmounting: `cancel` below already
+      // returned the phase to "writing", and an unmounted component has no
+      // phase left to set — either way, nothing went wrong to report.
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+      throw error;
     }
   }
 
+  /** Hangs off the Cancel control: gives up on the in-flight request. */
+  function cancel(): void {
+    request.cancel();
+    setPhase({ kind: "writing" });
+  }
+
   const failedCode = phase.kind === "failed" ? phase.code : undefined;
-  /** Set only where no resend could succeed, which is what replaces the composer. */
-  const terminalCode =
-    failedCode !== undefined && isTerminalFeedbackError(failedCode)
-      ? failedCode
-      : undefined;
-  /** The server's own refusal of a rule the client checked reads as a rule, not as a failure. */
-  const serverRuleError =
-    failedCode !== undefined && isAnswerRuleFeedbackError(failedCode)
-      ? t(`errors.${failedCode}`)
-      : undefined;
-  const retryableError =
-    failedCode !== undefined &&
-    terminalCode === undefined &&
-    serverRuleError === undefined
-      ? t(`errors.${failedCode}`)
-      : undefined;
+  const { terminalCode, answerError, sendError } = useFeedbackMessages(
+    failedCode,
+    violation,
+    ceiling,
+  );
 
   return (
     <article className="measure space-y-6">
@@ -156,12 +149,8 @@ export function TopicAttempt({
           ceiling={ceiling}
           busy={phase.kind === "sending"}
           settled={answered}
-          {...(violation === undefined
-            ? serverRuleError === undefined
-              ? {}
-              : { answerError: serverRuleError }
-            : { answerError: violationMessage(violation) })}
-          {...(retryableError === undefined ? {} : { sendError: retryableError })}
+          {...(answerError === undefined ? {} : { answerError })}
+          {...(sendError === undefined ? {} : { sendError })}
           canResend={phase.kind === "failed"}
           onAnswerChange={(next) => {
             setAnswer(next);
@@ -172,6 +161,7 @@ export function TopicAttempt({
           onSend={() => {
             void send();
           }}
+          onCancel={cancel}
           onSkip={onSkip}
         />
       )}
