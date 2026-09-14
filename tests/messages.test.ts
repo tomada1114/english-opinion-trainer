@@ -301,6 +301,8 @@ const MESSAGE_KEYS = [
   "HomePage.structure.mixed",
   "HomePage.progress",
   "HomePage.completed",
+  "HomePage.today.progress",
+  "HomePage.today.done",
   "HomePage.phrasesLink",
   "NotFound.title",
   "NotFound.description",

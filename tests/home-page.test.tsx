@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import HomePage from "../src/app/[locale]/page";
 import { STRUCTURE_TEMPLATES } from "../src/core/drill";
-import { defaultState } from "../src/core/state";
+import { defaultState, localDayKey } from "../src/core/state";
 import en from "../messages/en.json";
 
 vi.mock("next-intl/server", () => ({
@@ -117,6 +117,60 @@ describe("HomePage", () => {
       "href",
       "/en/phrases",
     );
+  });
+
+  it("renders 0 answered today against the default target, with no badge", async () => {
+    await renderHomePage();
+
+    expect(
+      screen.getByText(
+        en.HomePage.today.progress.replace("{answered}", "0").replace("{target}", "3"),
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(en.HomePage.today.done)).not.toBeInTheDocument();
+  });
+
+  it("renders today's count below the target, with no badge", async () => {
+    const today = localDayKey(new Date());
+    window.localStorage.setItem(
+      "english-opinion-trainer",
+      JSON.stringify({
+        ...defaultState(),
+        answeredByDay: { [today]: 2 },
+        dailyTarget: 3,
+      }),
+    );
+
+    await renderHomePage();
+
+    expect(
+      screen.getByText(
+        en.HomePage.today.progress.replace("{answered}", "2").replace("{target}", "3"),
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(en.HomePage.today.done)).not.toBeInTheDocument();
+  });
+
+  it("renders a success badge with the Check glyph once today's target is met", async () => {
+    const today = localDayKey(new Date());
+    window.localStorage.setItem(
+      "english-opinion-trainer",
+      JSON.stringify({
+        ...defaultState(),
+        answeredByDay: { [today]: 3 },
+        dailyTarget: 3,
+      }),
+    );
+
+    await renderHomePage();
+
+    expect(
+      screen.getByText(
+        en.HomePage.today.progress.replace("{answered}", "3").replace("{target}", "3"),
+      ),
+    ).toBeInTheDocument();
+    // A glyph plus the word, the same shape the unit completion badge uses.
+    expect(screen.getByText(en.HomePage.today.done)).toBeInTheDocument();
   });
 
   it("persists a changed level and reads it again after a remount", async () => {

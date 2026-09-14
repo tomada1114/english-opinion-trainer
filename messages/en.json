@@ -14,6 +14,10 @@
     },
     "progress": "{answered} / {total} topics answered",
     "completed": "Complete",
+    "today": {
+      "progress": "{answered} / {target} today",
+      "done": "Done for today"
+    },
     "phrasesLink": "View saved phrases"
   },
   "NotFound": {

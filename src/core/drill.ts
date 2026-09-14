@@ -30,6 +30,16 @@ export type Level = (typeof LEVELS)[number];
 /** The level a learner starts at before choosing one. */
 export const DEFAULT_LEVEL: Level = "B1";
 
+/**
+ * How many topics a day's practice targets before the reader has changed it.
+ *
+ * @remarks
+ * A target, never a quota: missing it costs nothing and is never mentioned.
+ * Small on purpose — a five-minute session's worth — so it reads as reachable
+ * rather than as a scoreboard.
+ */
+export const DEFAULT_DAILY_TARGET = 3;
+
 /** The drill's units, each drawing from one structure's topics or from all. */
 export const UNIT_IDS = [1, 2, 3, 4] as const;
 
