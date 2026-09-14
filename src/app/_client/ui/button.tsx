@@ -1,8 +1,8 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { Slot } from "radix-ui";
 import type { ComponentProps, ReactElement } from "react";
 
 import { cn } from "./cn";
+import { Slot } from "./slot";
 
 /**
  * The four button appearances this app has, and the two sizes.
@@ -64,10 +64,7 @@ export function Button({
     // `type` is meaningless on the anchor or Link this branch renders, and
     // passing it through would put an invalid attribute on the element.
     return (
-      <Slot.Root
-        className={cn(buttonStyles({ variant, size }), className)}
-        {...props}
-      />
+      <Slot className={cn(buttonStyles({ variant, size }), className)} {...props} />
     );
   }
   return (

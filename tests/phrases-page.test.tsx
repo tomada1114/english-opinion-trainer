@@ -137,6 +137,12 @@ describe("PhrasesPage", () => {
     // The filters are absent, not merely empty: five selects above an onboarding
     // message would say the list is filtered rather than unstarted.
     expect(screen.queryByLabelText(en.Phrases.category.label)).not.toBeInTheDocument();
+    // `Button asChild` renders the local `Slot`, cloning the `Link` it wraps
+    // rather than nesting an anchor inside a button — this stays an anchor
+    // reachable by its role and accessible name, not a `<button>`.
+    expect(
+      screen.getByRole("link", { name: en.Phrases.empty.action }),
+    ).toBeInTheDocument();
   });
 
   it("distinguishes an excluding filter from nothing having been saved", async () => {
