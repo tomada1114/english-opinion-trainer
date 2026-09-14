@@ -1,8 +1,9 @@
 # Design concept
 
 What was decided about this app's UI/UX and why. Implementable values live in
-[`design-system.md`](./design-system.md); the token file itself is
-[`tokens.css`](./tokens.css).
+[`design-system.md`](./design-system.md); the live token source is
+[`src/app/globals.css`](../../src/app/globals.css), with [`tokens.css`](./tokens.css)
+retained only as a pointer.
 
 This document is written for the session that implements the UI. Where a decision rules
 something out, the rejected option is named, because a rejection that is not written
@@ -38,7 +39,8 @@ What follows from "may be added later":
   light half. Reason: a fabricated light value measures as compliant without anyone
   having looked at it, which is worse than an absent one.
 - Adding light later is therefore "give each existing name a light value and wrap both
-  in `light-dark()`" — a change confined to `tokens.css`, with no component touched.
+  in `light-dark()`" — a change confined to `src/app/globals.css`, with no component
+  touched.
 
 ## Design principles
 
@@ -248,7 +250,7 @@ The same thing is never called two things.
 - Colour comes from `currentColor`. Icons carry no colour of their own.
 - Icon-only controls get an accessible name, and a tooltip only on pointer devices.
 - The verdict glyphs are chosen so that they differ in **shape**, not only hue:
-  `present` → check, `weak` → half-filled circle, `absent` → dashed circle.
+  `present` → `Check`, `weak` → `CircleDot`, `absent` → `CircleDashed`.
 
 ### Imagery
 
@@ -274,15 +276,15 @@ part most worth revisiting against a real product.
 
 ## Out of scope
 
-| Not doing                                | Why                                                                                                                            | Met instead by                                                                              |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| A light theme                            | The author uses dark; inventing light values nobody has looked at would produce measured-but-unseen compliance.                | Every semantic name exists and is documented, so light is a `tokens.css`-only change later. |
-| Token-by-token streaming of the feedback | The endpoint answers with one validated JSON body against a fixed schema; there is no token stream to render.                  | A narrated wait (principle 1) plus a fade-in on arrival.                                    |
-| A stop / cancel control during the wait  | `requestFeedback` has no abort path today, and a cancel button that does not cancel is worse than none.                        | Recorded as a follow-up: thread an `AbortSignal` through, then add the control.             |
-| Markdown rendering of any text           | Neither side produces Markdown — the user writes prose, the model answers structured JSON.                                     | `white-space: pre-wrap` wherever user text is shown.                                        |
-| Plain-Enter submission                   | Enter is the newline key in a box meant for 4–6 sentences, and an IME-confirming Enter is indistinguishable enough to misfire. | Cmd/Ctrl+Enter, which an IME confirmation cannot produce.                                   |
-| A total score, percentage, or grade      | Principle 2.                                                                                                                   | Per-element verdicts, which say where to look next.                                         |
-| Toasts                                   | Every message here belongs beside the thing it is about, and a toast that auto-dismisses loses a retryable error.              | Inline messages, plus one live region.                                                      |
+| Not doing                                | Why                                                                                                                            | Met instead by                                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| A light theme                            | The author uses dark; inventing light values nobody has looked at would produce measured-but-unseen compliance.                | Every semantic name exists and is documented, so light is a `globals.css`-only change later. |
+| Token-by-token streaming of the feedback | The endpoint answers with one validated JSON body against a fixed schema; there is no token stream to render.                  | A narrated wait (principle 1) plus a fade-in on arrival.                                     |
+| A stop / cancel control during the wait  | `requestFeedback` has no abort path today, and a cancel button that does not cancel is worse than none.                        | Recorded as a follow-up: thread an `AbortSignal` through, then add the control.              |
+| Markdown rendering of any text           | Neither side produces Markdown — the user writes prose, the model answers structured JSON.                                     | `white-space: pre-wrap` wherever user text is shown.                                         |
+| Plain-Enter submission                   | Enter is the newline key in a box meant for 4–6 sentences, and an IME-confirming Enter is indistinguishable enough to misfire. | Cmd/Ctrl+Enter, which an IME confirmation cannot produce.                                    |
+| A total score, percentage, or grade      | Principle 2.                                                                                                                   | Per-element verdicts, which say where to look next.                                          |
+| Toasts                                   | Every message here belongs beside the thing it is about, and a toast that auto-dismisses loses a retryable error.              | Inline messages, plus one live region.                                                       |
 
 Deferred rather than rejected — these change the domain, so they belong to
 `building-the-drill`, not to this document:
