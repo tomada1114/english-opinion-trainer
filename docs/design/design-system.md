@@ -1,8 +1,9 @@
 # Design system
 
 Implementable values. The reasoning behind them is in
-[`design-concept.md`](./design-concept.md); the token file to copy is
-[`tokens.css`](./tokens.css).
+[`design-concept.md`](./design-concept.md). The single live token source is
+[`src/app/globals.css`](../../src/app/globals.css); [`tokens.css`](./tokens.css) is only
+a pointer to it, not a copy.
 
 Read the semantic layer only (`--color-*`, `--space-*`, `--text-*`, `--motion-*`).
 Reading a primitive (`--neutral-600`, `--accent-400`) from a component is what makes a
@@ -16,30 +17,44 @@ document's "Theme policy"; do not fill a light column with guesses.
 Nothing outside this table gets built. When a new part is genuinely needed, add the row
 first.
 
-| Component        | Origin                         | Variants                                     | Sizes   | States                                    |
-| ---------------- | ------------------------------ | -------------------------------------------- | ------- | ----------------------------------------- |
-| `Button`         | shadcn/ui `button`             | primary / secondary / ghost / destructive    | sm / md | see state matrix                          |
-| `Textarea`       | shadcn/ui `textarea`           | default                                      | md      | default / focus / error / disabled / busy |
-| `Select`         | shadcn/ui `select`             | default                                      | md      | default / focus / disabled                |
-| `Label`          | shadcn/ui `label`              | default                                      | —       | default                                   |
-| `Card`           | shadcn/ui `card`               | elevated                                     | —       | default                                   |
-| `Badge`          | shadcn/ui `badge`              | neutral / success / warning / danger / count | sm      | default                                   |
-| `Disclosure`     | native `<details>`/`<summary>` | with count badge                             | —       | closed / open / focus                     |
-| `Separator`      | shadcn/ui `separator`          | default                                      | —       | default                                   |
-| `BusyStatus`     | custom                         | —                                            | —       | idle (unrendered) / busy                  |
-| `VerdictBadge`   | custom (wraps `Badge`)         | present / weak / absent                      | sm      | default                                   |
-| `DiffLine`       | custom                         | fix / grammar-note                           | —       | default                                   |
-| `CharacterCount` | custom                         | default / near-limit                         | —       | default / near-limit                      |
-| `InlineError`    | custom                         | validation / retryable                       | —       | default                                   |
-| `SurfaceError`   | custom                         | terminal                                     | —       | default                                   |
-| `EmptyState`     | custom                         | onboarding / filtered-out                    | —       | default                                   |
+| Component         | Origin                                                                                                                 | Variants                                     | Sizes   | States                                    |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ------- | ----------------------------------------- |
+| `Button`          | shadcn/ui `button`                                                                                                     | primary / secondary / ghost / destructive    | sm / md | see state matrix                          |
+| `Textarea`        | shadcn/ui `textarea`                                                                                                   | default                                      | md      | default / focus / error / disabled / busy |
+| `Select`          | styled native `<select>` — keyboard/screen-reader complete, phone picker, and the existing `value`/`onChange` contract | default                                      | md      | default / focus / disabled                |
+| `Label`           | shadcn/ui `label`                                                                                                      | default                                      | —       | default                                   |
+| `Card`            | shadcn/ui `card`                                                                                                       | elevated                                     | —       | default                                   |
+| `Badge`           | shadcn/ui `badge`                                                                                                      | neutral / success / warning / danger / count | sm      | default                                   |
+| `Disclosure`      | native `<details>`/`<summary>`                                                                                         | with count badge                             | —       | closed / open / focus                     |
+| `Separator`       | native `<hr>` — already carries the separator role                                                                     | default                                      | —       | default                                   |
+| `BusyStatus`      | custom                                                                                                                 | —                                            | —       | idle (unrendered) / busy                  |
+| `VerdictBadge`    | custom (wraps `Badge`)                                                                                                 | present / weak / absent                      | sm      | default                                   |
+| `DiffLine`        | custom                                                                                                                 | fix / grammar-note                           | —       | default                                   |
+| `CharacterCount`  | custom                                                                                                                 | default / near-limit                         | —       | default / near-limit                      |
+| `InlineError`     | custom                                                                                                                 | validation / retryable                       | —       | default                                   |
+| `SurfaceError`    | custom                                                                                                                 | terminal                                     | —       | default                                   |
+| `EmptyState`      | custom                                                                                                                 | onboarding / filtered-out                    | —       | default                                   |
+| `TopicHeader`     | composition                                                                                                            | topic / structure / mode / flag              | —       | default                                   |
+| `SeedReveal`      | composition                                                                                                            | hidden / revealed                            | —       | default / disabled                        |
+| `RewritePanel`    | composition                                                                                                            | editable / saved                             | —       | default / disabled                        |
+| `FeedbackDetails` | composition                                                                                                            | fixes / grammar                              | —       | collapsed / open                          |
+| `PhraseRow`       | composition                                                                                                            | saved phrase                                 | —       | default                                   |
+| `StateIo`         | composition                                                                                                            | export / import                              | —       | default / import error                    |
 
-Why the seven custom parts exist — Radix ships no equivalent for any of them, and each
-is a piece of this app's own vocabulary rather than a generic control:
+These six composition components are not new UI vocabulary. The 200-line per-file budget
+forced the screen-specific pieces into `TopicHeader`, `SeedReveal`, `RewritePanel`,
+`FeedbackDetails`, `PhraseRow`, and `StateIo`; they assemble the vocabulary above with
+the domain-specific content of each screen.
+
+Why the seven custom vocabulary parts exist — Radix ships no equivalent for any of them,
+and each is a piece of this app's own vocabulary rather than a generic control:
 
 - `BusyStatus` — the narrated wait: a `role="status"` line with three pulse dots.
-- `VerdictBadge` — `present`/`weak`/`absent` with a Lucide glyph whose **shape** differs
-  (check / half-circle / dashed circle), so the verdict survives colour removal.
+- `VerdictBadge` — `present`/`weak`/`absent` with `Check`, `CircleDot`, and
+  `CircleDashed`. The glyph shapes are deliberately unlike one another because
+  `--color-success` and `--color-warning` sit 0.02 apart in OKLCH lightness and are all
+  but identical in greyscale; the shape and the word carry the verdict, while the tone
+  only reinforces it.
 - `DiffLine` — one `before → after — why` row, used by both `fixes` and `grammar`.
 - `CharacterCount` — count against the mode's ceiling, with a `near-limit` appearance.
 - `InlineError` / `SurfaceError` — the two error severities; the split is the whole
@@ -53,28 +68,43 @@ of which the native element gives for free.
 
 ## Colour tokens
 
-| Token                                                    | Dark value                        | Use                                                    |
-| -------------------------------------------------------- | --------------------------------- | ------------------------------------------------------ |
-| `--color-bg`                                             | `--neutral-950`                   | page ground                                            |
-| `--color-bg-subtle`                                      | `--neutral-1000`                  | a recessed band; the only surface darker than the page |
-| `--color-bg-elevated`                                    | `--neutral-900`                   | cards, the feedback panel                              |
-| `--color-surface`                                        | `--neutral-850`                   | textarea and select faces, chips                       |
-| `--color-surface-hover`                                  | `--neutral-800`                   | pointer over the above                                 |
-| `--color-text`                                           | `--neutral-50`                    | headings and body                                      |
-| `--color-text-muted`                                     | `--neutral-300`                   | labels, the progress line, `why` text                  |
-| `--color-text-subtle`                                    | `--neutral-400`                   | placeholder, character count                           |
-| `--color-text-on-primary`                                | `--accent-950`                    | text on an accent face                                 |
-| `--color-text-on-danger` / `-on-success` / `-on-warning` | `--red-950` etc.                  | text on a filled status face                           |
-| `--color-border`                                         | `--neutral-600`                   | control and input borders, separators                  |
-| `--color-border-strong`                                  | `--neutral-500`                   | hovered control border, emphasised divider             |
-| `--color-focus`                                          | `--accent-400`                    | focus ring                                             |
-| `--color-overlay`                                        | `oklch(0 0 0/.7)`                 | scrim (none in use yet; reserved for a future modal)   |
-| `--color-primary` / `-hover` / `-active` / `-subtle`     | accent 400/300/500/900            | the primary action and its states                      |
-| `--color-success` / `-subtle`                            | green 400/900                     | `present`                                              |
-| `--color-warning` / `-subtle`                            | amber 400/900                     | `weak`, and the near-limit character count             |
-| `--color-danger` / `-subtle`                             | red 400/900                       | `absent`, validation errors, Delete                    |
-| `--color-info` / `-subtle`                               | blue 400/900                      | neutral notices (unused today; reserved)               |
-| `--color-disabled-bg` / `--color-disabled-text`          | `--neutral-850` / `--neutral-700` | disabled controls                                      |
+| Token                                                                                             | Dark value                        | Use                                                    |
+| ------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------ |
+| `--color-bg`                                                                                      | `--neutral-950`                   | page ground                                            |
+| `--color-bg-subtle`                                                                               | `--neutral-1000`                  | a recessed band; the only surface darker than the page |
+| `--color-bg-elevated`                                                                             | `--neutral-900`                   | cards, the feedback panel                              |
+| `--color-surface`                                                                                 | `--neutral-850`                   | textarea and select faces, chips                       |
+| `--color-surface-hover`                                                                           | `--neutral-800`                   | pointer over the above                                 |
+| `--color-text`                                                                                    | `--neutral-50`                    | headings and body                                      |
+| `--color-text-muted`                                                                              | `--neutral-300`                   | labels, the progress line, `why` text                  |
+| `--color-text-subtle`                                                                             | `--neutral-400`                   | placeholder, character count                           |
+| `--color-text-on-primary`                                                                         | `--accent-950`                    | text on an accent face                                 |
+| `--color-text-on-danger` / `--color-text-on-success` / `--color-text-on-warning`                  | `--red-950` etc.                  | text on a filled status face                           |
+| `--color-border`                                                                                  | `--neutral-600`                   | control and input borders, separators                  |
+| `--color-border-strong`                                                                           | `--neutral-500`                   | hovered control border, emphasised divider             |
+| `--color-focus`                                                                                   | `--accent-400`                    | focus ring                                             |
+| `--color-overlay`                                                                                 | `oklch(0 0 0/.7)`                 | scrim (none in use yet; reserved for a future modal)   |
+| `--color-primary` / `--color-primary-hover` / `--color-primary-active` / `--color-primary-subtle` | accent 400/300/500/900            | the primary action and its states                      |
+| `--color-success` / `--color-success-subtle`                                                      | green 400/900                     | `present`                                              |
+| `--color-warning` / `--color-warning-subtle`                                                      | amber 400/900                     | `weak`, and the near-limit character count             |
+| `--color-danger` / `--color-danger-subtle`                                                        | red 400/900                       | `absent`, validation errors, Delete                    |
+| `--color-info` / `--color-info-subtle`                                                            | blue 400/900                      | neutral notices (unused today; reserved)               |
+| `--color-disabled-bg` / `--color-disabled-text`                                                   | `--neutral-850` / `--neutral-700` | disabled controls                                      |
+| `--color-background`                                                                              | `--color-bg`                      | shadcn/ui alias                                        |
+| `--color-foreground`                                                                              | `--color-text`                    | shadcn/ui alias                                        |
+| `--color-card` / `--color-popover`                                                                | `--color-bg-elevated`             | shadcn/ui aliases                                      |
+| `--color-card-foreground` / `--color-popover-foreground`                                          | `--color-text`                    | shadcn/ui aliases                                      |
+| `--color-primary-foreground`                                                                      | `--color-text-on-primary`         | shadcn/ui alias                                        |
+| `--color-secondary`                                                                               | `--color-surface`                 | shadcn/ui alias                                        |
+| `--color-secondary-foreground`                                                                    | `--color-text`                    | shadcn/ui alias                                        |
+| `--color-muted`                                                                                   | `--color-surface`                 | shadcn/ui alias                                        |
+| `--color-muted-foreground`                                                                        | `--color-text-muted`              | shadcn/ui alias                                        |
+| `--color-accent`                                                                                  | `--color-surface-hover`           | shadcn/ui alias                                        |
+| `--color-accent-foreground`                                                                       | `--color-text`                    | shadcn/ui alias                                        |
+| `--color-destructive`                                                                             | `--color-danger`                  | shadcn/ui alias                                        |
+| `--color-destructive-foreground`                                                                  | `--color-text-on-danger`          | shadcn/ui alias                                        |
+| `--color-input`                                                                                   | `--color-border`                  | shadcn/ui alias                                        |
+| `--color-ring`                                                                                    | `--color-focus`                   | shadcn/ui alias                                        |
 
 Depth in this theme is lightness, never shadow: `bg` → `bg-elevated` → `surface` climbs
 in lightness. `--shadow-*` exists, but a shadow alone must never be a boundary, because
@@ -150,8 +180,8 @@ needs no self-hosting decision.
 
 ## Size tokens
 
-Space, 4px base: `--space-1` 0.25rem … `--space-12` 6rem, as in `tokens.css`. Working
-unit at standard density is `--space-3`; section gaps are `--space-6`.
+Space, 4px base: `--space-1` 0.25rem … `--space-12` 6rem, as in `src/app/globals.css`.
+Working unit at standard density is `--space-3`; section gaps are `--space-6`.
 
 Radii: `--radius-sm` tags and badges / `--radius-md` buttons, inputs / `--radius-lg`
 cards / `--radius-xl` reserved for a sheet / `--radius-full` pills.
@@ -186,11 +216,11 @@ The four moving things, and nothing else:
 Only `transform` and `opacity` are animated, so no frame needs layout or paint.
 
 Under `prefers-reduced-motion: reduce`: the durations collapse to 0.01ms via
-`tokens.css`, and each of the four degrades rather than vanishing — the pulse dots
-become three static dots plus the status text (the text alone already carries the
+`src/app/globals.css`, and each of the four degrades rather than vanishing — the pulse
+dots become three static dots plus the status text (the text alone already carries the
 information), the feedback appears without the translate, and the programmatic scroll to
 the Feedback heading becomes instant (`scroll-behavior: auto`, already forced in
-`tokens.css`).
+`src/app/globals.css`).
 
 ## State matrix
 
@@ -228,11 +258,11 @@ than editable.
 
 Colour is never the only signal.
 
-| Verdict   | Glyph (Lucide)                   | Word      | Colour            |
-| --------- | -------------------------------- | --------- | ----------------- |
-| `present` | `check`                          | "Present" | `--color-success` |
-| `weak`    | `circle-dashed` at 50% + `minus` | "Weak"    | `--color-warning` |
-| `absent`  | `circle-dashed`                  | "Missing" | `--color-danger`  |
+| Verdict   | Glyph (Lucide) | Word      | Colour            |
+| --------- | -------------- | --------- | ----------------- |
+| `present` | `Check`        | "Present" | `--color-success` |
+| `weak`    | `CircleDot`    | "Weak"    | `--color-warning` |
+| `absent`  | `CircleDashed` | "Missing" | `--color-danger`  |
 
 `fixes` and `grammar` carry **no** severity in the schema, so they get no status colour.
 A `DiffLine` distinguishes its halves by position and by `<del>`/`<ins>` with an
@@ -413,8 +443,8 @@ run that gates on 3:1 while still being correct:
 | ----------------------------------------------- | ----- | ----------- | --------------- |
 | `--color-disabled-text` / `--color-disabled-bg` | 2.56  | exempt      | distinguishable |
 
-Two values in `tokens.css` deviate from the palette recipe they came from, and the
-measurements are why. Do not "restore" them:
+Two values in `src/app/globals.css` deviate from the palette recipe they came from, and
+the measurements are why. Do not "restore" them:
 
 - `--color-text-subtle` is L 0.665, not 0.590. At 0.590 a placeholder on
   `--color-surface` measured **3.90**, and a placeholder is body text needing 4.5.
@@ -450,14 +480,16 @@ formatted at render time, never concatenated by hand.
 
 ## Instructions for the implementing session
 
-1. Bring `tokens.css` in as the token source. With Tailwind v4 that means the `:root`
-   block from this file plus one `@theme inline` block that maps the shadcn names (table
-   above) and exposes the scales Tailwind needs. Do not restate a value in two places.
+1. Keep `src/app/globals.css` as the single token source. With Tailwind v4 that means
+   its `:root` block plus the `@theme inline` block that maps the shadcn names (table
+   above) and exposes the scales Tailwind needs. `tokens.css` is only a pointer; do not
+   copy declarations into it or restate a value in two places.
 2. Read the semantic layer only. A primitive name in a component is a bug.
 3. Do not invent a colour, radius, space, or duration. If a needed value is missing,
    propose the token first.
-4. Build from the inventory. The seven custom components are the only custom ones;
-   anything else comes from shadcn/ui.
+4. Build from the inventory. The seven custom vocabulary components are the only new UI
+   primitives; the six composition rows assemble them for their screens, and anything
+   else comes from shadcn/ui or the native platform.
 5. Implement every state in the state matrix, not just `default`.
 6. Respect `eslint.config.mjs`'s 200-line per-file budget. The feedback panel's four
    sections will not fit in one file with the composer — split by section, not by
