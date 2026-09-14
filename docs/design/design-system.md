@@ -459,6 +459,61 @@ Re-run the script and rebuild both tables whenever a value changes:
 python3 ~/.claude/skills/ui-ux-designing/scripts/check_contrast.py pairs.json
 ```
 
+## Verification log
+
+The "Colour-vision check" checklist above, and the reflow/zoom/forced-colors/keyboard
+claims in "Responsive", "Accessibility" and "Keyboard", were run against a production
+build (`pnpm build && pnpm start`, not `pnpm dev`) rather than merely asserted.
+
+**Date:** 2026-09-14. **Browser:** Chrome 152.0.0.0 on macOS (Chromium engine,
+automated).
+
+Two techniques stood in for the parts of Chrome DevTools' Rendering panel that the
+automation surface used for this pass could not drive directly, and are named here so a
+later re-run knows exactly what was and was not exercised:
+
+- **Vision-deficiency emulation.** DevTools' "Emulate vision deficiencies" dropdown is
+  DevTools-UI-only and not reachable through page automation. It was reproduced with the
+  same colour-matrix algorithm Chromium's own emulation uses (Machado, Oliveira &
+  Fernandes 2009), injected as a page-level SVG `feColorMatrix` filter
+  (`document.documentElement.style.filter = 'url(#protanopia-filter)'`, etc.) applied to
+  the live, hydrated page — not a static mockup.
+- **`forced-colors: active`.** True OS-level forced-colors mode needs a Windows
+  high-contrast setting (or CDP media emulation) this environment does not expose. The
+  one thing the issue asks about — whether `Card`'s border still draws the boundary once
+  `forced-colors: active` removes the `box-shadow` — was verified directly: the same
+  `--shadow-1`/`--shadow-2`/`--shadow-3: none` override `src/app/globals.css`'s
+  `@media (forced-colors: active)` block applies was set on `:root`, and the Feedback
+  card's computed `box-shadow` went to `none` while its computed border stayed
+  `1px solid` in the border colour — the boundary the design's TSDoc claims survives,
+  confirmed rather than assumed. The browser's own system-colour remapping of every
+  other property (backgrounds, text, non-`Card` borders) was not exercised; see
+  UNRESOLVED in the pull request this log came from.
+- **320px reflow / 400% zoom.** Resizing the automated browser's outer window
+  (`resize_window`) left `window.innerWidth` unchanged (the tool moves the OS window,
+  not the tab's rendering viewport), so 1.4.10 was verified with a same-origin
+  `<iframe>` sized to `320px` embedded in the page, which does constrain the child
+  document's real `window.innerWidth`/media-query evaluation to 320 CSS px. 1.4.12 was
+  verified by injecting the WCAG-specified text-spacing overrides (`line-height: 1.5`,
+  `letter-spacing: 0.12em`, `word-spacing: 0.16em`, paragraph spacing `2em`) as a
+  stylesheet on the full page, which is the standard way to test 1.4.12 and is
+  independent of zoom level.
+
+| Step                                                      | Outcome                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Protanopia / deuteranopia / tritanopia emulation          | Applied to the drill screen with a live `present`/`weak`/`absent` mix (from real model feedback, not fixtures). The verdict badges and the `DiffLine` `<del>`/`<ins>` stayed legible under all three — hue shifted as expected, but glyph shape and the word were unaffected and remained the distinguishing cue. No defect.                                                                                                                                                                                                                                                                                    |
+| Achromatopsia (full greyscale) — verdict-badge glyphs     | Confirmed with real feedback carrying all three verdicts: `present` (`Check`), `weak` (`CircleDot`, a filled centre dot), `absent` (`CircleDashed`, a dashed ring) are three visually distinct glyph shapes in greyscale, matching the claim in `verdict-badge.tsx`'s TSDoc that shape and word — not the 0.02 L-value gap between `--color-success` and `--color-warning` — carry the distinction. No defect.                                                                                                                                                                                                  |
+| Achromatopsia — `DiffLine`'s `<del>`/`<ins>`              | The struck-through `before` line and the unstruck, bolder `after` line stayed clearly ordered and distinguishable by the line-through alone in greyscale. No defect.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 1.4.10 reflow at 320px — drill screen                     | No horizontal scroll (`document.documentElement.scrollWidth` 316px inside a 316px viewport). The topic heading and the `Flag` button — the pairing the issue named as most likely to break — wrap onto separate lines at this width via the existing `flex flex-wrap`; nothing overlapped or clipped. No defect.                                                                                                                                                                                                                                                                                                |
+| 1.4.10 reflow at 320px — feedback panel, disclosures open | No horizontal scroll with both `What to fix` and `Grammar notes` open. `DiffLine` rows, the count badges, and the rewrite textarea all wrapped inside the 320px column. No defect.                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 1.4.10 reflow at 320px — phrases screen (empty state)     | No horizontal scroll on the onboarding empty state. No defect.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| 1.4.12 text-spacing override                              | Applied to the drill screen with feedback open (badges, both disclosures expanded). No horizontal scroll, no clipped or overlapping text at the widened line-height/letter-spacing/word-spacing/paragraph-spacing. No defect.                                                                                                                                                                                                                                                                                                                                                                                   |
+| `forced-colors: active` — `Card`'s shadow + border        | See "Two techniques" above. Border survives with the shadow zeroed; the Feedback card (a `Card`) keeps a visible boundary. No defect in the mechanism the issue named. The browser's own system-colour remapping of everything else under real forced-colors mode was not exercised in this environment.                                                                                                                                                                                                                                                                                                        |
+| Keyboard walk — drill screen                              | Tab order from a fresh load: `Flag` → `Show seeds` → answer `textarea` → `Get feedback` → `Skip this topic`, matching visual order (verified both directions with `Shift+Tab`). After submitting and feedback arriving, focus moved to the `h3` "Feedback" heading (`tabindex="-1"`) as documented, then `Tab` continued to the rewrite `textarea` → `Save to phrases` → the `What to fix` `<summary>` → the `Grammar notes` `<summary>` → `Next topic`. Both `<summary>` elements are reachable by `Tab` and opened with `Return`, focus staying on the `<summary>` (no stranding) after each open. No defect. |
+| Keyboard walk — phrases screen                            | Tab order: `Export` → the `Import` file input → the five filter `<select>`s (`Category`, `Structure`, `Mode`, `Level`, `Used a seed`) → the saved phrase's `Delete` button → the `Flagged content IDs` `<summary>`, matching visual order and reachable throughout. No defect.                                                                                                                                                                                                                                                                                                                                  |
+
+No step in this pass found a defect, so no `src/` file changed as part of it.
+
 ## Internationalisation
 
 One locale (`en`), LTR only. No RTL work, so physical properties are acceptable — but
