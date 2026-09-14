@@ -19,6 +19,8 @@ function makeDocument(): StateDocument {
     phrases: [],
     flaggedTopicIds: [],
     flaggedSeedIds: ["seed-3"],
+    answeredByDay: {},
+    dailyTarget: 3,
   };
 }
 
