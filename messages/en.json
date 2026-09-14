@@ -38,6 +38,16 @@
       "body": "You have saved phrases, but none of them fit every filter at once."
     },
     "filters": "Filter phrases",
+    "order": {
+      "label": "Order",
+      "newest": "Newest",
+      "review": "Review"
+    },
+    "reviewed": {
+      "markButton": "Mark reviewed",
+      "never": "Not reviewed yet",
+      "lastReviewed": "Reviewed {time}"
+    },
     "export": "Export",
     "import": "Import",
     "importError": "The selected file is not a valid saved state.",

@@ -34,6 +34,7 @@ function makePhrase(overrides: Partial<PhraseEntry> = {}): PhraseEntry {
     level: "B1",
     usedSeed: false,
     savedAt: "2026-09-11T00:00:00.000Z",
+    lastReviewedAt: null,
     ...overrides,
   };
 }
@@ -122,6 +123,10 @@ describe("migrateState", () => {
       "a phrase without savedAt",
       { phrases: [{ ...makePhrase(), savedAt: undefined }] },
     ],
+    [
+      "a phrase with a non-string, non-null lastReviewedAt",
+      { phrases: [{ ...makePhrase(), lastReviewedAt: 1_757_548_800_000 }] },
+    ],
     ["flagged ids that are not an array", { flaggedSeedIds: "seed-17" }],
     [
       "an answeredByDay count that is not a number",
@@ -159,6 +164,41 @@ describe("migrateState", () => {
     expect(migrateState({ ...makeDocument(), streak: 3 })).toStrictEqual(
       makeDocument(),
     );
+  });
+
+  it("migrates a phrase without lastReviewedAt to null, keeping its other fields", () => {
+    // Written out by hand, the shape a phrase saved before this field existed
+    // has: every phraseEntrySchema field except lastReviewedAt.
+    const legacyPhrase = {
+      id: "phrase-legacy",
+      text: "A phrase saved before lastReviewedAt existed.",
+      topicId: "prep-travel-short",
+      category: "travel",
+      structure: "prep",
+      mode: "short",
+      level: "B1",
+      usedSeed: false,
+      savedAt: "2026-09-11T00:00:00.000Z",
+    };
+
+    const migrated = migrateState({
+      ...makeDocument(),
+      phrases: [legacyPhrase],
+    });
+
+    expect(migrated.phrases).toStrictEqual([{ ...legacyPhrase, lastReviewedAt: null }]);
+  });
+
+  it("keeps an explicit lastReviewedAt timestamp on a phrase", () => {
+    const document = makeDocument();
+    const reviewed = makePhrase({
+      id: "phrase-reviewed",
+      lastReviewedAt: "2026-09-12T08:00:00.000Z",
+    });
+
+    expect(migrateState({ ...document, phrases: [reviewed] }).phrases).toStrictEqual([
+      reviewed,
+    ]);
   });
 });
 

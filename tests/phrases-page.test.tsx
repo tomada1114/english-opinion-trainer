@@ -30,6 +30,7 @@ function makePhrase(overrides: Partial<PhraseEntry> = {}): PhraseEntry {
     level: "B1",
     usedSeed: false,
     savedAt: "2026-09-10T00:00:00.000Z",
+    lastReviewedAt: null,
     ...overrides,
   };
 }
@@ -39,6 +40,24 @@ function seedPhrases(phrases: readonly PhraseEntry[]): void {
     STORAGE_KEY,
     JSON.stringify({ ...defaultState(), phrases }),
   );
+}
+
+/**
+ * The rendered phrase rows, in document order.
+ *
+ * @remarks
+ * `getAllByRole("listitem")` cannot answer this: each row's own tag badges
+ * are themselves an unordered list of `<li>`s nested inside it, so a flat
+ * role query returns every badge alongside every row. Anchoring on one
+ * phrase's own row and reading its parent's direct children instead stays
+ * correct regardless of how many badges a row renders.
+ */
+function phraseRows(anchorPhraseText: string): readonly Element[] {
+  const list = screen.getByText(anchorPhraseText).closest("li")?.parentElement;
+  if (list == null) {
+    throw new Error("the phrase list was not rendered");
+  }
+  return Array.from(list.children);
 }
 
 function makeState(): StateDocument {
@@ -248,6 +267,116 @@ describe("PhrasesPage", () => {
     expect(
       JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"),
     ).toMatchObject({ phrases: [retained] });
+  });
+
+  it("orders the list under Review order with unreviewed phrases first, then oldest-reviewed, savedAt breaking ties", async () => {
+    const neverReviewedNewer = makePhrase({
+      id: "never-reviewed-newer",
+      text: "Never reviewed, saved more recently.",
+      savedAt: "2026-09-12T00:00:00.000Z",
+      lastReviewedAt: null,
+    });
+    const neverReviewedOlder = makePhrase({
+      id: "never-reviewed-older",
+      text: "Never reviewed, saved earlier.",
+      savedAt: "2026-09-10T00:00:00.000Z",
+      lastReviewedAt: null,
+    });
+    const reviewedRecently = makePhrase({
+      id: "reviewed-recently",
+      text: "Reviewed recently.",
+      savedAt: "2026-09-01T00:00:00.000Z",
+      lastReviewedAt: "2026-09-13T00:00:00.000Z",
+    });
+    const reviewedLongAgo = makePhrase({
+      id: "reviewed-long-ago",
+      text: "Reviewed a long time ago.",
+      savedAt: "2026-09-01T00:00:00.000Z",
+      lastReviewedAt: "2026-09-02T00:00:00.000Z",
+    });
+    // Seeded out of every order this test expects, so a pass cannot be an
+    // accident of storage order.
+    seedPhrases([
+      reviewedRecently,
+      neverReviewedNewer,
+      reviewedLongAgo,
+      neverReviewedOlder,
+    ]);
+
+    await renderPhrasesPage();
+    fireEvent.change(screen.getByLabelText(en.Phrases.order.label), {
+      target: { value: "review" },
+    });
+
+    const expectedOrder = [
+      neverReviewedOlder,
+      neverReviewedNewer,
+      reviewedLongAgo,
+      reviewedRecently,
+    ];
+    const rows = phraseRows(neverReviewedOlder.text);
+    expect(rows).toHaveLength(expectedOrder.length);
+    expectedOrder.forEach((phrase, index) => {
+      expect(rows[index]).toHaveTextContent(phrase.text);
+    });
+  });
+
+  it("marks a phrase reviewed, writing the timestamp to localStorage and re-ordering the row", async () => {
+    const neverReviewedA = makePhrase({
+      id: "never-reviewed-a",
+      text: "The phrase about to be marked reviewed.",
+      savedAt: "2026-09-01T00:00:00.000Z",
+      lastReviewedAt: null,
+    });
+    const neverReviewedB = makePhrase({
+      id: "never-reviewed-b",
+      text: "A phrase that stays unreviewed.",
+      savedAt: "2026-09-05T00:00:00.000Z",
+      lastReviewedAt: null,
+    });
+    const reviewedLongAgo = makePhrase({
+      id: "reviewed-long-ago",
+      text: "A phrase reviewed a long time ago.",
+      savedAt: "2026-09-01T00:00:00.000Z",
+      lastReviewedAt: "2026-09-02T00:00:00.000Z",
+    });
+    seedPhrases([neverReviewedA, neverReviewedB, reviewedLongAgo]);
+
+    await renderPhrasesPage();
+    fireEvent.change(screen.getByLabelText(en.Phrases.order.label), {
+      target: { value: "review" },
+    });
+    const beforeClick = Date.now();
+    const phraseItem = screen.getByText(neverReviewedA.text).closest("li");
+    expect(phraseItem).not.toBeNull();
+    fireEvent.click(
+      within(phraseItem as HTMLElement).getByRole("button", {
+        name: en.Phrases.reviewed.markButton,
+      }),
+    );
+    const afterClick = Date.now();
+
+    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null") as {
+      phrases: readonly { id: string; lastReviewedAt: string | null }[];
+    };
+    const storedPhrase = stored.phrases.find(
+      (phrase) => phrase.id === neverReviewedA.id,
+    );
+    if (storedPhrase?.lastReviewedAt == null) {
+      throw new Error("the marked phrase's lastReviewedAt was not written");
+    }
+    const writtenAt = Date.parse(storedPhrase.lastReviewedAt);
+    expect(writtenAt).toBeGreaterThanOrEqual(beforeClick);
+    expect(writtenAt).toBeLessThanOrEqual(afterClick);
+    // The just-reviewed phrase moves from first (never reviewed) to last
+    // (the most recently reviewed), since Review order puts the least
+    // recently engaged phrase first.
+    const expectedOrder = [neverReviewedB, reviewedLongAgo, neverReviewedA];
+    const rows = phraseRows(neverReviewedB.text);
+    expect(rows).toHaveLength(expectedOrder.length);
+    expectedOrder.forEach((phrase, index) => {
+      expect(rows[index]).toHaveTextContent(phrase.text);
+    });
   });
 
   it("exports the complete state as pretty-printed JSON with a dated filename", async () => {
