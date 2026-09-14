@@ -121,7 +121,7 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
   schema's success case and its four failure shapes.
 - **Browser state.** One `localStorage` document under the key
   `english-opinion-trainer`:
-  `{ version, level, units: { [unitId]: { answeredTopicIds, completed } }, phrases: [...], flaggedTopicIds, flaggedSeedIds }`.
+  `{ version, level, units: { [unitId]: { answeredTopicIds, completed } }, phrases: [...], flaggedTopicIds, flaggedSeedIds, answeredByDay, dailyTarget }`.
   Read through zod; invalid or absent input resets to the default rather than throwing,
   and `version` drives migrations. The pure shape, its zod schema, and migrations live
   in `src/core/state.ts` (framework-free: `stateDocumentSchema`, `defaultState`,
@@ -135,6 +135,19 @@ optionally save the rewrite to a phrase list. No accounts, no scores, no streaks
   `version` is the literal `1`; a version 2 adds a literal and its migration path to
   `migrateState`. A phrase-list entry is
   `{ id, text, topicId, category, structure, mode, level, usedSeed, savedAt }`.
+- **Today's practice (#83).** `answeredByDay: Record<string, number>` counts topics
+  answered per local `YYYY-MM-DD` day (never UTC, so a late-night session stays "today"
+  on the reader's own clock); `dailyTarget: number` is the count the home screen
+  compares it against, defaulting to 3. Both default rather than fail `migrateState`'s
+  parse when absent, so a document written before #83 migrates to the defaults instead
+  of resetting. `localDayKey` and `recordAnsweredDay` (the day-key formatter and the
+  increment-and-prune step, the latter keeping only the most recent 60 days) live in
+  `src/core/state.ts` beside the field they maintain, and are called wherever
+  `recordAnswered` (`src/core/unit-progress.ts`) runs for a topic that completes a
+  unit's pass. Deliberately absent, per the issue: any streak, flame, "don't break it"
+  mechanic, recovery mechanic, or notification — a missed day costs nothing and is never
+  mentioned. No control to change `dailyTarget` exists yet; the field is written so one
+  can be added without another migration.
 - **Pages.** `/` lists units with progress and a level selector; `/units/[unitId]` runs
   the drill; `/phrases` lists saved phrases with tag filters. Units are always
   selectable — reopening a completed unit starts a new pass and keeps the completed
