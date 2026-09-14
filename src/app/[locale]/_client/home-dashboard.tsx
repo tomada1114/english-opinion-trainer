@@ -11,6 +11,7 @@ import {
   type Level,
   type UnitId,
 } from "../../../core/drill";
+import { localDayKey } from "../../../core/state";
 import { TOPICS_PER_PASS } from "../../../core/unit-progress";
 import { Badge } from "../../_client/ui/badge";
 import { Card } from "../../_client/ui/card";
@@ -45,6 +46,9 @@ export function HomeDashboard({
     return <p className="text-text-muted">{t("loading")}</p>;
   }
 
+  const answeredToday = state.answeredByDay[localDayKey(new Date())] ?? 0;
+  const targetMet = answeredToday >= state.dailyTarget;
+
   return (
     <section className="measure space-y-6">
       <div className="space-y-1">
@@ -56,6 +60,19 @@ export function HomeDashboard({
             </option>
           ))}
         </Select>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="text-sm tabular-nums text-text-subtle">
+          {t("today.progress", { answered: answeredToday, target: state.dailyTarget })}
+        </p>
+        {targetMet ? (
+          // A glyph and a word, the same shape the unit completion badge uses.
+          <Badge tone="success">
+            <Check aria-hidden="true" className="size-3.5 shrink-0" />
+            {t("today.done")}
+          </Badge>
+        ) : null}
       </div>
 
       <ul className="space-y-3">

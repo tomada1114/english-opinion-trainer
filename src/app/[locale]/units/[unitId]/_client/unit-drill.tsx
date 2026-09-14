@@ -9,6 +9,7 @@ import {
 } from "../../../../_client/use-state-document";
 import type { Topic } from "../../../../../core/content/index";
 import type { Level, UnitId } from "../../../../../core/drill";
+import { localDayKey, recordAnsweredDay } from "../../../../../core/state";
 import {
   isCompleted,
   nextTopic,
@@ -106,6 +107,7 @@ function DrillSession({
 
   function persistProgress(nextProgress: UnitProgressState): void {
     const passCompleted = isCompleted(nextProgress);
+    const today = localDayKey(new Date());
     setState((current) => ({
       ...current,
       units: {
@@ -115,6 +117,7 @@ function DrillSession({
           completed: passCompleted || current.units[unit]?.completed === true,
         },
       },
+      answeredByDay: recordAnsweredDay(current.answeredByDay, today),
     }));
   }
 

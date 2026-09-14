@@ -2,6 +2,7 @@ import * as z from "zod";
 
 import {
   CATEGORIES,
+  DEFAULT_DAILY_TARGET,
   DEFAULT_LEVEL,
   LEVELS,
   MODES,
@@ -61,6 +62,10 @@ export type StoredUnitProgress = z.infer<typeof storedUnitProgressSchema>;
  * `units` is partial: a unit appears only once it has progress to record. A key
  * outside {@link UNIT_IDS} fails the parse. Unknown top-level keys are dropped
  * rather than rejected, so a stray key costs nothing but itself.
+ *
+ * `answeredByDay` and `dailyTarget` default rather than fail the parse when
+ * absent, so a document written before these fields existed migrates to their
+ * defaults instead of resetting: see {@link migrateState}.
  */
 export const stateDocumentSchema = z.object({
   version: z.literal(STATE_VERSION),
@@ -69,6 +74,10 @@ export const stateDocumentSchema = z.object({
   phrases: z.array(phraseEntrySchema),
   flaggedTopicIds: z.array(z.string()),
   flaggedSeedIds: z.array(z.string()),
+  /** Topics answered per local `YYYY-MM-DD` day; see {@link recordAnsweredDay}. */
+  answeredByDay: z.record(z.string(), z.number().int().nonnegative()).default({}),
+  /** The count of today's answers the home screen compares against. */
+  dailyTarget: z.number().int().positive().default(DEFAULT_DAILY_TARGET),
 });
 
 /** The persisted document; the schema is the only definition of its shape. */
@@ -83,6 +92,8 @@ export function defaultState(): StateDocument {
     phrases: [],
     flaggedTopicIds: [],
     flaggedSeedIds: [],
+    answeredByDay: {},
+    dailyTarget: DEFAULT_DAILY_TARGET,
   };
 }
 
@@ -101,4 +112,51 @@ export function defaultState(): StateDocument {
 export function migrateState(raw: unknown): StateDocument {
   const parsed = stateDocumentSchema.safeParse(raw);
   return parsed.success ? parsed.data : defaultState();
+}
+
+/** How many days of `answeredByDay` history a write keeps. */
+export const ANSWERED_BY_DAY_HISTORY_DAYS = 60;
+
+/**
+ * The local calendar day `date` falls on, as `YYYY-MM-DD`.
+ *
+ * @remarks
+ * Reads `date`'s local year/month/day, never the UTC ones: the reader's
+ * "today" is the one on their own clock, so a commute at 23:40 belongs to
+ * that day rather than rolling to UTC's next one. `answeredByDay` is keyed by
+ * this function's output.
+ */
+export function localDayKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${String(year)}-${month}-${day}`;
+}
+
+/**
+ * `answeredByDay` with `today`'s count incremented by one, keeping only the
+ * most recent {@link ANSWERED_BY_DAY_HISTORY_DAYS} days.
+ *
+ * @remarks
+ * Called wherever `recordAnswered` (`src/core/unit-progress.ts`) runs for a
+ * topic that completes a unit's pass, so the two stay in step: one answered
+ * topic is one increment. `YYYY-MM-DD` keys sort chronologically as plain
+ * strings, which is what lets pruning stay a sort-and-slice with no date
+ * parsing. Pruning happens on every write rather than as a separate pass, so
+ * `answeredByDay` never grows past its cap in a store the reader cannot see.
+ */
+export function recordAnsweredDay(
+  answeredByDay: Readonly<Record<string, number>>,
+  today: string,
+): Record<string, number> {
+  const incremented: Record<string, number> = {
+    ...answeredByDay,
+    [today]: (answeredByDay[today] ?? 0) + 1,
+  };
+  const daysToKeep = new Set(
+    Object.keys(incremented).sort().slice(-ANSWERED_BY_DAY_HISTORY_DAYS),
+  );
+  return Object.fromEntries(
+    Object.entries(incremented).filter(([day]) => daysToKeep.has(day)),
+  );
 }

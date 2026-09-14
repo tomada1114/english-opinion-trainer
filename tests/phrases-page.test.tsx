@@ -58,6 +58,8 @@ function makeState(): StateDocument {
     ],
     flaggedTopicIds: ["concession-work-short"],
     flaggedSeedIds: ["seed-concession-work-short-b1-1"],
+    answeredByDay: {},
+    dailyTarget: 3,
   };
 }
 
