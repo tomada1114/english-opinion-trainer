@@ -7,19 +7,23 @@
    1. UI code reads the semantic layer only (--color-*, --space-*, --text-*, --motion-*).
       A primitive name (--neutral-600, --accent-400) in a component is a bug: it is the
       one place a later theme change would miss.
-   2. DARK ONLY, deliberately. `color-scheme: dark` is fixed and there is no light theme;
-      see the concept document's "Theme policy". Every semantic NAME is final and only the
-      light VALUES are absent, so adding light later is a change to this file alone. Do not
-      invent light values to fill the gap.
+   2. OS-FOLLOWING, both themes. `color-scheme: light dark` lets `light-dark()` resolve
+      each semantic colour against the OS setting; see the concept document's "Theme
+      policy" (superseded dark-only decision recorded in its decision log). There is no
+      in-app toggle — that needs the choice persisted and a first-paint flash suppressed,
+      neither of which is built. The primitives below stay single dark-mode values; the
+      light half of each semantic token is written inline in the `@theme inline` block.
    3. The primary action token is --color-primary, never --color-accent. In shadcn/ui's
       vocabulary `accent` means a subtle hover surface, and Tailwind v4 gives both
       vocabularies the same --color-* namespace, so the name can only mean one thing. */
 
 :root {
-  color-scheme: dark; /* also settles form controls, scrollbars and the UA's own colours */
+  color-scheme: light dark; /* also settles form controls, scrollbars and the UA's own colours */
 
-  /* Primitive: neutrals on the accent's own hue, mixed in at C 0.004-0.016 so every
-     surface, border and label sits on one hue axis with the primary colour. */
+  /* Primitive: dark-mode neutrals on the accent's own hue, mixed in at C 0.004-0.016 so
+     every surface, border and label sits on one hue axis with the primary colour. The
+     light half of each semantic token below is a literal value, not a primitive scale:
+     see design-system.md's colour token table for where each one comes from. */
   --neutral-50: oklch(0.965 0.004 248);
   --neutral-300: oklch(0.755 0.016 248);
   --neutral-400: oklch(0.665 0.014 248);
@@ -61,45 +65,63 @@
 
 /* Semantic colours. `inline` keeps the var() references intact, so a utility emits
    `color: var(--color-text)` rather than a copy of the resolved value — which is what lets
-   the media-query overrides at the bottom of this file reach code that used a utility. */
+   the media-query overrides at the bottom of this file reach code that used a utility.
+
+   Each value is `light-dark(<light>, <dark>)`. The dark half is always the primitive this
+   file already had; the light half is a literal derived from the same recipe (reversed
+   lightness ladder for the neutrals, adjusted L/C for the primary) documented in
+   design-system.md. `light-dark()` resolves against the computed `color-scheme` above, so
+   this is the whole light-theme switch — no component changed to add it.
+
+   Three light values deviate from the recipe's plain reversed value, for the same reason
+   two dark values already did: measured contrast, not a guess. `--color-text-subtle`
+   (placeholder on `--color-surface`) and `--color-border` (control border on
+   `--color-bg-elevated`) needed a lower L than the recipe default to clear their
+   thresholds; `--color-primary` needed a lower L than "~0.545" so `--color-text-on-primary`
+   (white in light) clears 4.5:1 against `accent`, `hover` **and** `active`, and so a link in
+   `--color-primary` clears 4.5:1 on `--color-surface` too. `--color-primary-hover` and
+   `--color-primary-active` are shifted by the same amount as `--color-primary` so the three
+   states keep their original spacing. See design-system.md's "Measured contrast" for the
+   numbers. */
 @theme inline {
-  /* Surfaces. In a dark theme depth is lightness, not shadow. */
-  --color-bg: var(--neutral-950);
-  --color-bg-subtle: var(--neutral-1000);
-  --color-bg-elevated: var(--neutral-900);
-  --color-surface: var(--neutral-850);
-  --color-surface-hover: var(--neutral-800);
+  /* Surfaces. Dark: depth is lightness. Light: depth is a small step down in lightness,
+     the reverse of the dark ladder (bg-elevated is lightest, at C 0 — plain white). */
+  --color-bg: light-dark(oklch(0.99 0.003 248), var(--neutral-950));
+  --color-bg-subtle: light-dark(oklch(0.968 0.006 248), var(--neutral-1000));
+  --color-bg-elevated: light-dark(oklch(1 0 248), var(--neutral-900));
+  --color-surface: light-dark(oklch(0.945 0.008 248), var(--neutral-850));
+  --color-surface-hover: light-dark(oklch(0.918 0.01 248), var(--neutral-800));
 
   /* Text */
-  --color-text: var(--neutral-50);
-  --color-text-muted: var(--neutral-300);
-  --color-text-subtle: var(--neutral-400);
-  --color-text-on-primary: var(--accent-950);
-  --color-text-on-danger: var(--red-950);
-  --color-text-on-success: var(--green-950);
-  --color-text-on-warning: var(--amber-950);
+  --color-text: light-dark(oklch(0.255 0.02 248), var(--neutral-50));
+  --color-text-muted: light-dark(oklch(0.46 0.016 248), var(--neutral-300));
+  --color-text-subtle: light-dark(oklch(0.5 0.014 248), var(--neutral-400));
+  --color-text-on-primary: light-dark(oklch(1 0 0), var(--accent-950));
+  --color-text-on-danger: light-dark(oklch(1 0 0), var(--red-950));
+  --color-text-on-success: light-dark(oklch(1 0 0), var(--green-950));
+  --color-text-on-warning: light-dark(oklch(1 0 0), var(--amber-950));
 
   /* Lines */
-  --color-border: var(--neutral-600);
-  --color-border-strong: var(--neutral-500);
-  --color-focus: var(--accent-400);
-  --color-overlay: oklch(0 0 0 / 0.7);
+  --color-border: light-dark(oklch(0.6 0.01 248), var(--neutral-600));
+  --color-border-strong: light-dark(oklch(0.56 0.012 248), var(--neutral-500));
+  --color-focus: light-dark(oklch(0.52 0.14 248), var(--accent-400));
+  --color-overlay: light-dark(oklch(0 0 0 / 0.45), oklch(0 0 0 / 0.7));
 
   /* Primary action and status */
-  --color-primary: var(--accent-400);
-  --color-primary-hover: var(--accent-300);
-  --color-primary-active: var(--accent-500);
-  --color-primary-subtle: var(--accent-900);
-  --color-success: var(--green-400);
-  --color-success-subtle: var(--green-900);
-  --color-warning: var(--amber-400);
-  --color-warning-subtle: var(--amber-900);
-  --color-danger: var(--red-400);
-  --color-danger-subtle: var(--red-900);
-  --color-info: var(--blue-400);
-  --color-info-subtle: var(--blue-900);
-  --color-disabled-bg: var(--neutral-850);
-  --color-disabled-text: var(--neutral-700);
+  --color-primary: light-dark(oklch(0.52 0.14 248), var(--accent-400));
+  --color-primary-hover: light-dark(oklch(0.47 0.13 248), var(--accent-300));
+  --color-primary-active: light-dark(oklch(0.425 0.118 248), var(--accent-500));
+  --color-primary-subtle: light-dark(oklch(0.95 0.022 248), var(--accent-900));
+  --color-success: light-dark(oklch(0.505 0.125 152), var(--green-400));
+  --color-success-subtle: light-dark(oklch(0.955 0.026 152), var(--green-900));
+  --color-warning: light-dark(oklch(0.51 0.1 75), var(--amber-400));
+  --color-warning-subtle: light-dark(oklch(0.955 0.028 75), var(--amber-900));
+  --color-danger: light-dark(oklch(0.515 0.185 25), var(--red-400));
+  --color-danger-subtle: light-dark(oklch(0.955 0.02 25), var(--red-900));
+  --color-info: light-dark(oklch(0.52 0.135 250), var(--blue-400));
+  --color-info-subtle: light-dark(oklch(0.955 0.02 250), var(--blue-900));
+  --color-disabled-bg: light-dark(oklch(0.945 0.004 248), var(--neutral-850));
+  --color-disabled-text: light-dark(oklch(0.7 0.008 248), var(--neutral-700));
 
   /* shadcn/ui's own vocabulary, bound to the names above. The table in
      design-system.md is the authority; note that `accent` here is the hover surface. */
@@ -315,12 +337,15 @@
   }
 }
 
-/* Lift the three tokens whose whole job is to be quiet. */
+/* Lift the three tokens whose whole job is to be quiet, in both themes: each dark half is
+   unchanged (still the next rung up dark already borrowed), and each light half borrows
+   the light value already used one rung up in the @theme inline block above, so a quieter
+   token is promoted to what a slightly stronger token already reads as. */
 @media (prefers-contrast: more) {
   :root {
-    --color-text-muted: var(--neutral-50);
-    --color-text-subtle: var(--neutral-300);
-    --color-border: var(--neutral-500);
+    --color-text-muted: light-dark(oklch(0.255 0.02 248), var(--neutral-50));
+    --color-text-subtle: light-dark(oklch(0.46 0.016 248), var(--neutral-300));
+    --color-border: light-dark(oklch(0.56 0.012 248), var(--neutral-500));
   }
 }
 
