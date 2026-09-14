@@ -83,6 +83,8 @@ on every edit is slow enough that it stops being run at all.
 | `src/server/env.ts` or `.env.example`                  | `pnpm exec vitest run tests/server-env.test.ts`      |
 | A page, layout or route handler under `src/app/`       | `pnpm build`, then `pnpm test:smoke`                 |
 | A component with a rendered test                       | `pnpm exec vitest run tests/<name>.test.tsx`         |
+| A component under `src/app/_client/ui/`                | `pnpm exec vitest run --project=component`           |
+| A token change in `src/app/globals.css`                | `pnpm build`, then `pnpm test:smoke`                 |
 | A catalog under `messages/`, or `src/i18n/messages.ts` | `pnpm exec vitest run tests/messages.test.ts`        |
 | `src/proxy.ts` or the locale routing behind it         | `pnpm exec vitest run tests/proxy.test.ts`           |
 | Anything only a running server shows                   | `pnpm build`, then `pnpm test:smoke`                 |
@@ -97,14 +99,16 @@ on every edit is slow enough that it stops being run at all.
 
 ```
 src/
-├── core/     # framework-free vocabulary: a Result, a domain type, a pure function
-├── ai/       # the LlmPort, its error vocabulary, and the adapters behind it
-├── server/   # the environment read, the composition root, and request handlers
-├── i18n/     # the locale list, its URL routing, and the typed message catalogs
-├── app/      # the Next.js App Router tree: pages, layouts, route handlers
-└── proxy.ts  # Next.js's request proxy: locale detection ahead of every page request
-messages/     # one JSON catalog per locale, shaped by en.json
-scripts/      # repository automation, authored as .mjs, never shipped
+├── core/           # framework-free vocabulary: a Result, a domain type, a pure function
+├── ai/             # the LlmPort, its error vocabulary, and the adapters behind it
+├── server/         # the environment read, the composition root, and request handlers
+├── i18n/           # the locale list, its URL routing, and the typed message catalogs
+├── app/            # the Next.js App Router tree: pages, layouts, route handlers
+│   └── _client/ui/ # the shared, framework-free component layer styled with semantic tokens
+└── proxy.ts        # Next.js's request proxy: locale detection ahead of every page request
+messages/           # one JSON catalog per locale, shaped by en.json
+docs/design/        # the design system and concept documents; src/app/globals.css is the live token source
+scripts/            # repository automation, authored as .mjs, never shipped
 ```
 
 Imports run one way — `app` → `server` → `ai` → `core` — with `i18n` a leaf that the
@@ -187,6 +191,7 @@ names its own boundary with its neighbours.
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `building-the-drill`    | the drill's domain (topics, seeds, structure types, modes, units, levels, phrase list, feedback schema), the feedback endpoint, or browser state |
 | `building-app-routes`   | a page, layout or Route Handler under `src/app/`, `src/proxy.ts`, or `src/server/`                                                               |
+| `styling-ui`            | a component under `src/app/_client/ui/`, a token in `src/app/globals.css`, or `docs/design/`                                                     |
 | `localizing-ui`         | a catalog under `messages/`, a module under `src/i18n/`, or adding a UI string                                                                   |
 | `integrating-llm`       | the `LlmPort`, an adapter under `src/ai/`, or a fixture under `tests/fixtures/llm/`                                                              |
 | `writing-typescript`    | a `.ts` module or a `.tsx` component under `src/`                                                                                                |
