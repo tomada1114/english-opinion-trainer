@@ -71,7 +71,12 @@ export async function requestFeedback(
     return err("unknown");
   }
 
-  const body: unknown = await response.json().catch(() => undefined);
+  const body: unknown = await response.json().catch((error: unknown) => {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw error;
+    }
+    return undefined;
+  });
   if (!response.ok) {
     const failure = errorBodySchema.safeParse(body);
     return err(

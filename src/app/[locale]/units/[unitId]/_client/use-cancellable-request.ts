@@ -28,6 +28,7 @@ export function useCancellableRequest(): {
 
   return {
     start: () => {
+      controllerRef.current?.abort();
       const controller = new AbortController();
       controllerRef.current = controller;
       return controller.signal;
