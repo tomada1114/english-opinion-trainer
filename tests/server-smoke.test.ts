@@ -114,6 +114,28 @@ function assertFreshBuild(): void {
   }
 }
 
+/**
+ * The `href` of the served document's stylesheet link.
+ *
+ * @remarks
+ * Next.js writes the built stylesheet's filename as a content hash, so the
+ * path cannot be hard-coded; it is read off the page the way a browser would.
+ */
+function extractStylesheetHref(document: string): string {
+  const linkTags = document.match(/<link[^>]*>/g) ?? [];
+  const stylesheetLink = linkTags.find((tag) => tag.includes('rel="stylesheet"'));
+  if (stylesheetLink === undefined) {
+    throw new Error(
+      `no <link rel="stylesheet"> found in the served document:\n${document}`,
+    );
+  }
+  const href = /href="([^"]+)"/.exec(stylesheetLink)?.[1];
+  if (href === undefined) {
+    throw new Error(`<link rel="stylesheet"> has no href: ${stylesheetLink}`);
+  }
+  return href;
+}
+
 /** Read the build's static route table without trusting its JSON shape. */
 function readPrerenderedRoutes(): object {
   const manifest: unknown = JSON.parse(readFileSync(prerenderManifestPath, "utf8"));
@@ -551,4 +573,48 @@ describe("the built application, served by `next start`", () => {
       expect(document).toContain(MESSAGES[locale].NotFound.homeLink);
     },
   );
+});
+
+// Issue #81: `src/app/globals.css` hand-binds shadcn/ui's colour vocabulary to
+// this app's semantic tokens, and a mis-bound name is silent — the build
+// succeeds, every jsdom test passes (jsdom never applies a stylesheet), and
+// the wrong colour ships. This suite is the only one serving real CSS, so it
+// is the only place that can catch the binding going wrong. Name-level checks
+// only: a resolved colour value is `check_contrast.py`'s job, and asserting
+// one here would have to be edited every time a token moves.
+describe("the design token wiring in the served stylesheet", () => {
+  let stylesheet = "";
+
+  beforeAll(async () => {
+    const pageResponse = await fetch(`${baseUrl}/en`);
+    const document = await pageResponse.text();
+    const stylesheetHref = extractStylesheetHref(document);
+    const stylesheetResponse = await fetch(new URL(stylesheetHref, baseUrl));
+    stylesheet = await stylesheetResponse.text();
+  });
+
+  it.each(["--color-bg", "--color-text", "--color-primary", "--color-focus"])(
+    "declares %s",
+    (tokenName) => {
+      expect(stylesheet).toMatch(new RegExp(`${tokenName}:`));
+    },
+  );
+
+  // The binding most likely to be wrong: in shadcn/ui's vocabulary `accent` is
+  // a hover surface, not the primary colour, and inverting it would paint
+  // every hovered row the primary blue without failing a build or a test.
+  it("binds shadcn/ui's --color-accent to the hover surface, not the primary colour", () => {
+    expect(stylesheet).toContain("--color-accent:var(--color-surface-hover)");
+    expect(stylesheet).not.toContain("--color-accent:var(--color-primary)");
+  });
+
+  it("binds shadcn/ui's --color-primary-foreground to the on-primary text colour", () => {
+    expect(stylesheet).toContain(
+      "--color-primary-foreground:var(--color-text-on-primary)",
+    );
+  });
+
+  it("fixes color-scheme to dark, since the whole palette assumes it", () => {
+    expect(stylesheet).toContain("color-scheme:dark");
+  });
 });
