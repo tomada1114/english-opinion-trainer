@@ -43,11 +43,18 @@ function toFeedbackErrorCode(code: string): FeedbackErrorCode {
  * what the endpoint's `Sec-Fetch-Site` gate admits. The `200` body is
  * validated against the topic's own feedback schema rather than trusted, so
  * the rendering below never meets a shape it was not written for.
+ *
+ * `signal`, when given, aborts the underlying `fetch`. An abort is not a
+ * failure to report through the returned `Result` — nothing went wrong, the
+ * caller changed its mind — so it is rethrown as the `AbortError`
+ * `DOMException` it arrived as, its own arm rather than the `"unknown"` code
+ * a genuine network failure gets. The caller is expected to catch it.
  */
 export async function requestFeedback(
   topic: Topic,
   answer: string,
   level: Level,
+  signal?: AbortSignal,
 ): Promise<Result<Feedback, FeedbackErrorCode>> {
   let response: Response;
   try {
@@ -55,12 +62,21 @@ export async function requestFeedback(
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ topicId: topic.id, answer, level }),
+      ...(signal === undefined ? {} : { signal }),
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw error;
+    }
     return err("unknown");
   }
 
-  const body: unknown = await response.json().catch(() => undefined);
+  const body: unknown = await response.json().catch((error: unknown) => {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw error;
+    }
+    return undefined;
+  });
   if (!response.ok) {
     const failure = errorBodySchema.safeParse(body);
     return err(

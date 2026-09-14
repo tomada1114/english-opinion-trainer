@@ -139,6 +139,66 @@ function stubFetch(...responses: (Response | Promise<Response>)[]): RecordedCall
   return calls;
 }
 
+/**
+ * Stubs `fetch` with a call that never settles on its own, the way a real
+ * request that is still waiting on the network behaves, but rejects with the
+ * platform's own `AbortError` the moment the `RequestInit.signal` it was
+ * handed fires — the way a real cancelled `fetch` behaves, unlike
+ * {@link stubFetch}'s unconditional resolution.
+ */
+function stubAbortAwareFetch(): RecordedCall[] {
+  const calls: RecordedCall[] = [];
+  vi.stubGlobal("fetch", (input: string, init?: RequestInit): Promise<Response> => {
+    calls.push({ url: input, init });
+    return new Promise<Response>((_resolve, reject) => {
+      init?.signal?.addEventListener("abort", () => {
+        reject(new DOMException("The operation was aborted.", "AbortError"));
+      });
+    });
+  });
+  return calls;
+}
+
+/**
+ * Stubs `fetch` with a call that resolves immediately — headers arrived, the
+ * way a real response starts before its body is fully read — but whose
+ * `.json()` never settles on its own and rejects with the platform's own
+ * `AbortError` the moment the request's `signal` fires. This is the window
+ * `stubAbortAwareFetch` above does not reach: a cancel that lands after
+ * `fetch` has resolved but while the body is still being parsed.
+ *
+ * `bodyReadStarted` resolves once `.json()` has actually been called — and so
+ * has registered its `abort` listener on the signal — which is what a caller
+ * must wait for before cancelling, so the cancel truly lands mid-body-read
+ * rather than racing ahead of `fetch`'s own resolution.
+ */
+function stubAbortAwareJsonFetch(): {
+  calls: RecordedCall[];
+  bodyReadStarted: Promise<void>;
+} {
+  const calls: RecordedCall[] = [];
+  let markBodyReadStarted: () => void = () => undefined;
+  const bodyReadStarted = new Promise<void>((resolve) => {
+    markBodyReadStarted = resolve;
+  });
+  vi.stubGlobal("fetch", (input: string, init?: RequestInit): Promise<Response> => {
+    calls.push({ url: input, init });
+    const response = {
+      ok: true,
+      json: () => {
+        markBodyReadStarted();
+        return new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(new DOMException("The operation was aborted.", "AbortError"));
+          });
+        });
+      },
+    } as unknown as Response;
+    return Promise.resolve(response);
+  });
+  return { calls, bodyReadStarted };
+}
+
 function renderDrill(topics: readonly Topic[]) {
   return render(
     <NextIntlClientProvider locale="en" messages={en}>
@@ -245,6 +305,98 @@ describe("the drill page's client leaf", () => {
     });
     expect(document.activeElement).toBe(feedbackHeading);
     expect(calls).toHaveLength(1);
+  });
+
+  it("returns to writing with the answer intact and no error when the reader cancels", async () => {
+    const calls = stubAbortAwareFetch();
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    clickButton(en.Drill.send);
+
+    expect(calls).toHaveLength(1);
+    const signal = calls[0]?.init?.signal;
+    expect(signal).toBeInstanceOf(AbortSignal);
+    expect(signal?.aborted).toBe(false);
+
+    clickButton(en.Drill.cancel);
+
+    expect(signal?.aborted).toBe(true);
+    expect(screen.getByLabelText(en.Drill.answerLabel)).toHaveValue(ANSWER);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: en.Drill.cancel }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.Drill.send })).toBeEnabled();
+
+    // Lets the now-rejected fetch's `AbortError` finish propagating through
+    // `requestFeedback` and `send`'s own catch before the test ends, so a
+    // handled rejection never has a chance to look unhandled.
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+
+  it("returns to writing with no bogus failure when the reader cancels while the body is still being read", async () => {
+    const { calls, bodyReadStarted } = stubAbortAwareJsonFetch();
+    renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    clickButton(en.Drill.send);
+
+    expect(calls).toHaveLength(1);
+    const signal = calls[0]?.init?.signal;
+    expect(signal).toBeInstanceOf(AbortSignal);
+    expect(signal?.aborted).toBe(false);
+
+    // Waits for `.json()` to have actually started — and registered its
+    // `abort` listener — before cancelling, so the cancel below lands
+    // mid-body-read rather than before `fetch` has even resolved.
+    await act(async () => {
+      await bodyReadStarted;
+    });
+
+    clickButton(en.Drill.cancel);
+
+    expect(signal?.aborted).toBe(true);
+
+    // Lets the now-rejected `.json()` promise's `AbortError` finish
+    // propagating through `requestFeedback` and `send`'s own catch — and, if
+    // it were instead swallowed into a bogus success, lets the resulting
+    // `setPhase({ kind: "failed" })` land too — before asserting the settled
+    // state below.
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByLabelText(en.Drill.answerLabel)).toHaveValue(ANSWER);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: en.Drill.cancel }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.Drill.send })).toBeEnabled();
+  });
+
+  it("aborts the in-flight request and updates no state when the component unmounts", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const calls = stubAbortAwareFetch();
+    const view = renderDrill([SHORT_PREP]);
+
+    typeAnswer(ANSWER);
+    clickButton(en.Drill.send);
+    expect(calls).toHaveLength(1);
+    const signal = calls[0]?.init?.signal;
+    expect(signal?.aborted).toBe(false);
+
+    view.unmount();
+
+    expect(signal?.aborted).toBe(true);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
   });
 
   it("saves an edited rewrite with its feedback context and allows dismissal", async () => {

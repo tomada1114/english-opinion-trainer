@@ -93,6 +93,7 @@
     "send": "Get feedback",
     "sending": "Getting feedback…",
     "busy": "Getting feedback on your answer",
+    "cancel": "Cancel",
     "feedbackReady": "Feedback ready",
     "resend": "Send again",
     "skip": "Skip this topic",
